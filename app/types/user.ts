@@ -4,7 +4,7 @@ export interface UserSummary {
   username: string;
   online: boolean;
   createdAt: string; // ISO date-time string
-  birthday: string;  // ISO date string
+  birthday: string; // ISO date string
 }
 
 export interface UserProfile {

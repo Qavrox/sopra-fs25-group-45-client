@@ -1,4 +1,4 @@
 // types/message.ts
 export interface MessageResponse {
-    message: string;
+  message: string;
 }

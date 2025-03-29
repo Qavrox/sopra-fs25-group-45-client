@@ -2,10 +2,16 @@
 import { ApiService } from "./apiService";
 import type { LoginRequest, LoginResponse } from "@/types/auth";
 import type { MessageResponse } from "@/types/message";
-import type { ErrorResponse, ApplicationError } from "@/types/error";
-import type { UserSummary, UserProfile, UserProfileUpdate } from "@/types/user";
-import type { GameCreationRequest, Game, GameActionRequest, GameResults, ProbabilityResponse } from "@/types/game";
-import type { PreferencesUpdate, Preferences } from "@/types/preferences";
+import type { ApplicationError, ErrorResponse } from "@/types/error";
+import type { UserProfile, UserProfileUpdate, UserSummary } from "@/types/user";
+import type {
+  Game,
+  GameActionRequest,
+  GameCreationRequest,
+  GameResults,
+  ProbabilityResponse,
+} from "@/types/game";
+import type { Preferences, PreferencesUpdate } from "@/types/preferences";
 
 export class ApiClient {
   private apiService: ApiService;
@@ -29,7 +35,8 @@ export class ApiClient {
   private updateAuthHeader(): void {
     // NOTE: This hack accesses the private defaultHeaders from apiService.
     if (this.token) {
-      (this.apiService as any).defaultHeaders["Authorization"] = `Bearer ${this.token}`;
+      (this.apiService as any).defaultHeaders["Authorization"] =
+        `Bearer ${this.token}`;
     } else {
       delete (this.apiService as any).defaultHeaders["Authorization"];
     }
@@ -53,7 +60,10 @@ export class ApiClient {
     return this.apiService.get<UserProfile>(`/users/${userId}`);
   }
 
-  async updateUserProfile(userId: number, payload: UserProfileUpdate): Promise<UserProfile> {
+  async updateUserProfile(
+    userId: number,
+    payload: UserProfileUpdate,
+  ): Promise<UserProfile> {
     return this.apiService.put<UserProfile>(`/users/${userId}`, payload);
   }
 
@@ -63,15 +73,24 @@ export class ApiClient {
   }
 
   async sendFriendRequest(friendId: number): Promise<MessageResponse> {
-    return this.apiService.post<MessageResponse>(`/friends/${friendId}/request`, {});
+    return this.apiService.post<MessageResponse>(
+      `/friends/${friendId}/request`,
+      {},
+    );
   }
 
   async acceptFriendRequest(friendId: number): Promise<MessageResponse> {
-    return this.apiService.post<MessageResponse>(`/friends/${friendId}/accept`, {});
+    return this.apiService.post<MessageResponse>(
+      `/friends/${friendId}/accept`,
+      {},
+    );
   }
 
   async rejectFriendRequest(friendId: number): Promise<MessageResponse> {
-    return this.apiService.post<MessageResponse>(`/friends/${friendId}/reject`, {});
+    return this.apiService.post<MessageResponse>(
+      `/friends/${friendId}/reject`,
+      {},
+    );
   }
 
   // --- Game Endpoints ---
@@ -88,11 +107,19 @@ export class ApiClient {
   }
 
   async joinGame(gameId: number, passcode: string): Promise<MessageResponse> {
-    return this.apiService.post<MessageResponse>(`/games/${gameId}/join`, { passcode });
+    return this.apiService.post<MessageResponse>(`/games/${gameId}/join`, {
+      passcode,
+    });
   }
 
-  async submitGameAction(gameId: number, payload: GameActionRequest): Promise<MessageResponse> {
-    return this.apiService.post<MessageResponse>(`/games/${gameId}/actions`, payload);
+  async submitGameAction(
+    gameId: number,
+    payload: GameActionRequest,
+  ): Promise<MessageResponse> {
+    return this.apiService.post<MessageResponse>(
+      `/games/${gameId}/actions`,
+      payload,
+    );
   }
 
   async getGameResults(gameId: number): Promise<GameResults> {
@@ -100,16 +127,27 @@ export class ApiClient {
   }
 
   async spectateGame(gameId: number): Promise<MessageResponse> {
-    return this.apiService.post<MessageResponse>(`/games/${gameId}/spectate`, {});
+    return this.apiService.post<MessageResponse>(
+      `/games/${gameId}/spectate`,
+      {},
+    );
   }
 
   async getWinProbability(gameId: number): Promise<ProbabilityResponse> {
-    return this.apiService.get<ProbabilityResponse>(`/games/${gameId}/probability`);
+    return this.apiService.get<ProbabilityResponse>(
+      `/games/${gameId}/probability`,
+    );
   }
 
   // --- Preferences Endpoints ---
-  async updatePreferences(userId: number, payload: PreferencesUpdate): Promise<Preferences> {
-    return this.apiService.put<Preferences>(`/users/${userId}/preferences`, payload);
+  async updatePreferences(
+    userId: number,
+    payload: PreferencesUpdate,
+  ): Promise<Preferences> {
+    return this.apiService.put<Preferences>(
+      `/users/${userId}/preferences`,
+      payload,
+    );
   }
 }
 
