@@ -12,13 +12,16 @@ import type {
 } from "@/types/game";
 import type { Preferences, PreferencesUpdate } from "@/types/preferences";
 
+/**
+ * Provides an abstraction for interacting with the backend API
+ */
 export class ApiClient {
   private apiService: ApiService;
   private token: string | null;
 
-  constructor(token: string | null = null) {
+  constructor() {
     this.apiService = new ApiService();
-    this.token = token;
+    this.token = null;
     this.updateAuthHeader();
   }
 
