@@ -2,7 +2,6 @@
 import { ApiService } from "./apiService";
 import type { LoginRequest, LoginResponse } from "@/types/auth";
 import type { MessageResponse } from "@/types/message";
-import type { ApplicationError, ErrorResponse } from "@/types/error";
 import type { UserProfile, UserProfileUpdate, UserSummary } from "@/types/user";
 import type {
   Game,
@@ -43,24 +42,24 @@ export class ApiClient {
   }
 
   // --- Auth Endpoints ---
-  async login(payload: LoginRequest): Promise<LoginResponse> {
+  login(payload: LoginRequest): Promise<LoginResponse> {
     return this.apiService.post<LoginResponse>("/auth/login", payload);
   }
 
-  async logout(): Promise<MessageResponse> {
+  logout(): Promise<MessageResponse> {
     return this.apiService.post<MessageResponse>("/auth/logout", {});
   }
 
   // --- User Endpoints ---
-  async getUsers(): Promise<UserSummary[]> {
+  getUsers(): Promise<UserSummary[]> {
     return this.apiService.get<UserSummary[]>("/users");
   }
 
-  async getUserProfile(userId: number): Promise<UserProfile> {
+  getUserProfile(userId: number): Promise<UserProfile> {
     return this.apiService.get<UserProfile>(`/users/${userId}`);
   }
 
-  async updateUserProfile(
+  updateUserProfile(
     userId: number,
     payload: UserProfileUpdate,
   ): Promise<UserProfile> {
@@ -68,25 +67,25 @@ export class ApiClient {
   }
 
   // --- Friend Endpoints ---
-  async getFriends(): Promise<UserSummary[]> {
+  getFriends(): Promise<UserSummary[]> {
     return this.apiService.get<UserSummary[]>("/friends");
   }
 
-  async sendFriendRequest(friendId: number): Promise<MessageResponse> {
+  sendFriendRequest(friendId: number): Promise<MessageResponse> {
     return this.apiService.post<MessageResponse>(
       `/friends/${friendId}/request`,
       {},
     );
   }
 
-  async acceptFriendRequest(friendId: number): Promise<MessageResponse> {
+  acceptFriendRequest(friendId: number): Promise<MessageResponse> {
     return this.apiService.post<MessageResponse>(
       `/friends/${friendId}/accept`,
       {},
     );
   }
 
-  async rejectFriendRequest(friendId: number): Promise<MessageResponse> {
+  rejectFriendRequest(friendId: number): Promise<MessageResponse> {
     return this.apiService.post<MessageResponse>(
       `/friends/${friendId}/reject`,
       {},
@@ -94,25 +93,25 @@ export class ApiClient {
   }
 
   // --- Game Endpoints ---
-  async createGame(payload: GameCreationRequest): Promise<Game> {
+  createGame(payload: GameCreationRequest): Promise<Game> {
     return this.apiService.post<Game>("/games", payload);
   }
 
-  async getPublicGames(): Promise<Game[]> {
+  getPublicGames(): Promise<Game[]> {
     return this.apiService.get<Game[]>("/games");
   }
 
-  async getGameDetails(gameId: number): Promise<Game> {
+  getGameDetails(gameId: number): Promise<Game> {
     return this.apiService.get<Game>(`/games/${gameId}`);
   }
 
-  async joinGame(gameId: number, passcode: string): Promise<MessageResponse> {
+  joinGame(gameId: number, passcode: string): Promise<MessageResponse> {
     return this.apiService.post<MessageResponse>(`/games/${gameId}/join`, {
       passcode,
     });
   }
 
-  async submitGameAction(
+  submitGameAction(
     gameId: number,
     payload: GameActionRequest,
   ): Promise<MessageResponse> {
@@ -122,25 +121,25 @@ export class ApiClient {
     );
   }
 
-  async getGameResults(gameId: number): Promise<GameResults> {
+  getGameResults(gameId: number): Promise<GameResults> {
     return this.apiService.get<GameResults>(`/games/${gameId}/results`);
   }
 
-  async spectateGame(gameId: number): Promise<MessageResponse> {
+  spectateGame(gameId: number): Promise<MessageResponse> {
     return this.apiService.post<MessageResponse>(
       `/games/${gameId}/spectate`,
       {},
     );
   }
 
-  async getWinProbability(gameId: number): Promise<ProbabilityResponse> {
+  getWinProbability(gameId: number): Promise<ProbabilityResponse> {
     return this.apiService.get<ProbabilityResponse>(
       `/games/${gameId}/probability`,
     );
   }
 
   // --- Preferences Endpoints ---
-  async updatePreferences(
+  updatePreferences(
     userId: number,
     payload: PreferencesUpdate,
   ): Promise<Preferences> {
