@@ -3,103 +3,123 @@
 "use client"; // For components that need React hooks and browser APIs, SSR (server side rendering) has to be disabled. Read more here: https://nextjs.org/docs/pages/building-your-application/rendering/server-side-rendering
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useApi } from "@/hooks/useApi";
-import useLocalStorage from "@/hooks/useLocalStorage";
-import { User } from "@/types/user";
-import { Button, Card, Table } from "antd";
-import type { TableProps } from "antd"; // antd component library allows imports of types
-// Optionally, you can import a CSS module or file for additional styling:
-// import "@/styles/views/Dashboard.scss";
+import { useParams } from "next/navigation";
+import { useApiClient } from "@/hooks/useApi";
+import { Card, Avatar, Tag, Divider, Space, Typography, Skeleton } from "antd";
+import type { UserProfile } from "@/types/user";
 
-// Columns for the antd table of User objects
-const columns: TableProps<User>["columns"] = [
-  {
-    title: "Username",
-    dataIndex: "username",
-    key: "username",
-  },
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Id",
-    dataIndex: "id",
-    key: "id",
-  },
-];
+const { Title, Text } = Typography;
 
-const Dashboard: React.FC = () => {
-  const router = useRouter();
-  const apiService = useApi();
-  const [users, setUsers] = useState<User[] | null>(null);
-  // useLocalStorage hook example use
-  // The hook returns an object with the value and two functions
-  // Simply choose what you need from the hook:
-  const {
-    // value: token, // is commented out because we dont need to know the token value for logout
-    // set: setToken, // is commented out because we dont need to set or update the token value
-    clear: clearToken, // all we need in this scenario is a method to clear the token
-  } = useLocalStorage<string>("token", ""); // if you wanted to select a different token, i.e "lobby", useLocalStorage<string>("lobby", "");
-
-  const handleLogout = (): void => {
-    // Clear token using the returned function 'clear' from the hook
-    clearToken();
-    router.push("/login");
-  };
+/**
+ * ProfileView Component - Displays basic user profile information
+ * Shows the user's experience level, avatar, and basic stats
+ */
+const ProfileView: React.FC = () => {
+  const { id } = useParams();
+  const apiClient = useApiClient();
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchUserProfile = async () => {
       try {
-        // apiService.get<User[]> returns the parsed JSON object directly,
-        // thus we can simply assign it to our users variable.
-        const users: User[] = await apiService.get<User[]>("/users");
-        setUsers(users);
-        console.log("Fetched users:", users);
-      } catch (error) {
-        if (error instanceof Error) {
-          alert(`Something went wrong while fetching users:\n${error.message}`);
-        } else {
-          console.error("An unknown error occurred while fetching users.");
-        }
+        setLoading(true);
+        const userId = parseInt(id as string);
+        const userProfile = await apiClient.getUserProfile(userId);
+        setProfile(userProfile);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching user profile:", err);
+        setError("Failed to load user profile. Please try again later.");
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchUsers();
-  }, [apiService]); // dependency apiService does not re-trigger the useEffect on every render because the hook uses memoization (check useApi.tsx in the hooks).
-  // if the dependency array is left empty, the useEffect will trigger exactly once
-  // if the dependency array is left away, the useEffect will run on every state change. Since we do a state change to users in the useEffect, this results in an infinite loop.
-  // read more here: https://react.dev/reference/react/useEffect#specifying-reactive-dependencies
+    if (id) {
+      fetchUserProfile();
+    }
+  }, [id, apiClient]);
+
+  // Helper function to get color based on experience level
+  const getLevelColor = (level: string) => {
+    switch (level) {
+      case "Beginner":
+        return "green";
+      case "Intermediate":
+        return "blue";
+      case "Expert":
+        return "red";
+      default:
+        return "default";
+    }
+  };
 
   return (
     <div className="card-container">
       <Card
-        title="Get all users from secure endpoint:"
-        loading={!users}
-        className="dashboard-container"
+        title="Player Profile"
+        style={{ width: 400 }}
+        loading={loading}
       >
-        {users && (
+        {error ? (
+          <div className="error-message">{error}</div>
+        ) : profile ? (
           <>
-            {/* antd Table: pass the columns and data, plus a rowKey for stable row identity */}
-            <Table<User>
-              columns={columns}
-              dataSource={users}
-              rowKey="id"
-              onRow={(row) => ({
-                onClick: () => router.push(`/users/${row.id}`),
-                style: { cursor: "pointer" },
-              })}
-            />
-            <Button onClick={handleLogout} type="primary">
-              Logout
-            </Button>
+            <div style={{ display: "flex", alignItems: "center", marginBottom: 16 }}>
+              <Avatar
+                size={80}
+                src={profile.avatarUrl || "/default-avatar.png"}
+                style={{ marginRight: 16 }}
+              />
+              <div>
+                <Title level={3} style={{ margin: 0 }}>
+                  {profile.displayName}
+                </Title>
+                <Text type="secondary">@{profile.username}</Text>
+                <div style={{ marginTop: 8 }}>
+                  <Tag color={getLevelColor(profile.experienceLevel)}>
+                    {profile.experienceLevel}
+                  </Tag>
+                  <Tag color={profile.online ? "success" : "default"}>
+                    {profile.online ? "Online" : "Offline"}
+                  </Tag>
+                </div>
+              </div>
+            </div>
+
+            <Divider />
+
+            <Space direction="vertical" style={{ width: "100%" }}>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <Text>Member Since</Text>
+                <Text strong>
+                  {new Date(profile.createdAt).toLocaleDateString()}
+                </Text>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <Text>Birthday</Text>
+                <Text strong>
+                  {new Date(profile.birthday).toLocaleDateString()}
+                </Text>
+              </div>
+            </Space>
+            
+            <Divider />
+            
+            <div style={{ textAlign: "center" }}>
+              <Text type="secondary">
+                View full profile details to see game statistics and history
+              </Text>
+            </div>
           </>
+        ) : (
+          <Skeleton avatar paragraph={{ rows: 4 }} />
         )}
       </Card>
     </div>
   );
 };
 
-export default Dashboard;
+export default ProfileView;
