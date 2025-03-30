@@ -40,7 +40,7 @@ reason).
 |                    | 29.03   | c9ef0559683ff10cb5618e4e37f41a15c37a7286 | Visually presented user level information with the experience level display | Added user experience level display feature |
 |                    | 29.03   | b12506f1c2d7ef62c56c82603c8688469cc6c246 | Initialized user profile page component structure | Established the foundation framework for user profile display |
 | **@unscttp** | 30.03   | 96345bdca66a9ae9f5b98beba9ca2d62b8637f5a | Initialized Lobby and two room related components | Established foundation of game room management |
-|                    | 30.03   | f730498d3ee52ebea6e9f0623fdd0967ecaeff99 | Adjusted the components to use Local Sotrage | Critical on authentication in the game room management system |
+|                    | 30.03   | f730498d3ee52ebea6e9f0623fdd0967ecaeff99 | Adjusted the components to use Local Sotrage and alligh implementation with proposed backend GTOs | Critical on authentication and developement in the game room management system |
 | **@Qavrox** | 30.03   | 6726b321789573375cd1566934d815bb9cb15bb7 | Created User entity, database schema and REST endpoints with a simple avatar implementation, and implemented user profile service layer with validation  | Implemented the user management system |
 |                    | 30.03   | 8293fed8df5bcef6a353ec30225f45530b0ee50c | User list endpoints implementation and bug fixes  | Foundation of friend system and profile editing |
 
