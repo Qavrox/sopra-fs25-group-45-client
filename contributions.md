@@ -39,8 +39,8 @@ reason).
 | **@IsSaudade** | 29.03   | f6f70ec7e45b7bcf7824637c959e4a4d8e502f25 | Profile View Page  | Integrated all components to provide a complete user profile browsing experience |
 |                    | 29.03   | c9ef0559683ff10cb5618e4e37f41a15c37a7286 | Visually presented user level information with the experience level display | Added user experience level display feature |
 |                    | 29.03   | b12506f1c2d7ef62c56c82603c8688469cc6c246 | Initialized user profile page component structure | Established the foundation framework for user profile display |
-| **[@githubUser3]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
-|                    | [date]   | [Link to Commit 2] | [Brief description of the task] | [Why this contribution is relevant] |
+| **[@unscttp]** | 30.03   | [96345bdca66a9ae9f5b98beba9ca2d62b8637f5a] | Initialized Lobby and two room related components | Established foundation of game room management |
+|                    | 30.03   | f730498d3ee52ebea6e9f0623fdd0967ecaeff99 | Adjusted the components to use Local Sotrage | Critical on authentication in the game room management system |
 | **[@githubUser4]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
 |                    | [date]   | [Link to Commit 2] | [Brief description of the task] | [Why this contribution is relevant] |
 
