@@ -34,8 +34,8 @@ reason).
 
 | **Student**        | **Date** | **Link to Commit** | **Description**                 | **Relevance**                       |
 | ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
-| **[@githubUser1]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
-|                    | [date]   | [Link to Commit 2] | [Brief description of the task] | [Why this contribution is relevant] |
+| **@lydia-milena** |  29.03  | 97fda3ef4f2f1605dbca678b28314221fe6e3ef8 | I have added the REST enpoints for creating and joining a game, getting all pulbic games and getting game information. I also implemented the service, repository and entity classes of the Game and Player objects. | This provides the backend to implement User Story 3  |
+|                    |29.03 | 5382660c8848955451d206354981acbc8e851275 | Implemented the card system, including card distribution and drawing community cards based on the game stage. | Necessary subpart of User story 4 |
 | **[@githubUser2]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
 |                    | [date]   | [Link to Commit 2] | [Brief description of the task] | [Why this contribution is relevant] |
 | **[@githubUser3]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
