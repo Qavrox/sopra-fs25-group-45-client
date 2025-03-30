@@ -1,4 +1,4 @@
-import RoomBrowser from '@/components/RoomBrowser/page';
+import RoomBrowser from '@/components/RoomBrowser/RoomBrowser';
 
 export default function RoomBrowserPage() {
   return (

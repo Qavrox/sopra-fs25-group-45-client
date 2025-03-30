@@ -1,102 +1,117 @@
 'use client';
 import { useState } from 'react';
+import useLocalStorage from '@/hooks/useLocalStorage';
 
 export default function CreateRoomForm() {
-  const [roomName, setRoomName] = useState('');
-  const [maxPlayers, setMaxPlayers] = useState(6);
-  const [enableAI, setEnableAI] = useState(false);
-  const [betLimit, setBetLimit] = useState('');
-
+  const [maximalPlayers, setMaximalPlayers] = useState(6);
+  const [startCredit, setStartCredit] = useState(1000);
+  const [isPublic, setIsPublic] = useState(true);
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const { value: token } = useLocalStorage<string>('token', '');
+  const { value: rawUserId } = useLocalStorage<string>('userId', '');
+  const userId = Number(rawUserId);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert('Please log in to create a room.');
+    if (!token || !userId) return alert('Please log in.');
+
+    if (!isPublic && password.trim() === '') {
+      alert('Private games require a password.');
       return;
     }
 
     setLoading(true);
-
     try {
-      const res = await fetch('/api/games', {
+      const response = await fetch('/api/games', {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${token}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: roomName,
-          maxPlayers,
-          betLimit,
-          enableAI,
+          creatorId: userId,
+          maximalPlayers,
+          startCredit,
+          isPublic,
+          password: isPublic ? null : password,
         }),
       });
 
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || 'Failed to create room');
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || 'Failed to create game.');
       }
 
-      const data = await res.json(); // expect { gameId: 'abc123', ... }
-      window.location.href = `/game/${data.gameId}`;
+      const game = await response.json();
+      window.location.href = `/game/${game.id}`;
     } catch (err: any) {
-      alert(err.message);
+      alert(err.message || 'Unexpected error');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 border rounded-lg shadow max-w-md mx-auto bg-white space-y-4">
+    <form
+      onSubmit={handleSubmit}
+      className="p-4 border rounded-lg shadow max-w-md mx-auto space-y-4 bg-white"
+    >
       <h2 className="text-xl font-bold">Create a New Game</h2>
 
       <label className="block">
-        Room Name
+        Max Players
         <input
+          type="number"
           className="w-full border p-2 mt-1"
-          value={roomName}
-          onChange={(e) => setRoomName(e.target.value)}
+          min={2}
+          max={10}
+          value={maximalPlayers}
+          onChange={(e) => setMaximalPlayers(Number(e.target.value))}
           required
         />
       </label>
 
       <label className="block">
-        Max Players
+        Starting Credit
         <input
-          className="w-full border p-2 mt-1"
           type="number"
-          min={2}
-          max={10}
-          value={maxPlayers}
-          onChange={(e) => setMaxPlayers(Number(e.target.value))}
-        />
-      </label>
-
-      <label className="block">
-        Bet Limit
-        <input
           className="w-full border p-2 mt-1"
-          value={betLimit}
-          onChange={(e) => setBetLimit(e.target.value)}
+          min={1}
+          value={startCredit}
+          onChange={(e) => setStartCredit(Number(e.target.value))}
+          required
         />
       </label>
 
       <label className="flex items-center gap-2">
         <input
           type="checkbox"
-          checked={enableAI}
-          onChange={(e) => setEnableAI(e.target.checked)}
+          checked={isPublic}
+          onChange={(e) => setIsPublic(e.target.checked)}
         />
-        Enable AI Assistant
+        Public Game
       </label>
+
+      {!isPublic && (
+        <label className="block">
+          Password
+          <input
+            type="password"
+            className="w-full border p-2 mt-1"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </label>
+      )}
 
       <button
         type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full"
         disabled={loading}
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full"
       >
         {loading ? 'Creating...' : 'Create Table'}
       </button>
