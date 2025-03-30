@@ -43,7 +43,9 @@ reason).
 |                    | 30.03   | f730498d3ee52ebea6e9f0623fdd0967ecaeff99 | Adjusted the components to use Local Sotrage and alligh implementation with proposed backend GTOs | Critical on authentication and developement in the game room management system |
 | **@Qavrox** | 30.03   | 6726b321789573375cd1566934d815bb9cb15bb7 | Created User entity, database schema and REST endpoints with a simple avatar implementation, and implemented user profile service layer with validation  | Implemented the user management system |
 |                    | 30.03   | 8293fed8df5bcef6a353ec30225f45530b0ee50c | User list endpoints implementation and bug fixes  | Foundation of friend system and profile editing |
-
+| **@TauSigma5**     | 29.03   | 920ae4d4dd7b1287041baaf3be1fdc9574193157, 706a6d1e57631b5e8dc2329d3931bd68c4519e57 | Implement API client on the front end | Allows the rest of the implementation to use interfaces and a clean ApiClient instead of directly issuing API requests, therefore improving development velocity |
+| **@TauSigma5**     | 29.03   | 7b6b9652f20fe6d211e8b5b5dec35deedec687f1 | Research and implement statistics algorithm for determining win change | Most of Task #43 |
+| **@TauSigma5**     | 30.03   | 73335d0677ce1e3fd28ffc763cf6cbfab6a78825 | Implement friends database and REST API | Completes Task #47 |
 ---
 
 ## Contributions Week 2 - [Begin Date] to [End Date]
