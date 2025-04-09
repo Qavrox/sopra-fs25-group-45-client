@@ -57,7 +57,7 @@ reason).
 |                    |  09.04   | de5ff784cc273c2261e1effe8632727c7084452a | Implement win determination | Key part of user story and task #35 |
 | **[@unscttp]** | 09.04   | 34f28efde631998e1eb14e401cbe33fa235561af | Edited room creation component to fit game room requirement | Core mechanism of game itself |
 |                    | 09.04   | 54c1f9d16f46045e92c87d71556e403bbb4e79bb | Creation of files relevant to player action | Allows the functioning of players' actions |
-| **[@Qavrox]** | [08.04]   | 2636dd2ec1d005fd21f43366eff6f2ba005c291d | Implement player action services | Basic function in a game |
+| **[@Qavrox]** | 08.04   | 2636dd2ec1d005fd21f43366eff6f2ba005c291d | Implement player action services | Basic function in a game |
 |                    | 10.04   | 17ca75611e4a355ed5f2f060823f1390547254f1 | Implemented Betting round management and wrote tests | Basic function in a game |
 | **[@githubUser4]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
 |                    | [date]   | [Link to Commit 2] | [Brief description of the task] | [Why this contribution is relevant] |
