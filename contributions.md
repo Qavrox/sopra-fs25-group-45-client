@@ -55,8 +55,8 @@ reason).
 | **[@TauSigma5]**   |  06.04   | ebf7c1ed2e14c4ce393e79cb034a4c163ccffee4 | Improvements for the Deck and Card representation and writing tests | This provides a solid representation of Game, Deck and Cards to be used by OddsCalculator and other components |
 |                    |  06.04   | dbf616d424302d7db2afac89a98cc84b35a76b87 | Use the new representation from the above commit in odds calculator | This integrates older code into the code base since OddsCalculator existed before the Game representation did |
 |                    |  09.04   | de5ff784cc273c2261e1effe8632727c7084452a | Implement win determination | Key part of user story and task #35 |
-| **[@githubUser2]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
-|                    | [date]   | [Link to Commit 2] | [Brief description of the task] | [Why this contribution is relevant] |
+| **[@unscttp]** | 09.04   | 34f28efde631998e1eb14e401cbe33fa235561af | Edited room creation component to fit game room requirement | Core mechanism of game itself |
+|                    | 09.04   | 54c1f9d16f46045e92c87d71556e403bbb4e79bb | Creation of files relevant to player action | Allows the functioning of players' actions |
 | **[@githubUser3]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
 |                    | [date]   | [Link to Commit 2] | [Brief description of the task] | [Why this contribution is relevant] |
 | **[@githubUser4]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
