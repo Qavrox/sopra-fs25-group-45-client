@@ -7,6 +7,8 @@ export default function CreateRoomForm() {
   const [startCredit, setStartCredit] = useState(1000);
   const [isPublic, setIsPublic] = useState(true);
   const [password, setPassword] = useState('');
+  const [smallBlind, setSmallBlind] = useState(10); 
+  const [bigBlind, setBigBlind] = useState(20);
   const [loading, setLoading] = useState(false);
 
   const { value: token } = useLocalStorage<string>('token', '');
@@ -37,6 +39,8 @@ export default function CreateRoomForm() {
           startCredit,
           isPublic,
           password: isPublic ? null : password,
+          smallBlind,
+          bigBlind
         }),
       });
 
@@ -82,6 +86,32 @@ export default function CreateRoomForm() {
           min={1}
           value={startCredit}
           onChange={(e) => setStartCredit(Number(e.target.value))}
+          required
+        />
+      </label>
+
+      {/* ✅ 新增：small blind 输入 */}
+      <label className="block">
+        Small Blind
+        <input
+          type="number"
+          className="w-full border p-2 mt-1"
+          min={1}
+          value={smallBlind}
+          onChange={(e) => setSmallBlind(Number(e.target.value))}
+          required
+        />
+      </label>
+
+      {/* ✅ 新增：big blind 输入 */}
+      <label className="block">
+        Big Blind
+        <input
+          type="number"
+          className="w-full border p-2 mt-1"
+          min={1}
+          value={bigBlind}
+          onChange={(e) => setBigBlind(Number(e.target.value))}
           required
         />
       </label>
