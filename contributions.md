@@ -61,6 +61,8 @@ reason).
 |                    | 10.04   | 17ca75611e4a355ed5f2f060823f1390547254f1 | Implemented Betting round management and wrote tests | Basic function in a game |
 | **[@IsSaudade]** |08.04   | 99cfd33daa5abd1d1a9c6742be3a5d5eba8aa27c | Implement game table UI with player positions and cards | Basic function in a game |
 |                    | 08.04   | 82c9fb2cc22cc2308e4a300b483823c7df7f045f | endpoint for joining a game | Basic function in a game |
+| **[@lydia-milena]** | 07.04  | 616963727e7a6e5464c46e2c994b5eac2b579d89 | Implemented the backend function for game updates. | Required for User Story 5 and general game mechanics |
+|                    | 07.04  | 616963727e7a6e5464c46e2c994b5eac2b579d89 | Implemented Authentication for the room listing functions, game creation and joining a game | Required for User Story 3 |
 
 ---
 
