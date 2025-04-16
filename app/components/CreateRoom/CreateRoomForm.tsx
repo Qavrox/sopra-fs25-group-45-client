@@ -90,7 +90,7 @@ export default function CreateRoomForm() {
         />
       </label>
 
-      {/* ✅ 新增：small blind 输入 */}
+      {/* Small blind input */}
       <label className="block">
         Small Blind
         <input
@@ -103,7 +103,7 @@ export default function CreateRoomForm() {
         />
       </label>
 
-      {/* ✅ 新增：big blind 输入 */}
+      {/* Big blind input */}
       <label className="block">
         Big Blind
         <input
