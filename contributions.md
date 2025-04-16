@@ -70,7 +70,7 @@ reason).
 
 | **Student**        | **Date** | **Link to Commit** | **Description**                 | **Relevance**                       |
 | ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
-| **[@Qavrox]** | 16.04   | [[Link to Commit 1]](https://github.com/Qavrox/sopra-fs25-group-45-server/commit/8a660b1870a4c2b53362677d3a9e1676636050a3) | Verification for player action and make changes to related components | To make sure the actions are done by the players themself. |
+| **[@Qavrox]** | 16.04   | [[Link to Commit 1]](https://github.com/Qavrox/sopra-fs25-group-45-server/commit/95a6b1b3ac3c99eed55fde1e81346336bff350a6) | Verification for player action and make changes to related components | To make sure the actions are done by the players themself. |
 |                    | 16.04   | [[Link to Commit 2]](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/ad0b244d5d0ebb9dd9e71a13e6f5d1aa6a0edd74) | Implemented the tutorial page. | To provide learining material for new players and to meet US13 |
 | **[@githubUser2]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
 |                    | [date]   | [Link to Commit 2] | [Brief description of the task] | [Why this contribution is relevant] |
