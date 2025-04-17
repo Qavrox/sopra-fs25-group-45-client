@@ -1,4 +1,9 @@
 // types/user.ts
+export enum ExperienceLevel {
+  BEGINNER = "Beginner",
+  INTERMEDIATE = "Intermediate",
+  EXPERT = "Expert"
+}
 
 export interface User {
   id: string | null;
@@ -9,7 +14,6 @@ export interface User {
   creationDate: string; //  Ensure this is included as a string (ISO-8601 format)
   birthDate: string | null;
 }
-
 
 export interface UserSummary {
   id: number;
@@ -24,7 +28,7 @@ export interface UserProfile {
   username: string;
   displayName: string;
   avatarUrl: string;
-  experienceLevel: "Beginner" | "Intermediate" | "Expert";
+  experienceLevel: ExperienceLevel;
   birthday: string;
   createdAt: string;
   online: boolean;
@@ -33,6 +37,6 @@ export interface UserProfile {
 export interface UserProfileUpdate {
   displayName?: string;
   avatarUrl?: string;
-  experienceLevel?: "Beginner" | "Intermediate" | "Expert";
+  experienceLevel?: ExperienceLevel;
   birthday?: string;
 }

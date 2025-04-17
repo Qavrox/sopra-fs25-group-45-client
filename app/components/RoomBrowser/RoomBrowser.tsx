@@ -1,57 +1,37 @@
 'use client';
 import { useEffect, useState } from 'react';
-import useLocalStorage from '@/hooks/useLocalStorage';
-
-interface Room {
-  id: number;
-  isPublic: boolean;
-  maximalPlayers: number;
-  numberOfPlayers: number;
-  gameStatus: string;
-}
+import { apiClient } from '../../api/apiClient';
+import type { Game } from '@/types/game';
+import { useRouter } from 'next/navigation';
 
 export default function RoomBrowser() {
-  const { value: token } = useLocalStorage<string>('token', '');
-  const [rooms, setRooms] = useState<Room[]>([]);
+  const [rooms, setRooms] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    if (!token) return;
+    if (!apiClient.isAuthenticated()) return;
 
-    fetch('/api/games', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(res => res.json())
+    apiClient.getPublicGames()
       .then(setRooms)
       .catch(() => alert('Failed to load rooms'))
       .finally(() => setLoading(false));
-  }, [token]);
+  }, []);
 
   const handleJoin = async (gameId: number, isPublic: boolean) => {
     const password = isPublic ? '' : prompt('Enter password:') || '';
 
     try {
-      const res = await fetch(`/api/games/${gameId}/join`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ password }),
-      });
-
-      if (res.ok) {
-        window.location.href = `/game/${gameId}`;
-      } else {
-        const err = await res.json();
-        alert(err.message || 'Failed to join game');
-      }
-    } catch {
-      alert('An unexpected error occurred while joining the room');
+      await apiClient.joinGame(gameId, password);
+      router.push(`/game/${gameId}`);
+    } catch (err: any) {
+      alert(err.message || 'Failed to join game');
     }
   };
 
-  if (!token) return <p className="text-center text-gray-500">Please log in to see available rooms.</p>;
+  if (!apiClient.isAuthenticated()) {
+    return <p className="text-center text-gray-500">Please log in to see available rooms.</p>;
+  }
   if (loading) return <p className="text-center text-gray-500">Loading rooms...</p>;
 
   return (
@@ -67,13 +47,13 @@ export default function RoomBrowser() {
           >
             <div>
               <p className="font-semibold">Game #{room.id}</p>
-              <p>{room.numberOfPlayers}/{room.maximalPlayers} players</p>
-              <p>Status: {room.gameStatus}</p>
+              <p>{room.players.length}/{room.maximalPlayers} players</p>
+              <p>Status: {room.status}</p>
             </div>
             <button
               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
               onClick={() => handleJoin(room.id, room.isPublic)}
-              disabled={room.gameStatus !== 'WAITING'}
+              disabled={room.status !== 'waiting'}
             >
               Join
             </button>
