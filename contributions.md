@@ -78,6 +78,8 @@ reason).
 |                    | 16.04   | [Link to Commit 2](https://github.com/Qavrox/sopra-fs25-group-45-server/commit/b889d3fb8032de867b2aad9f5f6bec860c264fec) | Modification to player action component | further polishnemt to players'actions to fit gaming logic |
 | **[@lydia-milena]** | 17.04   |[Link to Commit 2](https://github.com/Qavrox/sopra-fs25-group-45-server/commit/4824e2d328a3a783323f7a1c9df60eb0fc1c218f)| Implemented the REST endpoints for leaving and deleting a game. | Basic game Functionality |
 |                    | 17.04   | [Link to Commit 2](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/b3eaa3b68dee7e149403882bfd3982e4f2a70a23) | Implemented the frontend page for the profile editing functionality | Required for User Story 1 |
+| **[@IsSaudade]** | 17.04   | [Link to Commit 1](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/c958d2cb7133726de148cd88ff3deaebdb0fde4f) | uses the useApiClient() hook to get an instance of the API client |using the API client that match the backend |
+|                    | [date]   | [Link to Commit 2] | [Brief description of the task] | [Why this contribution is relevant] |
 
 ---
 
