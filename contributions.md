@@ -73,7 +73,7 @@ reason).
 | **[@Qavrox]** | 16.04   | [[Link to Commit 1]](https://github.com/Qavrox/sopra-fs25-group-45-server/commit/95a6b1b3ac3c99eed55fde1e81346336bff350a6) | Verification for player action and make changes to related components | To make sure the actions are done by the players themselves. |
 |                    | 16.04   | [[Link to Commit 2]](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/ad0b244d5d0ebb9dd9e71a13e6f5d1aa6a0edd74) | Implemented the tutorial page. | To provide learning material for new players and to meet US13 |
 | **[@TauSigma5]** | 17.04   | [Link to Commit 1](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/65) | Finish win probability API | Part of User Story US#10 |
-|                    | [date]   | [Link to Commit 2] | [Brief description of the task] | [Why this contribution is relevant] |
+|                    | 18.04   | [Link to Commit 2](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/19) | Begun fixing and replacing mock/scattered API into apiClient | Attempts to reduce integration hell between front end and backend (more work to be done) |
 | **[@unscttp]** | 15.04   | [Link to Commit 1](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/8ae78825ded0a53b4b2a021250156442963a3cbc) | Implementation of entity midification | Makes the build of client work, crucial for future development |
 |                    | 16.04   | [Link to Commit 2](https://github.com/Qavrox/sopra-fs25-group-45-server/commit/b889d3fb8032de867b2aad9f5f6bec860c264fec) | Modification to player action component | further polishnemt to players'actions to fit gaming logic |
 | **[@githubUser4]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
