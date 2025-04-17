@@ -1,3 +1,6 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { apiClient } from '@/services/apiClient';
+
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -10,26 +13,29 @@ export async function POST(
   try {
     const body = await request.json();
     
-    const response = await fetch(`http://localhost:8080/games/${params.id}/join`, {
-      method: 'POST',
-      headers: {
-        Authorization: token,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        password: body.password || '',
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      return NextResponse.json(errorData, { status: response.status });
-    }
-
-    const result = await response.json();
+    // Set token for API client
+    apiClient.setToken(token);
+    
+    // Use the apiClient to join the game
+    // This properly uses the joinGame method from your ApiClient
+    const result = await apiClient.joinGame(
+      parseInt(params.id), 
+      body.password || ''
+    );
+    
     return NextResponse.json(result);
   } catch (error) {
     console.error('Error joining game:', error);
+    
+    // Check if it's a structured error with status code
+    if (error instanceof Error && 'status' in error) {
+      const statusCode = (error as any).status || 500;
+      return NextResponse.json(
+        { message: error.message || 'Failed to join game' },
+        { status: statusCode }
+      );
+    }
+    
     return NextResponse.json(
       { message: 'Failed to join game' },
       { status: 500 }
