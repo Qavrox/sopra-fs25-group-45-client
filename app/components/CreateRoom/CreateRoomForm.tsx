@@ -9,6 +9,8 @@ export default function CreateRoomForm() {
   const [startCredit, setStartCredit] = useState(1000);
   const [isPublic, setIsPublic] = useState(true);
   const [password, setPassword] = useState('');
+  const [smallBlind, setSmallBlind] = useState(10); 
+  const [bigBlind, setBigBlind] = useState(20);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -27,6 +29,7 @@ export default function CreateRoomForm() {
 
     setLoading(true);
     try {
+
       const gameRequest: GameCreationRequest = {
         isPublic,
         password: isPublic ? undefined : password,
@@ -35,7 +38,7 @@ export default function CreateRoomForm() {
         startCredit,
         maximalPlayers,
       };
-
+        
       const game = await apiClient.createGame(gameRequest);
       router.push(`/game/${game.id}`);
     } catch (err: any) {
@@ -73,6 +76,32 @@ export default function CreateRoomForm() {
           min={1}
           value={startCredit}
           onChange={(e) => setStartCredit(Number(e.target.value))}
+          required
+        />
+      </label>
+
+      {/* Small blind input */}
+      <label className="block">
+        Small Blind
+        <input
+          type="number"
+          className="w-full border p-2 mt-1"
+          min={1}
+          value={smallBlind}
+          onChange={(e) => setSmallBlind(Number(e.target.value))}
+          required
+        />
+      </label>
+
+      {/* Big blind input */}
+      <label className="block">
+        Big Blind
+        <input
+          type="number"
+          className="w-full border p-2 mt-1"
+          min={1}
+          value={bigBlind}
+          onChange={(e) => setBigBlind(Number(e.target.value))}
           required
         />
       </label>
