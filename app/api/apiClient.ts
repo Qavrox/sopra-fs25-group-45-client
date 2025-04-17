@@ -9,6 +9,7 @@ import type {
   GameCreationRequest,
   GameResults,
   ProbabilityResponse,
+  NewRoundResponse,
 } from "@/types/game";
 import type { Preferences, PreferencesUpdate } from "@/types/preferences";
 
@@ -139,10 +140,18 @@ export class ApiClient {
     return this.apiService.get<Game>(`/games/${gameId}`);
   }
 
-  joinGame(gameId: number, passcode: string): Promise<MessageResponse> {
+  deleteGame(gameId: number): Promise<MessageResponse> {
+    return this.apiService.delete<MessageResponse>(`/games/${gameId}`);
+  }
+
+  joinGame(gameId: number, password: string): Promise<MessageResponse> {
     return this.apiService.post<MessageResponse>(`/games/${gameId}/join`, {
-      passcode,
+      password,
     });
+  }
+
+  leaveGame(gameId: number): Promise<MessageResponse> {
+    return this.apiService.delete<MessageResponse>(`/games/${gameId}/join`);
   }
 
   submitGameAction(
@@ -159,9 +168,9 @@ export class ApiClient {
     return this.apiService.get<GameResults>(`/games/${gameId}/results`);
   }
 
-  spectateGame(gameId: number): Promise<MessageResponse> {
-    return this.apiService.post<MessageResponse>(
-      `/games/${gameId}/spectate`,
+  startNewRound(gameId: number): Promise<NewRoundResponse> {
+    return this.apiService.post<NewRoundResponse>(
+      `/games/${gameId}/newround`,
       {},
     );
   }

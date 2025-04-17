@@ -2,26 +2,33 @@
 import type { UserSummary } from "./user";
 
 export interface GameCreationRequest {
-  isPrivate: boolean;
-  passcode?: string; // Required if isPrivate is true
-  blindLevels: {
-    smallBlind: number;
-    bigBlind: number;
-  };
-  startingChips: number;
-  maxPlayers: number;
+  isPublic: boolean;
+  password?: string; // Required if isPublic is false
+  smallBlind: number;
+  bigBlind: number;
+  startCredit: number;
+  maximalPlayers: number;
+}
+
+export interface Player {
+  id: number;
+  userId: number;
+  gameId: number;
+  credit: number;
+  hand: string[];
 }
 
 export interface Game {
   id: number;
-  isPrivate: boolean;
-  blindLevels: {
-    smallBlind: number;
-    bigBlind: number;
-  };
-  startingChips: number;
-  maxPlayers: number;
-  players: UserSummary[];
+  isPublic: boolean;
+  smallBlind: number;
+  bigBlind: number;
+  smalllBlindIndex: number;
+  startCredit: number;
+  maximalPlayers: number;
+  pot: number;
+  callAmount: number;
+  players: Player[];
   status: "waiting" | "in-progress" | "finished";
   createdAt: string;
 }
@@ -33,7 +40,7 @@ export interface GameActionRequest {
 }
 
 export interface GameResults {
-  winner: UserSummary;
+  winner: Player;
   winningHand: string;
   statistics: {
     participationRate: number;
@@ -43,4 +50,8 @@ export interface GameResults {
 
 export interface ProbabilityResponse {
   probability: number;
+}
+
+export interface NewRoundResponse {
+  error?: string;
 }
