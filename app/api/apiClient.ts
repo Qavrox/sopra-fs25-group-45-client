@@ -85,6 +85,17 @@ export class ApiClient {
     }
   }
 
+  async register(payload: UserProfileUpdate & { username: string; password: string }) {
+    try {
+      const response = await this.apiService.post<LoginResponse>("/auth/register", payload);
+      this.setToken(response.token);
+      return response;
+    } catch (error) {
+      this.setToken(null); // Clear token on registration failure
+      throw error;
+    }
+  }
+
   // --- User Endpoints ---
   getUsers(): Promise<UserSummary[]> {
     return this.apiService.get<UserSummary[]>("/users");

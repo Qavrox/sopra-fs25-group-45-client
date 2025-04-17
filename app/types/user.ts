@@ -1,4 +1,10 @@
 // types/user.ts
+export enum ExperienceLevel {
+  BEGINNER = "Beginner",
+  INTERMEDIATE = "Intermediate",
+  EXPERT = "Expert"
+}
+
 export interface UserSummary {
   id: number;
   username: string;
@@ -12,7 +18,7 @@ export interface UserProfile {
   username: string;
   displayName: string;
   avatarUrl: string;
-  experienceLevel: "Beginner" | "Intermediate" | "Expert";
+  experienceLevel: ExperienceLevel;
   birthday: string;
   createdAt: string;
   online: boolean;
@@ -21,6 +27,6 @@ export interface UserProfile {
 export interface UserProfileUpdate {
   displayName?: string;
   avatarUrl?: string;
-  experienceLevel?: "Beginner" | "Intermediate" | "Expert";
+  experienceLevel?: ExperienceLevel;
   birthday?: string;
 }
