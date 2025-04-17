@@ -12,6 +12,8 @@ import type {
 } from "@/types/game";
 import type { Preferences, PreferencesUpdate } from "@/types/preferences";
 
+const TOKEN_STORAGE_KEY = "bearer_token";
+
 /**
  * Provides an abstraction for interacting with the backend API
  */
@@ -21,13 +23,30 @@ export class ApiClient {
 
   constructor() {
     this.apiService = new ApiService();
-    this.token = null;
+    // Load token from localStorage on initialization
+    this.token = typeof window !== 'undefined' ? localStorage.getItem(TOKEN_STORAGE_KEY) : null;
     this.updateAuthHeader();
   }
 
   public setToken(token: string | null): void {
     this.token = token;
+    // Persist token to localStorage
+    if (typeof window !== 'undefined') {
+      if (token) {
+        localStorage.setItem(TOKEN_STORAGE_KEY, token);
+      } else {
+        localStorage.removeItem(TOKEN_STORAGE_KEY);
+      }
+    }
     this.updateAuthHeader();
+  }
+
+  /**
+   * Check if the user is currently authenticated
+   * @returns boolean indicating if user is authenticated
+   */
+  public isAuthenticated(): boolean {
+    return this.token !== null;
   }
 
   /**
@@ -45,12 +64,24 @@ export class ApiClient {
   }
 
   // --- Auth Endpoints ---
-  login(payload: LoginRequest): Promise<LoginResponse> {
-    return this.apiService.post<LoginResponse>("/auth/login", payload);
+  async login(payload: LoginRequest) {
+    try {
+      const response = await this.apiService.post<LoginResponse>("/auth/login", payload);
+      this.setToken(response.token);
+    } catch (error) {
+      this.setToken(null); // Clear token on login failure
+      throw error;
+    }
   }
 
-  logout(): Promise<MessageResponse> {
-    return this.apiService.post<MessageResponse>("/auth/logout", {});
+  async logout() {
+    try {
+      const response = await this.apiService.post<MessageResponse>("/auth/logout", {});
+      this.setToken(null); // Clear token on successful logout
+    } catch (error) {
+      this.setToken(null); // Clear token even if logout request fails
+      throw error;
+    }
   }
 
   // --- User Endpoints ---
