@@ -18,7 +18,9 @@ import {
   Skeleton,
   Alert,
 } from "antd";
-import { UserProfile } from "@/types/user";
+//Ant Design (antd) is a popular React UI component library.
+//It provides rich and high-quality components.
+
 import { 
   UserOutlined, 
   TrophyOutlined, 
@@ -29,6 +31,23 @@ import {
 
 const { Title, Text } = Typography;
 const { TabPane } = Tabs;
+
+interface UserGetDTO {
+  id: number;
+  name: string;
+  username: string;
+  status: string;
+  level?: string;
+  creationDate: string;
+  birthday?: string;
+  profileImage?: any;
+}
+
+interface UserFriendDTO {
+  id: number;
+  username: string;
+  online: string;
+}
 
 interface GameHistoryItem {
   id: number;
@@ -44,19 +63,7 @@ interface StatisticsData {
   averagePosition: number;
 }
 
-/**
- * UserProfilePage Component - Comprehensive user profile page
- * Shows detailed user information with experience level display
- */
-const UserProfilePage: React.FC = () => {
-  const { id } = useParams();
-  const router = useRouter();
-  const apiClient = useApiClient();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // Mock data for development - would be replaced with API calls in production
+// Mock data - in a real project, this would come from API calls
   const [gameHistory] = useState<GameHistoryItem[]>([
     { id: 1, date: "2025-03-25", result: "Win", winnings: 120 },
     { id: 2, date: "2025-03-23", result: "Loss", winnings: -50 },
@@ -72,42 +79,20 @@ const UserProfilePage: React.FC = () => {
     averagePosition: 3.2,
   });
 
-  const [friends] = useState([
-    { id: 101, username: "Player1", online: true },
-    { id: 102, username: "Player2", online: false },
-    { id: 103, username: "Player3", online: true },
-  ]);
-
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
         setLoading(true);
-        // In a real implementation, you would fetch from your API
-        // For now, we'll simulate a delay and create mock data
         const userId = parseInt(id as string);
         
-        // Simulating API call with timeout
-        setTimeout(() => {
-          // Mock profile data that matches your UserProfile type
-          const mockProfile: UserProfile = {
-            id: userId,
-            username: `player${userId}`,
-            displayName: `Player ${userId}`,
-            avatarUrl: "/default-avatar.png",
-            experienceLevel: userId % 3 === 0 ? "Expert" : userId % 2 === 0 ? "Intermediate" : "Beginner",
-            birthday: "1990-01-01",
-            createdAt: "2024-11-15T08:30:00Z",
-            online: true
-          };
-          
-          setProfile(mockProfile);
-          setLoading(false);
-        }, 800);
+        if (isNaN(userId)) {
+          throw new Error("Invalid user ID");
+        }
         
-        /* Actual API implementation would look like this:
-        const userProfile = await apiClient.getUserProfile(userId);
-        setProfile(userProfile);
-        */
+        // Use apiClient to fetch user profile - ensure correct backend endpoint
+        const userData = await apiClient.get(`/users/${userId}`);
+        setProfile(userData);
+        setLoading(false);
       } catch (err) {
         console.error("Error fetching user profile:", err);
         setError("Failed to load user profile. Please try again later.");
@@ -119,6 +104,27 @@ const UserProfilePage: React.FC = () => {
       fetchUserProfile();
     }
   }, [id, apiClient]);
+
+  useEffect(() => {
+    const fetchFriends = async () => {
+      if (!profile) return;
+      
+      try {
+        setLoadingFriends(true);
+        // Use apiClient to fetch friends list - use correct backend endpoint
+        const friendsData = await apiClient.get('/friends');
+        setFriends(friendsData);
+        setLoadingFriends(false);
+      } catch (err) {
+        console.error("Error fetching friends list:", err);
+        setLoadingFriends(false);
+      }
+    };
+
+    if (!loading && profile) {
+      fetchFriends();
+    }
+  }, [loading, profile, apiClient]);
 
   // Helper function to get color based on experience level
   const getLevelColor = (level: string) => {
@@ -134,7 +140,7 @@ const UserProfilePage: React.FC = () => {
     }
   };
 
-  // Game history columns for the table
+  // Game history table columns
   const historyColumns = [
     {
       title: "Game ID",
@@ -167,7 +173,7 @@ const UserProfilePage: React.FC = () => {
     },
   ];
 
-  // Friends list columns
+  // Friends list table columns
   const friendColumns = [
     {
       title: "Username",
@@ -178,9 +184,9 @@ const UserProfilePage: React.FC = () => {
       title: "Status",
       dataIndex: "online",
       key: "online",
-      render: (online: boolean) => (
-        <Tag color={online ? "success" : "default"}>
-          {online ? "Online" : "Offline"}
+      render: (online: string) => (
+        <Tag color={online === "ONLINE" ? "success" : "default"}>
+          {online === "ONLINE" ? "Online" : "Offline"}
         </Tag>
       ),
     },
@@ -233,24 +239,27 @@ const UserProfilePage: React.FC = () => {
               <div style={{ display: "flex", alignItems: "flex-start", marginBottom: 24 }}>
                 <Avatar
                   size={100}
-                  src={profile.avatarUrl || "/default-avatar.png"}
+                  icon={<UserOutlined />}
+                  src={profile.profileImage ? `data:image/jpeg;base64,${btoa(String.fromCharCode.apply(null, profile.profileImage))}` : undefined}
                   style={{ marginRight: 24 }}
                 />
                 <div style={{ flex: 1 }}>
                   <Title level={2} style={{ margin: 0 }}>
-                    {profile.displayName}
+                    {profile.name}
                   </Title>
                   <Text type="secondary" style={{ fontSize: 16 }}>@{profile.username}</Text>
                   <div style={{ marginTop: 12 }}>
-                    <Tag color={getLevelColor(profile.experienceLevel)} style={{ fontSize: 14, padding: "4px 8px" }}>
-                      {profile.experienceLevel}
-                    </Tag>
-                    <Tag color={profile.online ? "success" : "default"} style={{ fontSize: 14, padding: "4px 8px" }}>
-                      {profile.online ? "Online" : "Offline"}
+                    {profile.level && (
+                      <Tag color={getLevelColor(profile.level)} style={{ fontSize: 14, padding: "4px 8px" }}>
+                        {profile.level}
+                      </Tag>
+                    )}
+                    <Tag color={profile.status === "ONLINE" ? "success" : "default"} style={{ fontSize: 14, padding: "4px 8px" }}>
+                      {profile.status === "ONLINE" ? "Online" : "Offline"}
                     </Tag>
                   </div>
                   <div style={{ marginTop: 12 }}>
-                    <Text>Member since: {new Date(profile.createdAt).toLocaleDateString()}</Text>
+                    <Text>Member since: {new Date(profile.creationDate).toLocaleDateString()}</Text>
                   </div>
                 </div>
               </div>
@@ -306,6 +315,7 @@ const UserProfilePage: React.FC = () => {
                     columns={friendColumns} 
                     rowKey="id" 
                     pagination={{ pageSize: 5 }}
+                    loading={loadingFriends}
                   />
                 </TabPane>
                 <TabPane 
@@ -318,7 +328,7 @@ const UserProfilePage: React.FC = () => {
                         <Text strong>Display Name:</Text>
                       </Col>
                       <Col span={16}>
-                        <Text>{profile.displayName}</Text>
+                        <Text>{profile.name}</Text>
                       </Col>
                       <Col span={8}>
                         <Text strong>Username:</Text>
@@ -326,25 +336,33 @@ const UserProfilePage: React.FC = () => {
                       <Col span={16}>
                         <Text>{profile.username}</Text>
                       </Col>
-                      <Col span={8}>
-                        <Text strong>Birthday:</Text>
-                      </Col>
-                      <Col span={16}>
-                        <Text>{new Date(profile.birthday).toLocaleDateString()}</Text>
-                      </Col>
-                      <Col span={8}>
-                        <Text strong>Experience Level:</Text>
-                      </Col>
-                      <Col span={16}>
-                        <Tag color={getLevelColor(profile.experienceLevel)}>
-                          {profile.experienceLevel}
-                        </Tag>
-                      </Col>
+                      {profile.birthday && (
+                        <>
+                          <Col span={8}>
+                            <Text strong>Birthday:</Text>
+                          </Col>
+                          <Col span={16}>
+                            <Text>{new Date(profile.birthday).toLocaleDateString()}</Text>
+                          </Col>
+                        </>
+                      )}
+                      {profile.level && (
+                        <>
+                          <Col span={8}>
+                            <Text strong>Experience Level:</Text>
+                          </Col>
+                          <Col span={16}>
+                            <Tag color={getLevelColor(profile.level)}>
+                              {profile.level}
+                            </Tag>
+                          </Col>
+                        </>
+                      )}
                       <Col span={8}>
                         <Text strong>Member Since:</Text>
                       </Col>
                       <Col span={16}>
-                        <Text>{new Date(profile.createdAt).toLocaleDateString()}</Text>
+                        <Text>{new Date(profile.creationDate).toLocaleDateString()}</Text>
                       </Col>
                     </Row>
                   </div>
