@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import useLocalStorage from '@/hooks/useLocalStorage';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { apiClient } from '@/services/apiClient';
 
 // Card component for displaying playing cards
@@ -95,7 +95,7 @@ const positionClasses = {
   7: "bottom-1/4 right-12", // bottom right
 };
 
-const GameTable = ({ gameId }) => {
+const PokerTable = ({ gameId }) => {
   const router = useRouter();
   const { value: token } = useLocalStorage('token', '');
   const { value: userId } = useLocalStorage('userId', '');
@@ -408,4 +408,4 @@ const GameTable = ({ gameId }) => {
   );
 };
 
-export default GameTable;
+export default PokerTable;
