@@ -60,3 +60,15 @@ a {
   min-height: 100vh;
   background-color: rgb(41, 44, 59);
 }
+
+.user-profile-image-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(41, 44, 59);
+  border-radius: 2%;
+  border: #ededed 2px solid;
+  width: 500px;
+  height: 600px;
+  margin: auto;
+}
