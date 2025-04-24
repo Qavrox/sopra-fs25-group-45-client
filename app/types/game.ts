@@ -27,7 +27,7 @@ export interface Game {
   isPublic: boolean;
   smallBlind: number;
   bigBlind: number;
-  smalllBlindIndex: number;
+  smallBlindIndex: number;
   startCredit: number;
   maximalPlayers: number;
   pot: number;
