@@ -77,7 +77,7 @@ export class ApiClient {
 
   async logout() {
     try {
-      const response = await this.apiService.post<MessageResponse>("/auth/logout", {});
+      const _response = await this.apiService.post<MessageResponse>("/auth/logout", {});
       this.setToken(null); // Clear token on successful logout
     } catch (error) {
       this.setToken(null); // Clear token even if logout request fails
