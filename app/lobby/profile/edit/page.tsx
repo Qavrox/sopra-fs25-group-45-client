@@ -11,14 +11,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { getApiDomain } from "@/utils/domain";
 import { useApi } from '@/hooks/useApi';
 import Image from 'next/image'; // For optimized image rendering in Next.js
-
-
-interface EditValues {
-    name: string;
-    birthday: string | Dayjs;
-    level: string;
-    profileImage: number;
-  }
+import { UserProfileUpdate } from '@/types/user';
 
 
 const EditProfilePage: React.FC = () => {
@@ -26,7 +19,7 @@ const EditProfilePage: React.FC = () => {
     const dateFormat = 'YYYY-MM-DD';
     const router = useRouter();
     const [form] = Form.useForm();
-    const apiService = useApi();
+    const apiClient = useApi();
 
     const availableImages = [
       { value: 'avatar1.png', src: '/images/avatar1.png', alt: 'Avatar 1' },
@@ -52,7 +45,7 @@ const EditProfilePage: React.FC = () => {
 
 
 
-    const SubmitValues = async (values: EditValues) =>{
+    const SubmitValues = async (values: UserProfileUpdate) =>{
         
         if (values.birthday) {
           values.birthday = dayjs(values.birthday).format(dateFormat);
@@ -62,7 +55,7 @@ const EditProfilePage: React.FC = () => {
         
         try{
             console.log('Submitting values:', values);
-            await apiService.put<EditValues>(`/users/${id}`, {values, headers: {Authorization: `Bearer ${token}`}});
+            await apiClient.updateUserProfile(Number(id), values);
 
             console.log('Profile updated successfully:');
         } catch (error) {
@@ -99,6 +92,11 @@ const EditProfilePage: React.FC = () => {
       });
     };
     
+    const isAdult = (date: dayjs.Dayjs) => {
+      const today = dayjs();
+      const age = today.diff(date, 'year');
+      return age >= 18;
+    };
     
 
     return (
@@ -130,7 +128,9 @@ const EditProfilePage: React.FC = () => {
                     label="Birthday"
                     rules={[{ required: false, message: "Please input your birthday!" }]}
                   >
-                    <DatePicker placeholder="Select your birthday" />        
+                    <DatePicker placeholder="Select your birthday" disabledDate={(current) => {
+                      return current && (current > dayjs().endOf('day') || !isAdult(current));
+                    }}/>        
                   </Form.Item>
                   <Form.Item
                       style={{ width: 150 }} 

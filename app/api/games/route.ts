@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { apiClient } from '@/services/apiClient';
+import { apiClient } from '@/api/apiClient';
 
 // GET handler for fetching all public games
 export async function GET(request: NextRequest) {

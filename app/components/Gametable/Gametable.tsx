@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import useLocalStorage from '@/hooks/useLocalStorage';
-import { apiClient } from '@/services/apiClient';
+import { apiClient } from '@/api/apiClient';
 
 // Card component for displaying playing cards
 const Card = ({ card, hidden = false }) => {

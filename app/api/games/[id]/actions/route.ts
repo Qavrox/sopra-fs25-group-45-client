@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { apiClient } from '@/services/apiClient';
+import { apiClient } from '@/api/apiClient';
 
 export async function POST(
   request: NextRequest,

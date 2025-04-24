@@ -36,7 +36,7 @@ export interface UserProfile {
 
 export interface UserProfileUpdate {
   name?: string;
-  avatarUrl?: string;
+  profileImage: number;
   experienceLevel?: ExperienceLevel;
   birthday?: string;
 }
