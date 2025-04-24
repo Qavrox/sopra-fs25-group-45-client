@@ -1,6 +1,6 @@
 'use client';
 import { useParams } from 'next/navigation';
-import GameTable from "@/components/Gametable/Gametable"
+import PokerTable from "@/components/PokerTable/PokerTable"
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/api/apiClient';
@@ -22,7 +22,7 @@ export default function GamePage() {
 
   return (
     <main className="w-full h-screen bg-green-900">
-      <GameTable gameId={Number(id)} />
+      <PokerTable gameId={Number(id)} />
     </main>
   );
 }

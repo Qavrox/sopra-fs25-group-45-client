@@ -14,9 +14,12 @@ export interface GameCreationRequest {
 export interface Player {
   id: number;
   userId: number;
+  username: string;
   gameId: number;
   credit: number;
   hand: string[];
+  betAmount: number;
+  isActive: boolean;
 }
 
 export interface Game {
@@ -30,6 +33,8 @@ export interface Game {
   pot: number;
   callAmount: number;
   players: Player[];
+  currentPlayerIndex: number;
+  communityCards: string[];
   status: "waiting" | "in-progress" | "finished";
   createdAt: string;
 }

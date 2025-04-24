@@ -1,411 +1,225 @@
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import useLocalStorage from '@/hooks/useLocalStorage';
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
 import { apiClient } from '@/api/apiClient';
+import type { Game, GameActionRequest, Player } from '@/types/game';
+import { useRouter } from 'next/navigation';
 
-// Card component for displaying playing cards
-const Card = ({ card, hidden = false }) => {
-  if (hidden) {
-    return (
-      <div className="w-16 h-24 rounded-lg bg-red-500 border-2 border-white shadow-md flex items-center justify-center">
-        <div className="w-12 h-20 bg-white rounded-lg p-1 flex items-center justify-center">
-          <div className="w-full h-full bg-red-500 rounded flex items-center justify-center">
-            <div className="text-white font-bold text-2xl">?</div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+interface PokerTableProps {
+  gameId: number;
+}
 
-  // Parse the card string (e.g., "AS" for Ace of Spades)
-  const rank = card ? card.charAt(0) : '';
-  const suit = card ? card.charAt(1) : '';
-
-  // Map suit to color and symbol
-  const suitMap = {
-    'S': { color: 'text-black', symbol: '♠' },
-    'H': { color: 'text-red-600', symbol: '♥' },
-    'C': { color: 'text-black', symbol: '♣' },
-    'D': { color: 'text-red-600', symbol: '♦' }
-  };
-
-  const suitStyle = suitMap[suit] || { color: 'text-black', symbol: '?' };
-
-  return (
-    <div className="w-16 h-24 rounded-lg bg-white border border-gray-300 shadow-md flex flex-col items-center justify-between p-1">
-      <div className={`self-start ${suitStyle.color} font-bold text-xl pl-1`}>
-        {rank}
-      </div>
-      <div className={`${suitStyle.color} text-3xl`}>
-        {suitStyle.symbol}
-      </div>
-      <div className={`self-end ${suitStyle.color} font-bold text-xl pr-1 rotate-180`}>
-        {rank}
-      </div>
-    </div>
-  );
-};
-
-// Player avatar and info component
-const PlayerPosition = ({ player, isActive, position, currentPlayerId }) => {
-  const isCurrentPlayer = player && player.userId === currentPlayerId;
-  
-  return (
-    <div className={`absolute ${positionClasses[position]} flex flex-col items-center`}>
-      <div className={`relative w-24 h-24 rounded-full ${player ? (isActive ? 'ring-4 ring-yellow-400' : '') : 'bg-gray-200'} flex items-center justify-center`}>
-        {player ? (
-          <>
-            <div className={`w-20 h-20 rounded-full bg-blue-500 flex items-center justify-center ${isCurrentPlayer ? 'bg-green-500' : 'bg-blue-500'}`}>
-              <span className="text-white font-bold">{player.username || `Player ${position}`}</span>
-            </div>
-            <div className="absolute -bottom-6 w-20 bg-gray-800 text-white text-xs py-1 rounded-full">
-              ${player.credit || 0}
-            </div>
-          </>
-        ) : (
-          <span className="text-gray-400">Empty</span>
-        )}
-      </div>
-      
-      {player && player.hand && player.hand.length > 0 && (
-        <div className="mt-8 flex space-x-2">
-          <Card card={isCurrentPlayer ? player.hand[0] : null} hidden={!isCurrentPlayer} />
-          <Card card={isCurrentPlayer ? player.hand[1] : null} hidden={!isCurrentPlayer} />
-        </div>
-      )}
-      
-      {player && player.betAmount > 0 && (
-        <div className="absolute mt-2 bg-yellow-500 text-xs text-black font-bold px-2 py-1 rounded-full">
-          ${player.betAmount}
-        </div>
-      )}
-    </div>
-  );
-};
-
-// Position classes for player avatars
-const positionClasses = {
-  0: "bottom-4 left-1/2 -translate-x-1/2", // bottom center
-  1: "bottom-1/4 left-12", // bottom left
-  2: "top-1/2 left-4 -translate-y-1/2", // middle left
-  3: "top-20 left-1/4", // top left
-  4: "top-4 left-1/2 -translate-x-1/2", // top center
-  5: "top-20 right-1/4", // top right
-  6: "top-1/2 right-4 -translate-y-1/2", // middle right
-  7: "bottom-1/4 right-12", // bottom right
-};
-
-const GameTable = ({ gameId }) => {
+export default function PokerTable({ gameId }: PokerTableProps) {
+  const [game, setGame] = useState<Game | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedAction, setSelectedAction] = useState<GameActionRequest['action'] | null>(null);
+  const [betAmount, setBetAmount] = useState<number>(0);
   const router = useRouter();
-  const { value: token } = useLocalStorage('token', '');
-  const { value: userId } = useLocalStorage('userId', '');
-  const [game, setGame] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedAction, setSelectedAction] = useState(null);
-  const [betAmount, setBetAmount] = useState(0);
+  const hasJoined = useRef(false);
 
-  // Fetch game data
+  const POLLING_INTERVAL = 2000; // Poll every 2 seconds
+
   useEffect(() => {
-    if (!token || !gameId) return;
-
-    const fetchGameData = async () => {
+    const initializeGame = async () => {
+      if (hasJoined.current) return; // Prevent double joining
+      
       try {
-        setLoading(true);
+        // First try to join the game
+        await apiClient.joinGame(gameId, '');
+        hasJoined.current = true;
         
-        // Set token for API client
-        apiClient.setToken(token);
-        
-        // Use the apiClient to get game details
-        const data = await apiClient.getGameDetails(parseInt(gameId));
-        setGame(data);
-      } catch (err) {
-        setError(err.message || 'Failed to load game');
-        console.error('Error loading game:', err);
+        // Then fetch the game details
+        const gameData = await apiClient.getGameDetails(gameId);
+        setGame(gameData);
+        setError(null);
+      } catch (err: any) {
+        setError(err.message || 'Failed to join game');
+        console.error(err);
+        // Redirect back to lobby if joining fails
+        router.push('/lobby');
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
-    fetchGameData();
-    
-    // Set up periodic refresh
-    const interval = setInterval(fetchGameData, 5000);
-    return () => clearInterval(interval);
-  }, [gameId, token]);
-
-  // Handle player action
-  const handleAction = async (action) => {
-    if (!token || !gameId || !userId) return;
-    
-    try {
-      setLoading(true);
-      
-      // Set token for API client
-      apiClient.setToken(token);
-      
-      // Create payload for the action
-      const payload = {
-        action: action,
-        userId: parseInt(userId)
-      };
-      
-      if ((action === 'bet' || action === 'raise') && betAmount > 0) {
-        payload.amount = betAmount;
+    const fetchGameState = async () => {
+      try {
+        const gameData = await apiClient.getGameDetails(gameId);
+        setGame(gameData);
+        setError(null);
+      } catch (err) {
+        setError('Failed to fetch game state');
+        console.error(err);
       }
-      
-      // Submit the game action
-      await apiClient.submitGameAction(parseInt(gameId), payload);
-      
-      // Refresh game data
-      const updatedGame = await apiClient.getGameDetails(parseInt(gameId));
-      setGame(updatedGame);
-      
+    };
+
+    // Initial join and fetch
+    initializeGame();
+
+    // Set up polling for game state updates
+    const intervalId = setInterval(fetchGameState, POLLING_INTERVAL);
+
+    return () => {
+      clearInterval(intervalId);
+      hasJoined.current = false; // Reset the ref when component unmounts
+    };
+  }, [gameId, router]);
+
+  const handleAction = async () => {
+    if (!game || !selectedAction) return;
+
+    const currentPlayer = game.players[game.currentPlayerIndex];
+    if (!currentPlayer || currentPlayer.userId !== apiClient.getUserId()) return;
+
+    try {
+      const action: GameActionRequest = {
+        userId: currentPlayer.userId,
+        action: selectedAction,
+        amount: selectedAction === 'bet' || selectedAction === 'raise' ? betAmount : undefined
+      };
+
+      await apiClient.submitGameAction(gameId, action);
       setSelectedAction(null);
       setBetAmount(0);
     } catch (err) {
-      setError(err.message || 'Failed to perform action');
-    } finally {
-      setLoading(false);
+      setError('Failed to submit action');
+      console.error(err);
     }
   };
 
-  // Helper to get AI-calculated odds
-  const getOdds = async () => {
-    if (!token || !gameId) return;
-    
-    try {
-      // Set token for API client
-      apiClient.setToken(token);
-      
-      // Get win probability
-      const data = await apiClient.getWinProbability(parseInt(gameId));
-      alert(`Your winning probability: ${(data.probability * 100).toFixed(1)}%`);
-    } catch (err) {
-      setError('Error calculating odds: ' + (err.message || 'Unknown error'));
-    }
-  };
-
-  // Get current player's data
-  const getCurrentPlayer = () => {
-    if (!game || !game.players || !userId) return null;
-    return game.players.find(p => p.userId === parseInt(userId));
-  };
-  
-  // Get current active player index
-  const getActivePlayerIndex = () => {
-    if (!game || !game.currentPlayerIndex) return -1;
-    return game.currentPlayerIndex;
-  };
-
-  // Render loading state
-  if (loading && !game) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center">
-        <div className="text-xl">Loading game...</div>
-      </div>
-    );
+  if (isLoading) {
+    return <div className="flex items-center justify-center h-screen">Loading game...</div>;
   }
 
-  // Render error state
-  if (error) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center flex-col gap-4">
-        <div className="text-xl text-red-500">{error}</div>
-        <button 
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          onClick={() => router.push('/lobby')}
-        >
-          Back to Lobby
-        </button>
-      </div>
-    );
+  if (error || !game) {
+    return <div className="flex items-center justify-center h-screen text-red-500">{error || 'Game not found'}</div>;
   }
 
-  // Prepare player data for positions
-  const players = game?.players || [];
-  const maxPlayers = game?.maximalPlayers || 8;
-  const placeholders = Array(maxPlayers).fill(null);
-  
-  // Fill positions with actual players
-  players.forEach((player, index) => {
-    placeholders[index] = player;
-  });
-  
-  // Current player
-  const currentPlayer = getCurrentPlayer();
-  const activePlayerIndex = getActivePlayerIndex();
-  const isPlayerTurn = currentPlayer && activePlayerIndex === players.findIndex(p => p.userId === currentPlayer.userId);
+  const currentPlayer = game.players[game.currentPlayerIndex];
+  const isCurrentPlayer = currentPlayer?.userId === apiClient.getUserId();
+  const currentUserPlayer = game.players.find(p => p.userId === apiClient.getUserId());
 
   return (
-    <div className="w-full h-screen flex flex-col items-center justify-center bg-green-800 relative p-4">
-      <div className="absolute top-4 left-4 flex gap-2">
-        <button 
-          className="px-3 py-1 bg-gray-800 text-white rounded hover:bg-gray-700 text-sm"
-          onClick={() => router.push('/lobby')}
-        >
-          Back to Lobby
-        </button>
-        <div className="px-3 py-1 bg-gray-800 text-white rounded text-sm">
-          Game #{gameId}
+    <div className="relative w-full h-screen bg-green-800">
+      {/* Table */}
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-green-700 rounded-full border-8 border-brown-800">
+        {/* Community Cards */}
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex space-x-4">
+          {game.communityCards.map((card, index) => (
+            <div key={index} className="w-20 h-28 bg-white rounded-lg shadow-lg flex items-center justify-center text-2xl font-bold">
+              {card}
+            </div>
+          ))}
         </div>
-      </div>
-      
-      {/* Game status display */}
-      <div className="absolute top-4 right-4 px-3 py-1 bg-gray-800 text-white rounded text-sm">
-        {game?.gameStatus || 'WAITING'}
-      </div>
-      
-      {/* Game table */}
-      <div className="relative w-full max-w-5xl h-[600px] bg-green-600 rounded-full border-8 border-brown-600 shadow-2xl">
-        {/* Player positions */}
-        {placeholders.map((player, index) => (
-          <PlayerPosition 
-            key={index}
-            player={player}
-            isActive={index === activePlayerIndex}
-            position={index}
-            currentPlayerId={parseInt(userId)}
-          />
-        ))}
-        
-        {/* Center pot and community cards */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-6">
-          {/* Pot */}
-          <div className="bg-yellow-400 px-6 py-3 rounded-full shadow-md">
-            <span className="text-black font-bold text-xl">Pot: ${game?.pot || 0}</span>
-          </div>
-          
-          {/* Community cards */}
-          <div className="flex gap-2">
-            {game?.communityCards && game.communityCards.length > 0 ? (
-              game.communityCards.map((card, index) => (
-                <Card key={index} card={card} />
-              ))
-            ) : (
-              Array(5).fill(null).map((_, index) => (
-                <div key={index} className="w-16 h-24 rounded-lg bg-green-700 border border-green-800" />
-              ))
-            )}
-          </div>
+
+        {/* Pot Display */}
+        <div className="absolute top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-3xl font-bold bg-black bg-opacity-50 px-6 py-3 rounded-lg">
+          Pot: ${game.pot}
         </div>
-      </div>
-      
-      {/* Player hand and actions */}
-      <div className="mt-4 bg-gray-800 w-full max-w-5xl p-4 rounded-lg flex flex-col items-center">
-        {currentPlayer ? (
-          <>
-            <div className="flex gap-4 mb-4">
-              <div>
-                <div className="text-white mb-2">Your Hand:</div>
-                <div className="flex gap-2">
-                  {currentPlayer.hand && currentPlayer.hand.length > 0 ? (
-                    currentPlayer.hand.map((card, index) => (
-                      <Card key={index} card={card} />
-                    ))
-                  ) : (
-                    <>
-                      <div className="w-16 h-24 rounded-lg bg-gray-700" />
-                      <div className="w-16 h-24 rounded-lg bg-gray-700" />
-                    </>
+
+        {/* Player Seats */}
+        <div className="absolute inset-0">
+          {game.players.map((player, index) => {
+            const angle = (index * 360) / game.players.length;
+            const radius = 200;
+            const x = Math.cos((angle * Math.PI) / 180) * radius;
+            const y = Math.sin((angle * Math.PI) / 180) * radius;
+
+            return (
+              <div
+                key={player.id}
+                className={`absolute transform -translate-x-1/2 -translate-y-1/2 ${
+                  player.isActive ? 'bg-blue-500' : 'bg-gray-500'
+                } rounded-lg p-4 text-white shadow-lg`}
+                style={{
+                  left: `calc(50% + ${x}px)`,
+                  top: `calc(50% + ${y}px)`,
+                }}
+              >
+                <div className="font-bold">{player.username}</div>
+                <div className="text-lg">${player.credit}</div>
+                {player.hand.length > 0 && (
+                  <div className="flex space-x-2 mt-2">
+                    {player.hand.map((card, i) => (
+                      <div key={i} className="w-16 h-24 bg-white rounded-lg shadow-lg text-black flex items-center justify-center text-xl font-bold">
+                        {card}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Current Player's Hand and Actions */}
+        {currentUserPlayer && (
+          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full">
+            {/* Player's Hand */}
+            <div className="flex justify-center space-x-4 mb-4">
+              {currentUserPlayer.hand.map((card, index) => (
+                <div key={index} className="w-24 h-36 bg-white rounded-lg shadow-lg flex items-center justify-center text-3xl font-bold">
+                  {card}
+                </div>
+              ))}
+            </div>
+
+            {/* Action Controls */}
+            {isCurrentPlayer && (
+              <div className="bg-black bg-opacity-70 p-6 rounded-t-lg">
+                <div className="flex flex-col items-center space-y-4">
+                  <div className="text-white text-xl mb-2">Your Turn - Choose an Action</div>
+                  <div className="flex space-x-4">
+                    <button
+                      onClick={() => setSelectedAction('fold')}
+                      className="px-6 py-3 bg-white text-red-600 rounded-lg hover:bg-red-100 text-lg font-bold"
+                    >
+                      Fold
+                    </button>
+                    <button
+                      onClick={() => setSelectedAction('check')}
+                      className="px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-100 text-lg font-bold"
+                    >
+                      Check
+                    </button>
+                    <button
+                      onClick={() => setSelectedAction('call')}
+                      className="px-6 py-3 bg-white text-green-600 rounded-lg hover:bg-green-100 text-lg font-bold"
+                    >
+                      Call ${game.callAmount}
+                    </button>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <input
+                      type="number"
+                      value={betAmount}
+                      onChange={(e) => setBetAmount(Number(e.target.value))}
+                      className="w-32 px-4 py-2 rounded-lg text-lg"
+                      placeholder="Bet Amount"
+                      min={game.callAmount}
+                    />
+                    <button
+                      onClick={() => setSelectedAction('bet')}
+                      className="px-6 py-3 bg-white text-yellow-600 rounded-lg hover:bg-yellow-100 text-lg font-bold"
+                    >
+                      Bet
+                    </button>
+                  </div>
+                  {selectedAction && (
+                    <button
+                      onClick={handleAction}
+                      className="px-8 py-3 bg-white text-purple-600 rounded-lg hover:bg-purple-100 text-lg font-bold"
+                    >
+                      Confirm {selectedAction.charAt(0).toUpperCase() + selectedAction.slice(1)}
+                    </button>
                   )}
                 </div>
               </div>
-              <div>
-                <div className="text-white mb-2">Your Chips:</div>
-                <div className="bg-yellow-500 px-4 py-2 rounded text-black font-bold text-xl">
-                  ${currentPlayer.credit || 0}
-                </div>
-              </div>
-            </div>
-            
-            {/* Action buttons */}
-            <div className="flex gap-2 mt-2">
-              <button 
-                className={`px-4 py-2 rounded font-bold ${isPlayerTurn ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 cursor-not-allowed'}`}
-                onClick={() => isPlayerTurn && handleAction('check')}
-                disabled={!isPlayerTurn}
-              >
-                Check
-              </button>
-              <button 
-                className={`px-4 py-2 rounded font-bold ${isPlayerTurn ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 cursor-not-allowed'}`}
-                onClick={() => isPlayerTurn && setSelectedAction('bet')}
-                disabled={!isPlayerTurn}
-              >
-                Bet
-              </button>
-              <button 
-                className={`px-4 py-2 rounded font-bold ${isPlayerTurn ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 cursor-not-allowed'}`}
-                onClick={() => isPlayerTurn && handleAction('call')}
-                disabled={!isPlayerTurn}
-              >
-                Call
-              </button>
-              <button 
-                className={`px-4 py-2 rounded font-bold ${isPlayerTurn ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 cursor-not-allowed'}`}
-                onClick={() => isPlayerTurn && setSelectedAction('raise')}
-                disabled={!isPlayerTurn}
-              >
-                Raise
-              </button>
-              <button 
-                className={`px-4 py-2 rounded font-bold ${isPlayerTurn ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-gray-600 text-gray-300 cursor-not-allowed'}`}
-                onClick={() => isPlayerTurn && handleAction('fold')}
-                disabled={!isPlayerTurn}
-              >
-                Fold
-              </button>
-            </div>
-            
-            {/* Bet/Raise amount input */}
-            {selectedAction && (selectedAction === 'bet' || selectedAction === 'raise') && (
-              <div className="mt-4 flex gap-2 items-center">
-                <input 
-                  type="number" 
-                  min={1} 
-                  max={currentPlayer.credit} 
-                  value={betAmount} 
-                  onChange={(e) => setBetAmount(parseInt(e.target.value))}
-                  className="w-24 px-2 py-1 rounded border border-gray-300 text-black"
-                />
-                <button 
-                  className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                  onClick={() => handleAction(selectedAction)}
-                >
-                  Confirm {selectedAction.charAt(0).toUpperCase() + selectedAction.slice(1)}
-                </button>
-                <button 
-                  className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-                  onClick={() => setSelectedAction(null)}
-                >
-                  Cancel
-                </button>
-              </div>
             )}
-            
-            {/* Helper buttons */}
-            <div className="mt-6 flex gap-4">
-              <button 
-                className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
-                onClick={getOdds}
-              >
-                Calculate Odds
-              </button>
-              <button 
-                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-                onClick={() => alert('Strategy tips would be displayed here')}
-              >
-                Strategy Tips
-              </button>
-            </div>
-          </>
-        ) : (
-          <div className="text-white text-xl">You are not in this game or are spectating</div>
+          </div>
         )}
       </div>
     </div>
   );
-};
-
-export default GameTable;
+}
