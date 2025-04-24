@@ -20,7 +20,7 @@ import {
   Skeleton,
   Alert,
 } from "antd";
-import { UserProfile } from "@/types/user";
+import { ExperienceLevel, UserProfile } from "@/types/user";
 import { 
   UserOutlined, 
   TrophyOutlined, 
@@ -94,9 +94,9 @@ const UserProfilePage: React.FC = () => {
           const mockProfile: UserProfile = {
             id: userId,
             username: `player${userId}`,
-            displayName: `Player ${userId}`,
+            name: `Player ${userId}`,
             avatarUrl: "/default-avatar.png",
-            experienceLevel: userId % 3 === 0 ? "Expert" : userId % 2 === 0 ? "Intermediate" : "Beginner",
+            experienceLevel: userId % 3 === 0 ? ExperienceLevel.EXPERT : userId % 2 === 0 ? ExperienceLevel.INTERMEDIATE : ExperienceLevel.BEGINNER,
             birthday: "1990-01-01",
             createdAt: "2024-11-15T08:30:00Z",
             online: true
@@ -240,7 +240,7 @@ const UserProfilePage: React.FC = () => {
                 />
                 <div style={{ flex: 1 }}>
                   <Title level={2} style={{ margin: 0 }}>
-                    {profile.displayName}
+                    {profile.name}
                   </Title>
                   <Text type="secondary" style={{ fontSize: 16 }}>@{profile.username}</Text>
                   <div style={{ marginTop: 12 }}>
@@ -320,7 +320,7 @@ const UserProfilePage: React.FC = () => {
                         <Text strong>Display Name:</Text>
                       </Col>
                       <Col span={16}>
-                        <Text>{profile.displayName}</Text>
+                        <Text>{profile.name}</Text>
                       </Col>
                       <Col span={8}>
                         <Text strong>Username:</Text>

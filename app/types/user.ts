@@ -26,7 +26,7 @@ export interface UserSummary {
 export interface UserProfile {
   id: number;
   username: string;
-  displayName: string;
+  name: string;
   avatarUrl: string;
   experienceLevel: ExperienceLevel;
   birthday: string;
@@ -35,7 +35,7 @@ export interface UserProfile {
 }
 
 export interface UserProfileUpdate {
-  displayName?: string;
+  name?: string;
   avatarUrl?: string;
   experienceLevel?: ExperienceLevel;
   birthday?: string;

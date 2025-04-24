@@ -73,7 +73,7 @@ const Register: React.FC = () => {
         </Form.Item>
 
         <Form.Item
-          name="displayName"
+          name="name"
           label="Display Name"
           rules={[{ required: true, message: "Please input your display name!" }]}
         >

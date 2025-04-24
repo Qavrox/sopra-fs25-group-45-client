@@ -14,7 +14,7 @@ const Login: React.FC = () => {
     try {
       await apiClient.login(values);
       // On successful login, navigate to the users page
-      router.push("/users");
+      router.push("/dashboard");
     } catch (error) {
       if (error instanceof Error) {
         alert(`Login failed: ${error.message}`);
