@@ -5,6 +5,16 @@ export enum ExperienceLevel {
   EXPERT = "Expert"
 }
 
+export interface User {
+  id: string | null;
+  name: string | null;
+  username: string | null;
+  token: string | null;
+  status: string | null;
+  creationDate: string; //  Ensure this is included as a string (ISO-8601 format)
+  birthDate: string | null;
+}
+
 export interface UserSummary {
   id: number;
   username: string;

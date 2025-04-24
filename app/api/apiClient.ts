@@ -203,7 +203,6 @@ export class ApiClient {
     );
   }
 }
-
 // Export a singleton instance for convenience.
 export const apiClient = new ApiClient();
 export default ApiClient;
