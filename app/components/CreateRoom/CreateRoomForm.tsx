@@ -30,6 +30,7 @@ export default function CreateRoomForm() {
     setLoading(true);
     try {
       const gameRequest: GameCreationRequest = {
+        creatorId: apiClient.getUserId() || 0,
         isPublic,
         password: isPublic ? undefined : password,
         smallBlind: 10,

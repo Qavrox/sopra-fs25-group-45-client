@@ -1,23 +1,22 @@
 'use client';
 import { useParams } from 'next/navigation';
-import GameTable from '@/components/GameTable/GameTable';
-import useLocalStorage from '@/hooks/useLocalStorage';
+import GameTable from "@/components/Gametable/Gametable"
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { apiClient } from '@/api/apiClient';
 
 export default function GamePage() {
   const { id } = useParams();
   const router = useRouter();
-  const { value: token } = useLocalStorage('token', '');
 
   // Redirect unauthenticated users
   useEffect(() => {
-    if (!token) {
+    if (!apiClient.isAuthenticated()) {
       router.push('/login');
     }
-  }, [token, router]);
+  }, [router]);
 
-  if (!token) {
+  if (!apiClient.isAuthenticated()) {
     return <div className="w-full h-screen flex items-center justify-center">Please log in to access the game</div>;
   }
 
