@@ -31,7 +31,6 @@ export interface Game {
   callAmount: number;
   players: Player[];
   status: "waiting" | "in-progress" | "finished";
-  communityCards: string[];
   createdAt: string;
 }
 
