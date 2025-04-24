@@ -1,6 +1,8 @@
 'use client';
 import { useState } from 'react';
-import useLocalStorage from '@/hooks/useLocalStorage';
+import { apiClient } from '../../api/apiClient';
+import type { GameCreationRequest } from '@/types/game';
+import { useRouter } from 'next/navigation';
 
 export default function CreateRoomForm() {
   const [maximalPlayers, setMaximalPlayers] = useState(6);
@@ -10,15 +12,15 @@ export default function CreateRoomForm() {
   const [smallBlind, setSmallBlind] = useState(10); 
   const [bigBlind, setBigBlind] = useState(20);
   const [loading, setLoading] = useState(false);
-
-  const { value: token } = useLocalStorage<string>('token', '');
-  const { value: rawUserId } = useLocalStorage<string>('userId', '');
-  const userId = Number(rawUserId);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!token || !userId) return alert('Please log in.');
+    if (!apiClient.isAuthenticated()) {
+      alert('Please log in.');
+      return;
+    }
 
     if (!isPublic && password.trim() === '') {
       alert('Private games require a password.');
@@ -27,30 +29,17 @@ export default function CreateRoomForm() {
 
     setLoading(true);
     try {
-      const response = await fetch('/api/games', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          creatorId: userId,
-          maximalPlayers,
-          startCredit,
-          isPublic,
-          password: isPublic ? null : password,
-          smallBlind,
-          bigBlind
-        }),
-      });
+      const gameRequest: GameCreationRequest = {
+        isPublic,
+        password: isPublic ? undefined : password,
+        smallBlind: 10,
+        bigBlind: 20,
+        startCredit,
+        maximalPlayers,
+      };
 
-      if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.message || 'Failed to create game.');
-      }
-
-      const game = await response.json();
-      window.location.href = `/game/${game.id}`;
+      const game = await apiClient.createGame(gameRequest);
+      router.push(`/game/${game.id}`);
     } catch (err: any) {
       alert(err.message || 'Unexpected error');
     } finally {
