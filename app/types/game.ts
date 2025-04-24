@@ -2,6 +2,7 @@
 import type { UserSummary } from "./user";
 
 export interface GameCreationRequest {
+  creatorId: number;
   isPublic: boolean;
   password?: string; // Required if isPublic is false
   smallBlind: number;
