@@ -12,36 +12,39 @@ export default function CreateRoomForm() {
   const [smallBlind, setSmallBlind] = useState(10); 
   const [bigBlind, setBigBlind] = useState(20);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
 
     if (!apiClient.isAuthenticated()) {
-      alert('Please log in.');
+      router.push('/login');
       return;
     }
 
     if (!isPublic && password.trim() === '') {
-      alert('Private games require a password.');
+      setError('Private games require a password.');
       return;
     }
 
     setLoading(true);
     try {
+      // Using the exact property names as in your original code
       const gameRequest: GameCreationRequest = {
         isPublic,
         password: isPublic ? undefined : password,
-        smallBlind: 10,
-        bigBlind: 20,
+        smallBlind,
+        bigBlind,
         startCredit,
-        maximalPlayers,
+        maximalPlayers
       };
 
       const game = await apiClient.createGame(gameRequest);
       router.push(`/game/${game.id}`);
     } catch (err: any) {
-      alert(err.message || 'Unexpected error');
+      setError(err.message || 'Failed to create game. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -53,6 +56,12 @@ export default function CreateRoomForm() {
       className="p-4 border rounded-lg shadow max-w-md mx-auto space-y-4 bg-white"
     >
       <h2 className="text-xl font-bold">Create a New Game</h2>
+
+      {error && (
+        <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          {error}
+        </div>
+      )}
 
       <label className="block">
         Max Players
