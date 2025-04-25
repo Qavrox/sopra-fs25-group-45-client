@@ -16,14 +16,14 @@ export default function Lobby() {
   }, []);
 
   return (
-    <main className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold mb-4">Game Table</h1>
-      <div className="flex flex-wrap gap-4">
+    <main className="lobby-container">
+      <h1 className="lobby-title">Game Tables</h1>
+      <div className="game-cards-container">
         {rooms.map((room) => (
           <div
             key={room.id}
             onClick={() => router.push(`/game/${room.id}`)}
-            className="w-40 h-60 border rounded shadow-md p-2 cursor-pointer hover:scale-105 transition"
+            className="game-card"
           >
             <div className="text-center text-xl font-bold">Game {room.id}</div>
             <p>{room.players.length} players, {room.status}</p>
@@ -35,16 +35,18 @@ export default function Lobby() {
         {/* Create Table Card */}
         <div
           onClick={() => router.push('/lobby/create')}
-          className="w-40 h-60 border-2 border-dashed rounded shadow-inner flex flex-col justify-center items-center cursor-pointer hover:scale-105 transition"
+          className="create-game-card"
         >
-          <div className="text-center text-red-500 font-bold">＋</div>
+          <div className="create-icon">＋</div>
           <p>Create a Table</p>
-          <p className="text-sm text-gray-500">Customize blinds</p>
-          <p className="text-sm text-gray-500">Set starting chips</p>
+          <p className="text-sm" style={{ opacity: 0.7 }}>Customize blinds</p>
+          <p className="text-sm" style={{ opacity: 0.7 }}>Set starting chips</p>
         </div>
+      </div>
+      <div style={{ textAlign: 'center' }}>
         <button
           onClick={() => router.push('/lobby/rooms')}
-          className="text-blue-600 underline mt-4"
+          className="browse-button"
         >
           Browse All Tables →
         </button>
