@@ -33,8 +33,8 @@ export default function CreateRoomForm() {
         creatorId: apiClient.getUserId() || 0,
         isPublic,
         password: isPublic ? undefined : password,
-        smallBlind: 10,
-        bigBlind: 20,
+        smallBlind,
+        bigBlind,
         startCredit,
         maximalPlayers,
       };
@@ -51,87 +51,94 @@ export default function CreateRoomForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-4 border rounded-lg shadow max-w-md mx-auto space-y-4 bg-white"
+      className="create-game-form"
     >
-      <h2 className="text-xl font-bold">Create a New Game</h2>
-
-      <label className="block">
-        Max Players
-        <input
-          type="number"
-          className="w-full border p-2 mt-1"
-          min={2}
-          max={10}
-          value={maximalPlayers}
-          onChange={(e) => setMaximalPlayers(Number(e.target.value))}
-          required
-        />
-      </label>
-
-      <label className="block">
-        Starting Credit
-        <input
-          type="number"
-          className="w-full border p-2 mt-1"
-          min={1}
-          value={startCredit}
-          onChange={(e) => setStartCredit(Number(e.target.value))}
-          required
-        />
-      </label>
-
-      {/* Small blind input */}
-      <label className="block">
-        Small Blind
-        <input
-          type="number"
-          className="w-full border p-2 mt-1"
-          min={1}
-          value={smallBlind}
-          onChange={(e) => setSmallBlind(Number(e.target.value))}
-          required
-        />
-      </label>
-
-      {/* Big blind input */}
-      <label className="block">
-        Big Blind
-        <input
-          type="number"
-          className="w-full border p-2 mt-1"
-          min={1}
-          value={bigBlind}
-          onChange={(e) => setBigBlind(Number(e.target.value))}
-          required
-        />
-      </label>
-
-      <label className="flex items-center gap-2">
-        <input
-          type="checkbox"
-          checked={isPublic}
-          onChange={(e) => setIsPublic(e.target.checked)}
-        />
-        Public Game
-      </label>
-
-      {!isPublic && (
-        <label className="block">
-          Password
+      <div className="form-group">
+        <label className="form-label">
+          Max Players
           <input
-            type="password"
-            className="w-full border p-2 mt-1"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            type="number"
+            className="form-input"
+            min={2}
+            max={10}
+            value={maximalPlayers}
+            onChange={(e) => setMaximalPlayers(Number(e.target.value))}
             required
           />
         </label>
+      </div>
+
+      <div className="form-group">
+        <label className="form-label">
+          Starting Credit
+          <input
+            type="number"
+            className="form-input"
+            min={1}
+            value={startCredit}
+            onChange={(e) => setStartCredit(Number(e.target.value))}
+            required
+          />
+        </label>
+      </div>
+
+      <div className="form-group">
+        <label className="form-label">
+          Small Blind
+          <input
+            type="number"
+            className="form-input"
+            min={1}
+            value={smallBlind}
+            onChange={(e) => setSmallBlind(Number(e.target.value))}
+            required
+          />
+        </label>
+      </div>
+
+      <div className="form-group">
+        <label className="form-label">
+          Big Blind
+          <input
+            type="number"
+            className="form-input"
+            min={1}
+            value={bigBlind}
+            onChange={(e) => setBigBlind(Number(e.target.value))}
+            required
+          />
+        </label>
+      </div>
+
+      <div className="checkbox-container">
+        <input
+          type="checkbox"
+          className="checkbox-input"
+          checked={isPublic}
+          onChange={(e) => setIsPublic(e.target.checked)}
+        />
+        <span>Public Game</span>
+      </div>
+
+      {!isPublic && (
+        <div className="form-group">
+          <label className="form-label">
+            Password
+            <input
+              type="password"
+              className="form-input"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </label>
+        </div>
       )}
 
       <button
         type="submit"
         disabled={loading}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full"
+        className="form-button"
       >
         {loading ? 'Creating...' : 'Create Table'}
       </button>
