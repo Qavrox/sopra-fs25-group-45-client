@@ -53,7 +53,7 @@ export default function RoomBrowser() {
             <button
               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
               onClick={() => handleJoin(room.id, room.isPublic)}
-              disabled={room.status !== 'waiting'}
+              
             >
               Join
             </button>
@@ -63,3 +63,4 @@ export default function RoomBrowser() {
     </div>
   );
 }
+{/*disabled={room.status !== 'waiting'}*/}

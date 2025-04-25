@@ -166,57 +166,69 @@ export default function PokerTable({ gameId }: PokerTableProps) {
             </div>
 
             {/* Action Controls */}
-            {isCurrentPlayer && (
-              <div className="bg-black bg-opacity-70 p-6 rounded-t-lg">
-                <div className="flex flex-col items-center space-y-4">
-                  <div className="text-white text-xl mb-2">Your Turn - Choose an Action</div>
-                  <div className="flex space-x-4">
-                    <button
-                      onClick={() => setSelectedAction('fold')}
-                      className="px-6 py-3 bg-white text-red-600 rounded-lg hover:bg-red-100 text-lg font-bold"
-                    >
-                      Fold
-                    </button>
-                    <button
-                      onClick={() => setSelectedAction('check')}
-                      className="px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-100 text-lg font-bold"
-                    >
-                      Check
-                    </button>
-                    <button
-                      onClick={() => setSelectedAction('call')}
-                      className="px-6 py-3 bg-white text-green-600 rounded-lg hover:bg-green-100 text-lg font-bold"
-                    >
-                      Call ${game.callAmount}
-                    </button>
-                  </div>
-                  <div className="flex items-center space-x-4">
-                    <input
-                      type="number"
-                      value={betAmount}
-                      onChange={(e) => setBetAmount(Number(e.target.value))}
-                      className="w-32 px-4 py-2 rounded-lg text-lg"
-                      placeholder="Bet Amount"
-                      min={game.callAmount}
-                    />
-                    <button
-                      onClick={() => setSelectedAction('bet')}
-                      className="px-6 py-3 bg-white text-yellow-600 rounded-lg hover:bg-yellow-100 text-lg font-bold"
-                    >
-                      Bet
-                    </button>
-                  </div>
-                  {selectedAction && (
-                    <button
-                      onClick={handleAction}
-                      className="px-8 py-3 bg-white text-purple-600 rounded-lg hover:bg-purple-100 text-lg font-bold"
-                    >
-                      Confirm {selectedAction.charAt(0).toUpperCase() + selectedAction.slice(1)}
-                    </button>
-                  )}
+            <div
+              className={`bg-black bg-opacity-70 p-6 rounded-t-lg ${
+                isCurrentPlayer ? '' : 'opacity-50 cursor-not-allowed'
+              }`}
+            >
+              <div className="flex flex-col items-center space-y-4">
+                {/* CHANGE: Text always visible but indicates when not player's turn */}
+                <div className="text-white text-xl mb-2">
+                  {isCurrentPlayer ? 'Your Turn - Choose an Action' : 'Waiting for your turn'}
                 </div>
+                <div className="flex space-x-4">
+                  {/* CHANGE: Added disabled attribute based on isCurrentPlayer */}
+                  <button
+                    onClick={() => isCurrentPlayer && setSelectedAction('fold')}
+                    className="px-6 py-3 bg-white text-red-600 rounded-lg hover:bg-red-100 text-lg font-bold"
+                    disabled={!isCurrentPlayer}
+                  >
+                    Fold
+                  </button>
+                  <button
+                    onClick={() => isCurrentPlayer && setSelectedAction('check')}
+                    className="px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-100 text-lg font-bold"
+                    disabled={!isCurrentPlayer}
+                  >
+                    Check
+                  </button>
+                  <button
+                    onClick={() => isCurrentPlayer && setSelectedAction('call')}
+                    className="px-6 py-3 bg-white text-green-600 rounded-lg hover:bg-green-100 text-lg font-bold"
+                    disabled={!isCurrentPlayer}
+                  >
+                    Call ${game.callAmount}
+                  </button>
+                </div>
+                <div className="flex items-center space-x-4">
+                  {/* CHANGE: Disabled input & button when not current player */}
+                  <input
+                    type="number"
+                    value={betAmount}
+                    onChange={(e) => isCurrentPlayer && setBetAmount(Number(e.target.value))}
+                    className="w-32 px-4 py-2 rounded-lg text-lg"
+                    placeholder="Bet Amount"
+                    min={game.callAmount}
+                    disabled={!isCurrentPlayer}
+                  />
+                  <button
+                    onClick={() => isCurrentPlayer && setSelectedAction('bet')}
+                    className="px-6 py-3 bg-white text-yellow-600 rounded-lg hover:bg-yellow-100 text-lg font-bold"
+                    disabled={!isCurrentPlayer}
+                  >
+                    Bet
+                  </button>
+                </div>
+                {/* CHANGE: Confirm button always rendered but disabled when not current player's turn */}
+                <button
+                  onClick={handleAction}
+                  className="px-8 py-3 bg-white text-purple-600 rounded-lg hover:bg-purple-100 text-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={!isCurrentPlayer || !selectedAction}
+                >
+                  {selectedAction ? `Confirm ${selectedAction.charAt(0).toUpperCase() + selectedAction.slice(1)}` : 'Confirm'}
+                </button>
               </div>
-            )}
+            </div>
           </div>
         )}
       </div>
