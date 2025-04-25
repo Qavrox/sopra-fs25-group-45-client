@@ -181,6 +181,13 @@ export class ApiClient {
     return this.apiService.get<Game>(`/games/${gameId}`);
   }
 
+  startBettingRound(gameId: number): Promise<Game> {
+    return this.apiService.post<Game>(               
+      `/games/${gameId}/start-betting`,              
+      {},                                            
+    );                                               
+  }    
+
   deleteGame(gameId: number): Promise<MessageResponse> {
     return this.apiService.delete<MessageResponse>(`/games/${gameId}`);
   }
@@ -200,7 +207,7 @@ export class ApiClient {
     payload: GameActionRequest,
   ): Promise<MessageResponse> {
     return this.apiService.post<MessageResponse>(
-      `/games/${gameId}/actions`,
+      `/games/${gameId}/action`,
       payload,
     );
   }

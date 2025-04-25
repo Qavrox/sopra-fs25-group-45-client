@@ -95,6 +95,16 @@ export default function PokerTable({ gameId }: PokerTableProps) {
   if (error || !game) {
     return <div className="flex items-center justify-center h-screen text-red-500">{error || 'Game not found'}</div>;
   }
+  const handleStartBetting = async () => {
+    try {
+      const updatedGame = await apiClient.startBettingRound(gameId);
+      setGame(updatedGame);
+      setError(null); // clear any previous error
+    } catch (err: any) {
+      console.error(err);
+      setError(err?.message || 'Failed to start betting round'); // show error
+    }
+  };
 
   const currentPlayer = game.players[game.currentPlayerIndex];
   const isCurrentPlayer = currentPlayer?.userId === apiClient.getUserId();
@@ -163,6 +173,14 @@ export default function PokerTable({ gameId }: PokerTableProps) {
                   {card}
                 </div>
               ))}
+            </div>
+            <div className="absolute top-4 right-4 z-50">
+              <button
+                onClick={handleStartBetting}
+                className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded shadow"
+              >
+                Start Betting Round
+              </button>
             </div>
 
             {/* Action Controls */}
