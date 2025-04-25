@@ -26,7 +26,7 @@ export default function Lobby() {
             className="game-card"
           >
             <div className="text-center text-xl font-bold">Game {room.id}</div>
-            <p>{room.players.length} players, {room.status}</p>
+            <p>{room.players.length} players, {room.gameStatus}</p>
             <p className="text-sm">Small Blind: {room.smallBlind}</p>
             <p className="text-sm">Big Blind: {room.bigBlind}</p>
           </div>

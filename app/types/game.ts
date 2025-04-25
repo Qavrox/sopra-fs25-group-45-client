@@ -11,6 +11,14 @@ export interface GameCreationRequest {
   maximalPlayers: number;
 }
 
+export enum PlayerAction {
+  CHECK = "CHECK",
+  BET = "BET",
+  CALL = "CALL",
+  RAISE = "RAISE",
+  FOLD = "FOLD"
+}
+
 export interface Player {
   id: number;
   userId: number;
@@ -18,30 +26,45 @@ export interface Player {
   gameId: number;
   credit: number;
   hand: string[];
-  betAmount: number;
-  isActive: boolean;
+  currentBet: number;
+  hasFolded: boolean;
+  hasActed: boolean;
+  lastAction?: PlayerAction;
+}
+
+export enum GameStatus {
+  WAITING = "WAITING",
+  READY = "READY",
+  PREFLOP = "PREFLOP",
+  FLOP = "FLOP",
+  TURN = "TURN",
+  RIVER = "RIVER",
+  SHOWDOWN = "SHOWDOWN",
+  GAMEOVER = "GAMEOVER"
 }
 
 export interface Game {
   id: number;
+  creatorId: number;
+  password?: string;
   isPublic: boolean;
+  maximalPlayers: number;
+  startCredit: number;
   smallBlind: number;
   bigBlind: number;
-  smallBlindIndex: number;
-  startCredit: number;
-  maximalPlayers: number;
+  gameStatus: GameStatus;
   pot: number;
   callAmount: number;
+  smallBlindIndex: number;
+  numberOfPlayers: number;
+  communityCards: number[];
   players: Player[];
-  currentPlayerIndex: number;
-  communityCards: string[];
-  status: "waiting" | "in-progress" | "finished";
-  createdAt: string;
+  currentPlayerId: number;
 }
 
 export interface GameActionRequest {
   userId: number;
-  action: "check" | "bet" | "call" | "raise" | "fold";
+  action: PlayerAction;
   amount?: number;
 }
 

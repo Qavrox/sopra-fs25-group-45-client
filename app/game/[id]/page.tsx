@@ -17,11 +17,11 @@ export default function GamePage() {
   }, [router]);
 
   if (!apiClient.isAuthenticated()) {
-    return <div className="w-full h-screen flex items-center justify-center">Please log in to access the game</div>;
+    return <div className="loading-container">Please log in to access the game</div>;
   }
 
   return (
-    <main className="w-full h-screen bg-green-900">
+    <main className="game-table-container">
       <PokerTable gameId={Number(id)} />
     </main>
   );

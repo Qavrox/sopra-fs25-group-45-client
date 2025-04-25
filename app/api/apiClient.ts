@@ -200,7 +200,7 @@ export class ApiClient {
     payload: GameActionRequest,
   ): Promise<MessageResponse> {
     return this.apiService.post<MessageResponse>(
-      `/games/${gameId}/actions`,
+      `/games/${gameId}/action`,
       payload,
     );
   }
