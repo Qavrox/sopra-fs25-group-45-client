@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { apiClient } from '../../api/apiClient';
-import type { Game } from '@/types/game';
+import { GameStatus, type Game } from '@/types/game';
 import { useRouter } from 'next/navigation';
 
 export default function RoomBrowser() {
@@ -48,12 +48,12 @@ export default function RoomBrowser() {
             <div>
               <p className="font-semibold">Game #{room.id}</p>
               <p>{room.players.length}/{room.maximalPlayers} players</p>
-              <p>Status: {room.status}</p>
+              <p>Status: {room.gameStatus}</p>
             </div>
             <button
               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
               onClick={() => handleJoin(room.id, room.isPublic)}
-              disabled={room.status !== 'waiting'}
+              disabled={room.gameStatus !== GameStatus.WAITING}
             >
               Join
             </button>
