@@ -222,6 +222,13 @@ export class ApiClient {
     );
   }
 
+  startBetting(gameId: number): Promise<MessageResponse> {
+    return this.apiService.post<MessageResponse>(
+      `/games/${gameId}/start-betting`,
+      {},
+    );
+  }
+
   // --- Preferences Endpoints ---
   updatePreferences(
     userId: number,

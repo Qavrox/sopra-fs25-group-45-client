@@ -66,6 +66,19 @@ export default function PokerTable({ gameId }: PokerTableProps) {
     };
   }, [gameId, router]);
 
+  const handleStartBetting = async () => {
+    if (!game) return;
+    
+    try {
+      await apiClient.startBetting(gameId);
+      // We'll rely on the poll to update the game state
+      // rather than setting a local state variable
+    } catch (err) {
+      setError('Failed to start betting');
+      console.error(err);
+    }
+  };
+
   const handleAction = async () => {
     if (!game || !selectedAction) return;
 
@@ -100,6 +113,10 @@ export default function PokerTable({ gameId }: PokerTableProps) {
 
   const isCurrentPlayersTurn = game.currentPlayerId === apiClient.getUserId();
   const currentUserPlayer = game.players.find(p => p.userId === apiClient.getUserId());
+  const isHost = game.creatorId === apiClient.getUserId();
+  const hasMultiplePlayers = game.players.length > 1;
+  const isBettingPhase = game.gameStatus !== GameStatus.WAITING;
+  const canStartGame = isHost && hasMultiplePlayers && game.gameStatus !== GameStatus.WAITING;
 
   return (
     <div>
@@ -123,6 +140,38 @@ export default function PokerTable({ gameId }: PokerTableProps) {
         <div className="game-status">
           Status: {game.gameStatus}
         </div>
+
+        {/* Host Controls */}
+        {game.gameStatus === GameStatus.READY && (
+          <div className="host-controls" style={{
+            position: 'absolute',
+            top: '20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 100,
+            padding: '10px',
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            borderRadius: '8px',
+            textAlign: 'center'
+          }}>
+            <button 
+              onClick={handleStartBetting}
+              className="start-game-button"
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#4CAF50',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                cursor: 'pointer'
+              }}
+            >
+              Start Game
+            </button>
+          </div>
+        )}
 
         {/* Player Seats */}
         <div>
@@ -178,7 +227,7 @@ export default function PokerTable({ gameId }: PokerTableProps) {
             </div>
 
             {/* Action Controls */}
-            {isCurrentPlayersTurn && !currentUserPlayer.hasFolded && !currentUserPlayer.hasActed && (
+            {isCurrentPlayersTurn && !currentUserPlayer.hasFolded && game.gameStatus !== GameStatus.WAITING && game.gameStatus !== GameStatus.READY && (
               <div className="action-controls">
                 <div className="action-title">Your Turn - Choose an Action</div>
                 <div className="action-buttons">
