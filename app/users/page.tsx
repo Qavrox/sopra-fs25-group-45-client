@@ -74,11 +74,22 @@ const UserProfilePage: React.FC = () => {
     averagePosition: 3.2,
   });
 
-  const [friends] = useState([
-    { id: 101, username: "Player1", online: true },
-    { id: 102, username: "Player2", online: false },
-    { id: 103, username: "Player3", online: true },
-  ]);
+  const [friends, setFriends] = useState<{ id: number; username: string; online: boolean }[]>([]);
+
+  useEffect(() => {
+  const fetchFriends = async () => {
+    try {
+      const response = await apiClient.getFriends();
+      setFriends(response);
+    } catch (error) {
+      console.error("Failed to fetch friends:", error);
+    }
+  };
+
+  fetchFriends();
+  }, [apiClient]);
+
+
 
   useEffect(() => {
     const fetchUserProfile = async () => {
