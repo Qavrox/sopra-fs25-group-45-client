@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { apiClient } from '@/api/apiClient';
-import { Game, GameActionRequest, Player, PlayerAction, GameStatus } from '@/types/game';
+import { Game, GameActionRequest, Player, PlayerAction, GameStatus, GameResults } from '@/types/game';
 import { useRouter } from 'next/navigation';
 
 interface PokerTableProps {
@@ -15,6 +15,7 @@ export default function PokerTable({ gameId }: PokerTableProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedAction, setSelectedAction] = useState<PlayerAction | null>(null);
   const [betAmount, setBetAmount] = useState<number>(0);
+  const [gameResults, setGameResults] = useState<GameResults | null>(null);
   const router = useRouter();
   const hasJoined = useRef(false);
 
@@ -47,6 +48,17 @@ export default function PokerTable({ gameId }: PokerTableProps) {
       try {
         const gameData = await apiClient.getGameDetails(gameId);
         setGame(gameData);
+        
+        // If game is over, fetch results
+        if (gameData.gameStatus === GameStatus.GAMEOVER && !gameResults) {
+          try {
+            const results = await apiClient.getGameResults(gameId);
+            setGameResults(results);
+          } catch (err) {
+            console.error('Failed to fetch game results:', err);
+          }
+        }
+        
         setError(null);
       } catch (err) {
         setError('Failed to fetch game state');
@@ -64,7 +76,7 @@ export default function PokerTable({ gameId }: PokerTableProps) {
       clearInterval(intervalId);
       hasJoined.current = false; // Reset the ref when component unmounts
     };
-  }, [gameId, router]);
+  }, [gameId, router, gameResults]);
 
   const handleStartBetting = async () => {
     if (!game) return;
@@ -103,6 +115,11 @@ export default function PokerTable({ gameId }: PokerTableProps) {
     }
   };
 
+  const handleNewGame = () => {
+    // This is a dummy function for now
+    console.log('New game requested');
+  };
+
   if (isLoading) {
     return <div className="loading-container">Loading game...</div>;
   }
@@ -116,10 +133,57 @@ export default function PokerTable({ gameId }: PokerTableProps) {
   const isHost = game.creatorId === apiClient.getUserId();
   const hasMultiplePlayers = game.players.length > 1;
   const isBettingPhase = game.gameStatus !== GameStatus.WAITING;
-  const canStartGame = isHost && hasMultiplePlayers && game.gameStatus !== GameStatus.WAITING;
+  const canStartGame = isHost && hasMultiplePlayers && game.gameStatus === GameStatus.READY;
+  const isGameOver = game.gameStatus === GameStatus.GAMEOVER;
 
   return (
     <div>
+      {/* Game Results Display */}
+      {isGameOver && gameResults && (
+        <div className="game-results" style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 200,
+          padding: '20px',
+          backgroundColor: 'rgba(0, 0, 0, 0.9)',
+          borderRadius: '10px',
+          textAlign: 'center',
+          color: 'white',
+          boxShadow: '0 0 20px rgba(255, 215, 0, 0.7)',
+          border: '2px solid gold',
+          width: '80%',
+          maxWidth: '500px'
+        }}>
+          <h2 style={{ color: 'gold', marginBottom: '15px' }}>Game Over!</h2>
+          <div style={{ marginBottom: '10px' }}>
+            <h3>Winner: Player {gameResults.winner.userId}</h3>
+            <p>Winning Hand: {gameResults.winningHand}</p>
+          </div>
+          <div style={{ marginBottom: '20px' }}>
+            <h4>Statistics</h4>
+            <p>Participation Rate: {gameResults.statistics.participationRate}%</p>
+            <p>Pots Won: {gameResults.statistics.potsWon}</p>
+          </div>
+          <button 
+            onClick={handleNewGame}
+            style={{
+              padding: '10px 20px',
+              backgroundColor: '#4CAF50',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              fontSize: '16px',
+              fontWeight: 'bold',
+              cursor: 'pointer'
+            }}
+          >
+            New Game
+          </button>
+        </div>
+      )}
+      
       {/* Table */}
       <div className="poker-table">
         {/* Community Cards */}
@@ -142,7 +206,7 @@ export default function PokerTable({ gameId }: PokerTableProps) {
         </div>
 
         {/* Host Controls */}
-        {game.gameStatus === GameStatus.READY && (
+        {canStartGame && (
           <div className="host-controls" style={{
             position: 'absolute',
             top: '20px',
@@ -227,7 +291,7 @@ export default function PokerTable({ gameId }: PokerTableProps) {
             </div>
 
             {/* Action Controls */}
-            {isCurrentPlayersTurn && !currentUserPlayer.hasFolded && game.gameStatus !== GameStatus.WAITING && game.gameStatus !== GameStatus.READY && (
+            {isCurrentPlayersTurn && !currentUserPlayer.hasFolded && game.gameStatus !== GameStatus.WAITING && game.gameStatus !== GameStatus.READY && game.gameStatus !== GameStatus.GAMEOVER && (
               <div className="action-controls">
                 <div className="action-title">Your Turn - Choose an Action</div>
                 <div className="action-buttons">
