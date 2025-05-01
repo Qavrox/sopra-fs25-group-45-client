@@ -85,7 +85,10 @@ reason).
 
 ## Contributions Week 4 - [Begin Date] to [End Date]
 
-_Continue with the same table format as above._
+| **Student**        | **Date** | **Link to Commit** | **Description**                 | **Relevance**                       |
+| ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
+| **[@TauSigma5]**   | 01.05    | [Link to PR 1](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/26) | Add FE for GameOver/Win Declaration | FE part of Task #35 done |
+| **[@TauSigma5]**   | 01.05    | [Link to PR 2](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/74) | Expose BE endpoint for winner determination | BE part of Task #35 done |
 
 ---
 
