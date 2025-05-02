@@ -14,7 +14,7 @@ export default function Home() {
     <Layout
       style={{
         minHeight: "100vh",
-        backgroundImage: `url("/poker-banner.png")`,
+        backgroundImage: `url("/pokermaster_bg.png")`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
