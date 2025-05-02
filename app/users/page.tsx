@@ -51,7 +51,6 @@ interface StatisticsData {
  * Shows detailed user information with experience level display
  */
 const UserProfilePage: React.FC = () => {
-  const { id } = useParams();
   const router = useRouter();
   const apiClient = useApiClient();
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -95,43 +94,24 @@ const UserProfilePage: React.FC = () => {
     const fetchUserProfile = async () => {
       try {
         setLoading(true);
-        // In a real implementation, you would fetch from your API
-        // For now, we'll simulate a delay and create mock data
-        const userId = parseInt(id as string);
+        const userId = await apiClient.getUserId(); // Get ID from auth/session
         
-        // Simulating API call with timeout
-        setTimeout(() => {
-          // Mock profile data that matches your UserProfile type
-          const mockProfile: UserProfile = {
-            id: userId,
-            username: `player${userId}`,
-            name: `Player ${userId}`,
-            avatarUrl: "/default-avatar.png",
-            experienceLevel: userId % 3 === 0 ? ExperienceLevel.EXPERT : userId % 2 === 0 ? ExperienceLevel.INTERMEDIATE : ExperienceLevel.BEGINNER,
-            birthday: "1990-01-01",
-            createdAt: "2024-11-15T08:30:00Z",
-            online: true
-          };
-          
-          setProfile(mockProfile);
-          setLoading(false);
-        }, 800);
-        
-        /* Actual API implementation would look like this:
+        if (userId === null) {
+          throw new Error("User ID is null. User might not be logged in.");
+        }
         const userProfile = await apiClient.getUserProfile(userId);
         setProfile(userProfile);
-        */
       } catch (err) {
-        console.error("Error fetching user profile:", err);
-        setError("Failed to load user profile. Please try again later.");
+        console.error("Error fetching current user profile:", err);
+        setError("Failed to load profile. Please try again later.");
+      } finally {
         setLoading(false);
       }
     };
-
-    if (id) {
-      fetchUserProfile();
-    }
-  }, [id, apiClient]);
+  
+    fetchUserProfile();
+  }, [apiClient]);
+  
 
   // Helper function to get color based on experience level
   const getLevelColor = (level: string) => {
