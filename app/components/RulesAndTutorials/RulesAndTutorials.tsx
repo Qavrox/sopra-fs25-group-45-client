@@ -1,7 +1,8 @@
 'use client';
 import { useState } from 'react';
-import { Tabs, Card, Typography, List, Divider, Row, Col } from 'antd';
+import { Tabs, Card, Typography, List, Divider, Row, Col, Button, Space } from 'antd';
 import { BookOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/navigation';
 
 const { Title, Paragraph, Text, Link } = Typography;
 const { TabPane } = Tabs;
@@ -40,109 +41,128 @@ const rulesData = {
 
 export default function RulesAndTutorials() {
   const [activeTab, setActiveTab] = useState('rules');
+  const router = useRouter();
 
   return (
-    <div style={{ 
-      padding: '24px', 
-      maxWidth: '900px', 
-      margin: 'auto', 
-      backgroundColor: '#006400', 
-      color: '#fff',
-      minHeight: '100vh'
-    }}>
-      <Title level={2} style={{ textAlign: 'center', marginBottom: '32px', color: '#fff' }}>Rules and Tutorials</Title>
-      {/* Ant Design Tabs*/}
-      <Tabs defaultActiveKey="rules" centered onChange={setActiveTab}>
-        <TabPane
-          tab={
-            <span>
-              <BookOutlined />
-              Rules
-            </span>
-          }
-          key="rules"
-        >
-          <Card title="Texas Hold'em Poker Rules">
-            <Title level={4}>Basic Rules</Title>
-            <Paragraph>{rulesData.basic}</Paragraph>
-            <Divider />
+      <>
+        <div style={{
+          padding: '24px',
+          maxWidth: '900px',
+          margin: 'auto',
+          backgroundColor: '#006400',
+          color: '#fff',
+          minHeight: '100vh'
+        }}>
+          <Title level={2} style={{ textAlign: 'center', marginBottom: '32px', color: '#fff' }}>Rules and Tutorials</Title>
+          {/* Ant Design Tabs*/}
+          <Tabs defaultActiveKey="rules" centered onChange={setActiveTab}>
+            <TabPane
+                tab={
+                  <span>
+                <BookOutlined />
+                Rules
+              </span>
+                }
+                key="rules"
+            >
+              <Card title="Texas Hold'em Poker Rules">
+                <Title level={4}>Basic Rules</Title>
+                <Paragraph>{rulesData.basic}</Paragraph>
+                <Divider />
 
-            <Title level={4}>Game Structure</Title>
-            <List
-              size="small"
-              dataSource={rulesData.structure}
-              renderItem={(item, index) => <List.Item>{`${index + 1}. ${item}`}</List.Item>}
-            />
-            <Divider />
+                <Title level={4}>Game Structure</Title>
+                <List
+                    size="small"
+                    dataSource={rulesData.structure}
+                    renderItem={(item, index) => <List.Item>{`${index + 1}. ${item}`}</List.Item>}
+                />
+                <Divider />
 
-            <Title level={4}>Betting Options</Title>
-            <List
-              size="small"
-              dataSource={rulesData.bettingOptions}
-              renderItem={(item) => <List.Item>{item}</List.Item>}
-            />
-            <Divider />
+                <Title level={4}>Betting Options</Title>
+                <List
+                    size="small"
+                    dataSource={rulesData.bettingOptions}
+                    renderItem={(item) => <List.Item>{item}</List.Item>}
+                />
+                <Divider />
 
-            <Title level={4}>Hand Rankings (Highest to Lowest)</Title>
-            <List
-              size="small"
-              dataSource={rulesData.handRankings}
-              renderItem={(item, index) => <List.Item>{`${index + 1}. ${item}`}</List.Item>}
-            />
-             <Paragraph type="secondary" style={{ marginTop: '16px', fontSize: '12px' }}>
-               Source: Adapted from Wikipedia's Texas Hold'em article.
-             </Paragraph>
-          </Card>
-        </TabPane>
-        <TabPane
-          tab={
-            <span>
-              <VideoCameraOutlined />
-              Tutorials
-            </span>
-          }
-          key="tutorials"
-        >
-          <Card title="Video Tutorials">
-            <Row gutter={[16, 24]}>
-              <Col xs={24} md={12}>
-                <Title level={4}>Beginner's Guide to Texas Hold'em</Title>
-                <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', maxWidth: '100%', background: '#000' }}>
-                  <iframe
-                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                    src="https://www.youtube.com/embed/GAoR9ji8D6A"
-                    title="Texas Hold'em Poker Tutorial"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
-                </div>
-                <Paragraph style={{ marginTop: '12px' }}>
-                  This comprehensive tutorial covers all the basics of Texas Hold'em poker, including hand rankings,
-                  betting rounds, and basic strategy tips for beginners.
+                <Title level={4}>Hand Rankings (Highest to Lowest)</Title>
+                <List
+                    size="small"
+                    dataSource={rulesData.handRankings}
+                    renderItem={(item, index) => <List.Item>{`${index + 1}. ${item}`}</List.Item>}
+                />
+                <Paragraph type="secondary" style={{ marginTop: '16px', fontSize: '12px' }}>
+                  Source: Adapted from Wikipedia's Texas Hold'em article.
                 </Paragraph>
-              </Col>
-              <Col xs={24} md={12}>
-                <Title level={4}>Advanced Strategy Tips</Title>
-                 <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', maxWidth: '100%', background: '#000' }}>
-                  <iframe
-                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                    src="https://www.youtube.com/embed/pthll8v-1z4"
-                    title="Advanced Poker Strategy"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
-                </div>
-                <Paragraph style={{ marginTop: '12px' }}>
-                  Once you've mastered the basics, this video will help you improve your game with advanced
-                  concepts like position play, reading opponents, and calculating pot odds.
-                </Paragraph>
-              </Col>
-            </Row>
-          </Card>
-        </TabPane>
-      </Tabs>
-    </div>
+              </Card>
+            </TabPane>
+            <TabPane
+                tab={
+                  <span>
+                <VideoCameraOutlined />
+                Tutorials
+              </span>
+                }
+                key="tutorials"
+            >
+              <Card title="Video Tutorials">
+                <Row gutter={[16, 24]}>
+                  <Col xs={24} md={12}>
+                    <Title level={4}>Beginner's Guide to Texas Hold'em</Title>
+                    <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', maxWidth: '100%', background: '#000' }}>
+                      <iframe
+                          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                          src="https://www.youtube.com/embed/GAoR9ji8D6A"
+                          title="Texas Hold'em Poker Tutorial"
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                      ></iframe>
+                    </div>
+                    <Paragraph style={{ marginTop: '12px' }}>
+                      This comprehensive tutorial covers all the basics of Texas Hold'em poker, including hand rankings,
+                      betting rounds, and basic strategy tips for beginners.
+                    </Paragraph>
+                  </Col>
+                  <Col xs={24} md={12}>
+                    <Title level={4}>Advanced Strategy Tips</Title>
+                    <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', maxWidth: '100%', background: '#000' }}>
+                      <iframe
+                          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                          src="https://www.youtube.com/embed/pthll8v-1z4"
+                          title="Advanced Poker Strategy"
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                      ></iframe>
+                    </div>
+                    <Paragraph style={{ marginTop: '12px' }}>
+                      Once you've mastered the basics, this video will help you improve your game with advanced
+                      concepts like position play, reading opponents, and calculating pot odds.
+                    </Paragraph>
+                  </Col>
+                </Row>
+              </Card>
+            </TabPane>
+          </Tabs>
+        </div>
+        <div style={{ textAlign: 'center', marginTop: '32px' }}>
+          <Space>
+            <Button
+                type="primary"
+                icon={<HomeOutlined />}
+                onClick={() => router.push('/')}
+                style={{
+                  fontWeight: 'bold',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
+                }}
+            >
+              Back to Home
+            </Button>
+          </Space>
+        </div>
+      </>
   );
 }
