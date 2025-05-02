@@ -1,44 +1,105 @@
 "use client";
 
-import { Button, Typography, Space, Layout } from "antd"; // Import Space and Layout
+import { Button, Typography, Space, Layout } from "antd";
 import { useRouter } from "next/navigation";
+import { LoginOutlined, UserAddOutlined, ReadOutlined } from "@ant-design/icons";
 
-const { Title } = Typography;
-const { Content } = Layout; // Destructure Content from Layout
+const { Title, Text } = Typography;
+const { Content } = Layout;
 
 export default function Home() {
   const router = useRouter();
-  return (
-    // Use Layout for overall structure and styling
-    <Layout style={{ minHeight: '100vh', backgroundColor: '#006400' }}> 
-      {/* Use Content for the main area, centered */}
-      <Content style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '50px' }}>
-        <Title level={1} style={{ color: '#fff', marginBottom: '48px', textAlign: 'center' }}>PokerMaster Arena</Title>
 
-        {/* Use Space for button arrangement */}
-        <Space direction="vertical" size="large" style={{ alignItems: 'center' }}> 
-          <Space size="large"> {/* Nested Space for horizontal button layout */}
+  return (
+    <Layout
+      style={{
+        minHeight: "100vh",
+        backgroundImage: `url("/poker-banner.png")`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundColor: "#013220", 
+      }}
+    >
+      <Content
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: "50px",
+          textAlign: "center",
+          backgroundColor: "rgba(0,0,0,0.5)", 
+        }}
+      >
+        <Title
+          level={1}
+          style={{
+            color: "#fff",
+            fontSize: "56px",
+            textShadow: "2px 2px #000",
+            marginBottom: "16px",
+          }}
+        >
+          PokerMaster Arena
+        </Title>
+
+        <Text
+          style={{
+            color: "#f1f1f1",
+            fontSize: "20px",
+            marginBottom: "48px",
+            fontStyle: "italic",
+          }}
+        >
+          Your Ultimate Texas Hold'em Challenge
+        </Text>
+
+        <Space direction="vertical" size="large" style={{ alignItems: "center" }}>
+          <Space size="large">
             <Button
               type="primary"
+              icon={<LoginOutlined />}
               size="large"
               onClick={() => router.push("/login")}
-              style={{ minWidth: '150px' }}
+              style={{
+                minWidth: "160px",
+                fontWeight: "bold",
+                borderRadius: "8px",
+                boxShadow: "0 4px 8px rgba(0,0,0,0.3)",
+              }}
             >
               Login
             </Button>
+
             <Button
               type="default"
+              icon={<UserAddOutlined />}
               size="large"
               onClick={() => router.push("/register")}
-              style={{ minWidth: '150px' }}
+              style={{
+                minWidth: "160px",
+                fontWeight: "bold",
+                borderRadius: "8px",
+                backgroundColor: "#fff",
+                boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+              }}
             >
               Register
             </Button>
+
             <Button
-              type="default"
+              type="dashed"
+              icon={<ReadOutlined />}
               size="large"
-              onClick={() => router.push("/tutorial")} // Updated path to /tutorial
-              style={{ minWidth: '150px' }}
+              onClick={() => router.push("/tutorial")}
+              style={{
+                minWidth: "160px",
+                fontWeight: "bold",
+                borderRadius: "8px",
+                color: "#fff",
+                borderColor: "#fff",
+              }}
             >
               Tutorials
             </Button>
