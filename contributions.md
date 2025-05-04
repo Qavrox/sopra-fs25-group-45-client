@@ -92,6 +92,8 @@ reason).
 | **[@Qavrox]**   | 30.04    | [Link to Commit 1](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/73) | Fix the bug that blocked the whole team for a week (which took Aaron and me more than 2 days to locate the problem). This simple DTO problem crashes the whole backend when the game moves to the next round. | Basic game function |
 | **[@Qavrox]**   | 30.04    | [Link to Commit 2](https://github.com/Qavrox/sopra-fs25-group-45-client/tree/FixTutorialCSS) | Fix the missing CSS problem on tutorial page | To meet US13 |
 | **[@Qavrox]**   | 01.05    | [Link to Commit 3](https://github.com/Qavrox/sopra-fs25-group-45-client/tree/HomePage) | Implemented a landing page for users to log in or register | To help users to log in or register |
+| **[@IsSaudade]** | 02.05   | [Link to Commit 1](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/7c41c4253f72f2e809e3e9f7c01827be4eb42e6e) | Beautify and improve the homepage |Interface-beautification |
+|                    | 04.05   | [Link to Commit 2](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/fc26d74abbbfd13b76aa6c0dff14d8efc543082f) | Beautify Browse Available Tables and enhance user experience  | Interface-beautification |
 ---
 
 ## Contributions Week 5 - [Begin Date] to [End Date]
