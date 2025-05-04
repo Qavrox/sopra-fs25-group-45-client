@@ -35,31 +35,46 @@ export default function RoomBrowser() {
   if (loading) return <p className="text-center text-gray-500">Loading rooms...</p>;
 
   return (
-    <div className="p-4 space-y-4">
-      <h2 className="text-2xl font-bold mb-4">Available Rooms</h2>
-      {rooms.length === 0 ? (
-        <p className="text-gray-600">No rooms available right now.</p>
-      ) : (
-        rooms.map(room => (
-          <div
-            key={room.id}
-            className="border p-4 rounded flex justify-between items-center hover:shadow transition"
-          >
-            <div>
-              <p className="font-semibold">Game #{room.id}</p>
-              <p>{room.players.length}/{room.maximalPlayers} players</p>
-              <p>Status: {room.gameStatus}</p>
-            </div>
-            <button
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
-              onClick={() => handleJoin(room.id, room.isPublic)}
-              disabled={room.gameStatus !== GameStatus.WAITING}
+    <div className="min-h-screen bg-gradient-to-br from-green-900 via-emerald-800 to-green-700 text-white px-6 py-10">
+      <div className="max-w-3xl mx-auto space-y-6">
+        <h2 className="text-3xl font-extrabold tracking-wide text-center mb-6">
+          🃏 Available Poker Rooms
+        </h2>
+  
+        {rooms.length === 0 ? (
+          <p className="text-center text-gray-300 text-lg">No rooms available right now.</p>
+        ) : (
+          rooms.map(room => (
+            <div
+              key={room.id}
+              className="bg-white text-gray-800 rounded-xl p-5 shadow-md hover:shadow-lg transition border border-gray-200"
             >
-              Join
-            </button>
-          </div>
-        ))
-      )}
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-lg font-bold mb-1">Game #{room.id}</p>
+                  <p className="text-sm text-gray-600 mb-1">
+                    {room.players.length}/{room.maximalPlayers} players
+                  </p>
+                  <p className="text-sm">
+                    Status:{' '}
+                    <span className={`font-medium ${
+                      room.gameStatus === GameStatus.WAITING ? 'text-green-600' : 'text-red-500'
+                    }`}>
+                      {room.gameStatus}
+                    </span>
+                  </p>
+                </div>
+                <button
+                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  onClick={() => handleJoin(room.id, room.isPublic)}
+                  disabled={room.gameStatus !== GameStatus.WAITING}
+                >
+                  Join
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
-}
