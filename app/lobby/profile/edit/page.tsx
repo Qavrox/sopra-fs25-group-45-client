@@ -91,7 +91,7 @@ const EditProfilePage: React.FC = () => {
           onFinish={SubmitValues}
           layout="vertical"
           initialValues={{
-            profileImage: 'avatar3.png',
+            profileImage: 'avatar0.png',
           }}
         >
           <Form.Item

@@ -95,10 +95,10 @@ const UserProfilePage: React.FC = () => {
             id: userId,
             username: `player${userId}`,
             name: `Player ${userId}`,
-            avatarUrl: "/default-avatar.png",
+            profileImage: 0,
             experienceLevel: userId % 3 === 0 ? ExperienceLevel.EXPERT : userId % 2 === 0 ? ExperienceLevel.INTERMEDIATE : ExperienceLevel.BEGINNER,
             birthday: "1990-01-01",
-            createdAt: "2024-11-15T08:30:00Z",
+            creationDate: "2024-11-15T08:30:00Z",
             online: true
           };
           
@@ -235,7 +235,7 @@ const UserProfilePage: React.FC = () => {
               <div style={{ display: "flex", alignItems: "flex-start", marginBottom: 24 }}>
                 <Avatar
                   size={100}
-                  src={profile.avatarUrl || "/default-avatar.png"}
+                  src={profile.profileImage || 0}
                   style={{ marginRight: 24 }}
                 />
                 <div style={{ flex: 1 }}>
@@ -252,7 +252,7 @@ const UserProfilePage: React.FC = () => {
                     </Tag>
                   </div>
                   <div style={{ marginTop: 12 }}>
-                    <Text>Member since: {new Date(profile.createdAt).toLocaleDateString()}</Text>
+                    <Text>Member since: {new Date(profile.creationDate).toLocaleDateString()}</Text>
                   </div>
                 </div>
               </div>
@@ -346,7 +346,7 @@ const UserProfilePage: React.FC = () => {
                         <Text strong>Member Since:</Text>
                       </Col>
                       <Col span={16}>
-                        <Text>{new Date(profile.createdAt).toLocaleDateString()}</Text>
+                        <Text>{new Date(profile.creationDate).toLocaleDateString()}</Text>
                       </Col>
                     </Row>
                   </div>

@@ -13,13 +13,15 @@ export interface User {
   status: string | null;
   creationDate: string; //  Ensure this is included as a string (ISO-8601 format)
   birthDate: string | null;
+  experienceLevel: ExperienceLevel;
+
 }
 
 export interface UserSummary {
   id: number;
   username: string;
   online: boolean;
-  createdAt: string; // ISO date-time string
+  creationDate: string; // ISO date-time string
   birthday: string; // ISO date string
 }
 
@@ -27,10 +29,10 @@ export interface UserProfile {
   id: number;
   username: string;
   name: string;
-  avatarUrl: string;
+  profileImage: number;
   experienceLevel: ExperienceLevel;
   birthday: string;
-  createdAt: string;
+  creationDate: string;
   online: boolean;
 }
 

@@ -26,6 +26,8 @@ import {
   TeamOutlined, 
   ArrowLeftOutlined 
 } from "@ant-design/icons";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { useApi } from '@/hooks/useApi';
 
 const { Title, Text } = Typography;
 const { TabPane } = Tabs;
@@ -49,12 +51,16 @@ interface StatisticsData {
  * Shows detailed user information with experience level display
  */
 const UserProfilePage: React.FC = () => {
-  const { id } = useParams();
+  // const { id } = useParams();
   const router = useRouter();
-  const apiClient = useApiClient();
+  const apiClient = useApi();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  const { value: name } = useLocalStorage<string>("name", "");
+  const { value: id } = useLocalStorage<string>("user_id", "");
+  const { value: token } = useLocalStorage<string>("token", "");
 
   // Mock data for development - would be replaced with API calls in production
   const [gameHistory] = useState<GameHistoryItem[]>([
@@ -80,45 +86,50 @@ const UserProfilePage: React.FC = () => {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      try {
-        setLoading(true);
-        // In a real implementation, you would fetch from your API
-        // For now, we'll simulate a delay and create mock data
-        const userId = parseInt(id as string);
+      // try {
+      //   setLoading(true);
+      //   // In a real implementation, you would fetch from your API
+      //   // For now, we'll simulate a delay and create mock data
+      //   const userId = parseInt(id as string);
         
-        // Simulating API call with timeout
-        setTimeout(() => {
-          // Mock profile data that matches your UserProfile type
-          const mockProfile: UserProfile = {
-            id: userId,
-            username: `player${userId}`,
-            name: `Player ${userId}`,
-            avatarUrl: "/default-avatar.png",
-            experienceLevel: userId % 3 === 0 ? ExperienceLevel.EXPERT : userId % 2 === 0 ? ExperienceLevel.INTERMEDIATE : ExperienceLevel.BEGINNER,
-            birthday: "1990-01-01",
-            createdAt: "2024-11-15T08:30:00Z",
-            online: true
-          };
+      //   // Simulating API call with timeout
+      //   setTimeout(() => {
+      //     // Mock profile data that matches your UserProfile type
+      //     // const mockProfile: UserProfile = {
+      //     //   id: userId,
+      //     //   username: `player${userId}`,
+      //     //   name: `Player ${userId}`,
+      //     //   avatarUrl: "/default-avatar.png",
+      //     //   experienceLevel: userId % 3 === 0 ? ExperienceLevel.EXPERT : userId % 2 === 0 ? ExperienceLevel.INTERMEDIATE : ExperienceLevel.BEGINNER,
+      //     //   birthday: "1990-01-01",
+      //     //   createdAt: "2024-11-15T08:30:00Z",
+      //     //   online: true
+      //     // };
           
-          setProfile(mockProfile);
-          setLoading(false);
-        }, 800);
-        
-        /* Actual API implementation would look like this:
-        const userProfile = await apiClient.getUserProfile(userId);
+      //     // setProfile(mockProfile);
+      //     setLoading(false);
+      //   }, 800);
+      try{
+        console.log("Fetching user profile for ID:", id);
+        const userProfile = await apiClient.getUserProfile(Number(id));
+        console.log("User profile data:", userProfile);
         setProfile(userProfile);
-        */
-      } catch (err) {
+        console.log("Set Profile:", profile)
+        setLoading(false);
+
+        
+      } catch (err) {setLoading
         console.error("Error fetching user profile:", err);
         setError("Failed to load user profile. Please try again later.");
         setLoading(false);
       }
     };
 
+    console.log("User ID from localStorage:", id);
     if (id) {
       fetchUserProfile();
     }
-  }, [id, apiClient]);
+  }, [id]);
 
   // Helper function to get color based on experience level
   const getLevelColor = (level: string) => {
@@ -233,7 +244,7 @@ const UserProfilePage: React.FC = () => {
               <div style={{ display: "flex", alignItems: "flex-start", marginBottom: 24 }}>
                 <Avatar
                   size={100}
-                  src={profile.avatarUrl || "/default-avatar.png"}
+                  src={`/images/avatar${profile.profileImage}.png`}
                   style={{ marginRight: 24 }}
                 />
                 <div style={{ flex: 1 }}>
@@ -250,7 +261,7 @@ const UserProfilePage: React.FC = () => {
                     </Tag>
                   </div>
                   <div style={{ marginTop: 12 }}>
-                    <Text>Member since: {new Date(profile.createdAt).toLocaleDateString()}</Text>
+                    <Text>Member since: {new Date(profile.creationDate).toLocaleDateString()}</Text>
                   </div>
                 </div>
               </div>
@@ -344,7 +355,7 @@ const UserProfilePage: React.FC = () => {
                         <Text strong>Member Since:</Text>
                       </Col>
                       <Col span={16}>
-                        <Text>{new Date(profile.createdAt).toLocaleDateString()}</Text>
+                        <Text>{new Date(profile.creationDate).toLocaleDateString()}</Text>
                       </Col>
                     </Row>
                   </div>

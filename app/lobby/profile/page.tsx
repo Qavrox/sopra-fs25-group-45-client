@@ -1,7 +1,11 @@
+import UserProfilePage from "@/components/profile/UserProfilePage";
+
 export default function ProfilePage() {
 
     return(
-        <div><p> Profile Page. </p></div>
+        <main className="create-game-container">
+          <UserProfilePage />
+        </main>
     )
 }
 
