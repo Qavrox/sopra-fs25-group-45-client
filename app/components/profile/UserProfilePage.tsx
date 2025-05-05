@@ -51,16 +51,14 @@ interface StatisticsData {
  * Shows detailed user information with experience level display
  */
 const UserProfilePage: React.FC = () => {
-  // const { id } = useParams();
+  const { id } = useParams();
   const router = useRouter();
-  const apiClient = useApi();
+  const apiClient = useApi(); 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const { value: name } = useLocalStorage<string>("name", "");
-  const { value: id } = useLocalStorage<string>("user_id", "");
-  const { value: token } = useLocalStorage<string>("token", "");
+  const { value: localId } = useLocalStorage<string>("user_id", "");
 
   // Mock data for development - would be replaced with API calls in production
   const [gameHistory] = useState<GameHistoryItem[]>([
@@ -84,31 +82,18 @@ const UserProfilePage: React.FC = () => {
     { id: 103, username: "Player3", online: true },
   ]);
 
+  const sendFriendRequest = async (friendid : number) => {
+    try{
+      await apiClient.sendFriendRequest(friendid);
+      console.log("Sending friend request");
+    } catch (err) {
+      console.error("Error sending friend request:", err);
+    }
+  }
+
   useEffect(() => {
     const fetchUserProfile = async () => {
-      // try {
-      //   setLoading(true);
-      //   // In a real implementation, you would fetch from your API
-      //   // For now, we'll simulate a delay and create mock data
-      //   const userId = parseInt(id as string);
-        
-      //   // Simulating API call with timeout
-      //   setTimeout(() => {
-      //     // Mock profile data that matches your UserProfile type
-      //     // const mockProfile: UserProfile = {
-      //     //   id: userId,
-      //     //   username: `player${userId}`,
-      //     //   name: `Player ${userId}`,
-      //     //   avatarUrl: "/default-avatar.png",
-      //     //   experienceLevel: userId % 3 === 0 ? ExperienceLevel.EXPERT : userId % 2 === 0 ? ExperienceLevel.INTERMEDIATE : ExperienceLevel.BEGINNER,
-      //     //   birthday: "1990-01-01",
-      //     //   createdAt: "2024-11-15T08:30:00Z",
-      //     //   online: true
-      //     // };
-          
-      //     // setProfile(mockProfile);
-      //     setLoading(false);
-      //   }, 800);
+
       try{
         console.log("Fetching user profile for ID:", id);
         const userProfile = await apiClient.getUserProfile(Number(id));
@@ -263,6 +248,30 @@ const UserProfilePage: React.FC = () => {
                   <div style={{ marginTop: 12 }}>
                     <Text>Member since: {new Date(profile.creationDate).toLocaleDateString()}</Text>
                   </div>
+                  {id && localId &&Number(id) != Number(localId) && (
+                    <div style={{ marginTop: 12 }}>
+                      <Button 
+                        type="primary"
+                        onClick={() => sendFriendRequest(Number(id))}
+                        style={{ marginRight: 8 }}
+                      >
+                        Send Friend Request
+                      </Button>
+
+                    </div>
+                  )}
+                  {Number(id) == Number(localId) && (
+                    <div style={{ marginTop: 12 }}>
+                    <Button 
+                      type="primary"
+                      onClick={() => router.push(`/lobby/profile/edit`)}
+                      style={{ marginRight: 8 }}
+                    >
+                      Edit Profile
+                    </Button>
+
+                  </div>                    
+                  )}
                 </div>
               </div>
 

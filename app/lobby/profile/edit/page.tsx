@@ -20,11 +20,11 @@ const EditProfilePage: React.FC = () => {
   const availableImages = [
     { value: 'avatar1.png', src: '/images/avatar1.png', alt: 'Avatar 1' },
     { value: 'avatar2.png', src: '/images/avatar2.png', alt: 'Avatar 2' },
-    { value: 'avatar3.png', src: '/images/avatar3.png', alt: 'Avatar 3' },
+    { value: 'avatar0.png', src: '/images/avatar0.png', alt: 'Avatar 0' },
   ];
 
   const [currentImageIndex, setCurrentImageIndex] = useState(
-    availableImages.findIndex((img) => img.value === 'avatar3.png')
+    availableImages.findIndex((img) => img.value === 'avatar0.png')
   );
 
   const { value: name } = useLocalStorage<string>("name", "");
@@ -91,7 +91,7 @@ const EditProfilePage: React.FC = () => {
           onFinish={SubmitValues}
           layout="vertical"
           initialValues={{
-            profileImage: 'avatar0.png',
+            profileImage: 0,
           }}
         >
           <Form.Item
