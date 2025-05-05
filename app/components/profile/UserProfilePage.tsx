@@ -264,7 +264,7 @@ const UserProfilePage: React.FC = () => {
                     <div style={{ marginTop: 12 }}>
                     <Button 
                       type="primary"
-                      onClick={() => router.push(`/lobby/profile/edit`)}
+                      onClick={() => router.push(`/users/${id}/edit`)}
                       style={{ marginRight: 8 }}
                     >
                       Edit Profile

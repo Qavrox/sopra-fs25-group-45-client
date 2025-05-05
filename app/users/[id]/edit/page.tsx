@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Button, Form, Input, Select, DatePicker } from "antd";
 import dayjs from 'dayjs';
@@ -11,6 +11,7 @@ import Image from 'next/image';
 import { UserProfileUpdate } from '@/types/user';
 
 const EditProfilePage: React.FC = () => {
+  const { id } = useParams();
   const url = getApiDomain();
   const dateFormat = 'YYYY-MM-DD';
   const router = useRouter();
@@ -27,9 +28,7 @@ const EditProfilePage: React.FC = () => {
     availableImages.findIndex((img) => img.value === 'avatar0.png')
   );
 
-  const { value: name } = useLocalStorage<string>("name", "");
-  const { value: id } = useLocalStorage<string>("id", "");
-  const { value: token } = useLocalStorage<string>("token", "");
+
 
   const isAdult = (date: dayjs.Dayjs) => {
     const today = dayjs();
