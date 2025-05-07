@@ -51,6 +51,14 @@ export default function Lobby() {
           Browse All Tables →
         </button>
       </div>
+      <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+        <button
+          onClick={() => router.push('/users/list')}
+          className="browse-button"
+        >   
+        See List of All Users →
+        </button>
+      </div>
     </main>
   );
 }
