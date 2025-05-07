@@ -98,7 +98,11 @@ reason).
 
 ## Contributions Week 5 - [Begin Date] to [End Date]
 
-_Continue with the same table format as above._
+| **Student**        | **Date** | **Link to Commit** | **Description**                 | **Relevance**                       |
+| ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
+| **[@Qavrox]**   | 07.05    | [Link to commit 1](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/32/commits/9b979e077fdec0be3fe5571ef76bde5e17e29f30) | Add a tutorial card on game table | required in the user stories |
+| **[@Qavrox]**   | 08.05    | [Link to commit 2](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/32/commits/c89d91025e921b05ceb2fb74176760425c53e260) | Add accessibility to profile page | Users can access profile page from lobby page |
+| **[@Qavrox]**   | 08.05    | [Link to Commit 3](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/32/commits/63c6e9bc69392f00bb3644f17efac6d7c2650dee) | Fixed goBack button on profile page. | Users can go back to lobby from profile page |
 
 ---
 
