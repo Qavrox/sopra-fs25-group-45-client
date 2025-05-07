@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Button, Form, Input, Select, DatePicker } from "antd";
 import dayjs from 'dayjs';
@@ -11,6 +11,7 @@ import Image from 'next/image';
 import { UserProfileUpdate } from '@/types/user';
 
 const EditProfilePage: React.FC = () => {
+  const { id } = useParams();
   const url = getApiDomain();
   const dateFormat = 'YYYY-MM-DD';
   const router = useRouter();
@@ -20,16 +21,14 @@ const EditProfilePage: React.FC = () => {
   const availableImages = [
     { value: 'avatar1.png', src: '/images/avatar1.png', alt: 'Avatar 1' },
     { value: 'avatar2.png', src: '/images/avatar2.png', alt: 'Avatar 2' },
-    { value: 'avatar3.png', src: '/images/avatar3.png', alt: 'Avatar 3' },
+    { value: 'avatar0.png', src: '/images/avatar0.png', alt: 'Avatar 0' },
   ];
 
   const [currentImageIndex, setCurrentImageIndex] = useState(
-    availableImages.findIndex((img) => img.value === 'avatar3.png')
+    availableImages.findIndex((img) => img.value === 'avatar0.png')
   );
 
-  const { value: name } = useLocalStorage<string>("name", "");
-  const { value: id } = useLocalStorage<string>("id", "");
-  const { value: token } = useLocalStorage<string>("token", "");
+
 
   const isAdult = (date: dayjs.Dayjs) => {
     const today = dayjs();
@@ -91,7 +90,7 @@ const EditProfilePage: React.FC = () => {
           onFinish={SubmitValues}
           layout="vertical"
           initialValues={{
-            profileImage: 'avatar3.png',
+            profileImage: 0,
           }}
         >
           <Form.Item

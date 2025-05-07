@@ -26,6 +26,8 @@ import {
   TeamOutlined, 
   ArrowLeftOutlined 
 } from "@ant-design/icons";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { useApi } from '@/hooks/useApi';
 
 const { Title, Text } = Typography;
 const { TabPane } = Tabs;
@@ -51,10 +53,12 @@ interface StatisticsData {
 const UserProfilePage: React.FC = () => {
   const { id } = useParams();
   const router = useRouter();
-  const apiClient = useApiClient();
+  const apiClient = useApi(); 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  const { value: localId } = useLocalStorage<string>("user_id", "");
 
   // Mock data for development - would be replaced with API calls in production
   const [gameHistory] = useState<GameHistoryItem[]>([
@@ -78,47 +82,39 @@ const UserProfilePage: React.FC = () => {
     { id: 103, username: "Player3", online: true },
   ]);
 
+  const sendFriendRequest = async (friendid : number) => {
+    try{
+      await apiClient.sendFriendRequest(friendid);
+      console.log("Sending friend request");
+    } catch (err) {
+      console.error("Error sending friend request:", err);
+    }
+  }
+
   useEffect(() => {
     const fetchUserProfile = async () => {
-      try {
-        setLoading(true);
-        // In a real implementation, you would fetch from your API
-        // For now, we'll simulate a delay and create mock data
-        const userId = parseInt(id as string);
-        
-        // Simulating API call with timeout
-        setTimeout(() => {
-          // Mock profile data that matches your UserProfile type
-          const mockProfile: UserProfile = {
-            id: userId,
-            username: `player${userId}`,
-            name: `Player ${userId}`,
-            avatarUrl: "/default-avatar.png",
-            experienceLevel: userId % 3 === 0 ? ExperienceLevel.EXPERT : userId % 2 === 0 ? ExperienceLevel.INTERMEDIATE : ExperienceLevel.BEGINNER,
-            birthday: "1990-01-01",
-            createdAt: "2024-11-15T08:30:00Z",
-            online: true
-          };
-          
-          setProfile(mockProfile);
-          setLoading(false);
-        }, 800);
-        
-        /* Actual API implementation would look like this:
-        const userProfile = await apiClient.getUserProfile(userId);
+
+      try{
+        console.log("Fetching user profile for ID:", id);
+        const userProfile = await apiClient.getUserProfile(Number(id));
+        console.log("User profile data:", userProfile);
         setProfile(userProfile);
-        */
-      } catch (err) {
+        console.log("Set Profile:", profile)
+        setLoading(false);
+
+        
+      } catch (err) {setLoading
         console.error("Error fetching user profile:", err);
         setError("Failed to load user profile. Please try again later.");
         setLoading(false);
       }
     };
 
+    console.log("User ID from localStorage:", id);
     if (id) {
       fetchUserProfile();
     }
-  }, [id, apiClient]);
+  }, [id]);
 
   // Helper function to get color based on experience level
   const getLevelColor = (level: string) => {
@@ -233,7 +229,7 @@ const UserProfilePage: React.FC = () => {
               <div style={{ display: "flex", alignItems: "flex-start", marginBottom: 24 }}>
                 <Avatar
                   size={100}
-                  src={profile.avatarUrl || "/default-avatar.png"}
+                  src={`/images/avatar${profile.profileImage}.png`}
                   style={{ marginRight: 24 }}
                 />
                 <div style={{ flex: 1 }}>
@@ -250,8 +246,32 @@ const UserProfilePage: React.FC = () => {
                     </Tag>
                   </div>
                   <div style={{ marginTop: 12 }}>
-                    <Text>Member since: {new Date(profile.createdAt).toLocaleDateString()}</Text>
+                    <Text>Member since: {new Date(profile.creationDate).toLocaleDateString()}</Text>
                   </div>
+                  {id && localId &&Number(id) != Number(localId) && (
+                    <div style={{ marginTop: 12 }}>
+                      <Button 
+                        type="primary"
+                        onClick={() => sendFriendRequest(Number(id))}
+                        style={{ marginRight: 8 }}
+                      >
+                        Send Friend Request
+                      </Button>
+
+                    </div>
+                  )}
+                  {Number(id) == Number(localId) && (
+                    <div style={{ marginTop: 12 }}>
+                    <Button 
+                      type="primary"
+                      onClick={() => router.push(`/users/${id}/edit`)}
+                      style={{ marginRight: 8 }}
+                    >
+                      Edit Profile
+                    </Button>
+
+                  </div>                    
+                  )}
                 </div>
               </div>
 
@@ -344,7 +364,7 @@ const UserProfilePage: React.FC = () => {
                         <Text strong>Member Since:</Text>
                       </Col>
                       <Col span={16}>
-                        <Text>{new Date(profile.createdAt).toLocaleDateString()}</Text>
+                        <Text>{new Date(profile.creationDate).toLocaleDateString()}</Text>
                       </Col>
                     </Row>
                   </div>

@@ -33,7 +33,7 @@ const Register: React.FC = () => {
         ...registrationData,
         birthday,
       };
-
+      payload.profileImage = 0; // Default profile image number
       // TODO: Add registration endpoint to apiClient
       await apiClient.register(payload);
       
