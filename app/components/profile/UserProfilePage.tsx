@@ -196,7 +196,7 @@ const UserProfilePage: React.FC = () => {
   ];
 
   const goBack = () => {
-    router.push("/users");
+    router.back();
   };
 
   return (
