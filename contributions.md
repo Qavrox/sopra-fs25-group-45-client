@@ -108,6 +108,8 @@ reason).
 | **[@TauSigma5]**   | 08.05    | [Link to PR 2](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/77) | Start on external API stuff with Google Generative Language API | 70% done with external API stuff for BE |
 | **[@lydia-milena]**   | 08.05    | [Link to PR 1](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/b1271ba4c92ded9e96928be0ba8708240b8ccfff) | Implemented friend request frontend | User Story 7 |
 | **[@lydia-milena]**   | 08.05    | [Link to PR 2](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/b1271ba4c92ded9e96928be0ba8708240b8ccfff) | Implemented friends display and fixed up the user profile display and edit front end | User Story 7 and general functionality |
+| **[@unscttp]**   | 05.05    | [Link to PR 1](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/1c11cfa8ef12641cb2cb85dad684f2620a2b53c5) | Implemented myprofile page | basic app function |
+| **[@unscttp]**   | 07.05    | [Link to PR 2](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/cee27e96dea613f6b601bcd4ea1b3c7ee625eed4) | Implemented List of all users | basic app function |
 ---
 
 ## Contributions Week 6 - [Begin Date] to [End Date]
