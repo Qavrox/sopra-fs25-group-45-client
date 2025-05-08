@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { UserOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '../api/apiClient';
 import type { Game } from '@/types/game';
@@ -15,8 +16,40 @@ export default function Lobby() {
       .catch(console.error);
   }, []);
 
+  const navigateToProfile = () => {
+    const userId = apiClient.getUserId();
+    if (userId) {
+      router.push(`/users/${userId}`);
+    } else {
+      router.push('/login');
+    }
+  };
+
   return (
     <main className="lobby-container">
+      {/* profile button */}
+      <button
+        onClick={navigateToProfile}
+        className="profile-button"
+        style={{
+          position: 'absolute',
+          top: '20px',
+          right: '20px',
+          backgroundColor: '#1890ff',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          padding: '8px 16px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          cursor: 'pointer',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+        }}
+      >
+        <UserOutlined /> Profile
+      </button>
+      
       <h1 className="lobby-title">Game Tables</h1>
       <div className="game-cards-container">
         {rooms.map((room) => (

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { apiClient } from '@/api/apiClient';
 import { Game, GameActionRequest, Player, PlayerAction, GameStatus, GameResults } from '@/types/game';
 import { useRouter } from 'next/navigation';
+import TutorialCard from '../RulesAndTutorials/TutorialCard.tsx';
 
 interface PokerTableProps {
   gameId: number;
@@ -138,6 +139,9 @@ export default function PokerTable({ gameId }: PokerTableProps) {
 
   return (
     <div>
+      {/* Tutorial Card Component */}
+      <TutorialCard />
+      
       {/* Game Results Display */}
       {isGameOver && gameResults && (
         <div className="game-results" style={{
