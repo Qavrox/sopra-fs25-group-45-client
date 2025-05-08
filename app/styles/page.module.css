@@ -163,3 +163,16 @@ a.secondary {
     filter: invert();
   }
 }
+
+.profile-button:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s;
+}
+
+@media (max-width: 768px) {
+  .profile-button {
+    position: static !important;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+}

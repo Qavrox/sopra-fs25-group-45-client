@@ -5,6 +5,7 @@ import { apiClient } from '@/api/apiClient';
 import { Game, GameActionRequest, Player, PlayerAction, GameStatus, GameResults } from '@/types/game';
 import { useRouter } from 'next/navigation';
 import styles from './GameTable.module.css';
+import TutorialCard from '../RulesAndTutorials/TutorialCard.tsx';
 
 interface PokerTableProps {
   gameId: number;
@@ -188,6 +189,9 @@ export default function PokerTable({ gameId }: PokerTableProps) {
 
   return (
     <div className={styles.pokerTableContainer}>
+    <div>
+      {/* Tutorial Card Component */}
+      <TutorialCard />
       {/* Game Results Display */}
       {isGameOver && gameResults && (
         <div className={styles.gameResults}>
