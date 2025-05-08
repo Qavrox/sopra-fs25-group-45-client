@@ -11,7 +11,7 @@ interface PokerTableProps {
   gameId: number;
 }
 
-export default function PokerTable({ gameId }: PokerTableProps) {
+export default function GameTable({ gameId }: PokerTableProps) {
   const [game, setGame] = useState<Game | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
