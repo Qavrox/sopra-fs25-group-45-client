@@ -1,7 +1,6 @@
 'use client';
 
 import { useApi } from '@/hooks/useApi';
-import useLocalStorage from '@/hooks/useLocalStorage';
 import { UserSummary } from '@/types/user';
 import React, { useEffect, useState } from 'react';
 import { Card, Table, Tag, Button, Typography, Alert } from 'antd';
@@ -14,15 +13,17 @@ const FriendsPage: React.FC = () => {
   const [friends, setFriends] = useState<UserSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { value: id } = useLocalStorage<string>('id', '');
-
-
 
   useEffect(() => {
     const fetchFriends = async () => {
       try {
         setLoading(true);
-        // const friends = await apiClient.getFriends();
+        if (!apiClient.isAuthenticated()) {
+          setError('Please log in to view friends');
+          setLoading(false);
+          return;
+        }
+        const friends = await apiClient.getFriends();
         setFriends(friends);
         setLoading(false);
       } catch (error) {
@@ -32,50 +33,10 @@ const FriendsPage: React.FC = () => {
       }
     };
     fetchFriends();
-  }, [id]);
+  }, [apiClient]);
 
-    // Mock data for testing
-    const mockFriends: UserSummary[] = [
-        {
-          id: 1,
-          username: "pokerMaster",
-          online: true,
-          creationDate: "2024-03-20T10:30:00Z",
-          birthday: "1990-05-15"
-        },
-        {
-          id: 2,
-          username: "cardShark",
-          online: false,
-          creationDate: "2024-03-21T15:45:00Z",
-          birthday: "1988-11-22"
-        },
-        {
-          id: 3,
-          username: "aceOfSpades",
-          online: true,
-          creationDate: "2024-03-22T09:15:00Z",
-          birthday: "1995-03-08"
-        },
-        {
-          id: 4,
-          username: "royalFlush",
-          online: true,
-          creationDate: "2024-03-23T14:20:00Z",
-          birthday: "1992-07-30"
-        },
-        {
-          id: 5,
-          username: "pokerPro",
-          online: false,
-          creationDate: "2024-03-24T11:10:00Z",
-          birthday: "1985-12-03"
-        }
-      ];
-
-      useEffect(() => {
-        setFriends(mockFriends);
-      }, []);
+  console.log(friends);
+  
 
   const columns = [
     {

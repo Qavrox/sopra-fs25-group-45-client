@@ -34,7 +34,7 @@ const FriendRequestsPage: React.FC = () => {
   
   const handleAccept = async (id: number) => {
     try {
-      //await apiClient.acceptFriendRequest(id);
+      await apiClient.acceptFriendRequest(id);
       setFriendRequests(prev => prev.filter(request => request.id !== id));
     } catch (error) {
       console.error('Error accepting friend request:', error);
@@ -43,7 +43,7 @@ const FriendRequestsPage: React.FC = () => {
 
   const handleReject = async (id: number) => {
     try {
-      //await apiClient.rejectFriendRequest(id);
+      await apiClient.rejectFriendRequest(id);
       setFriendRequests(prev => prev.filter(request => request.id !== id));
     } catch (error) {
       console.error('Error rejecting friend request:', error);
