@@ -5,7 +5,7 @@ import { apiClient } from '@/api/apiClient';
 import { Game, GameActionRequest, Player, PlayerAction, GameStatus, GameResults } from '@/types/game';
 import { useRouter } from 'next/navigation';
 import styles from './GameTable.module.css';
-import TutorialCard from '../RulesAndTutorials/TutorialCard.tsx';
+import TutorialCard from '../RulesAndTutorials/TutorialCard';
 
 interface PokerTableProps {
   gameId: number;
