@@ -147,6 +147,10 @@ export class ApiClient {
     return this.apiService.get<UserSummary[]>("/friends");
   }
 
+  getFriendRequests(): Promise<UserSummary[]> {
+    return this.apiService.get<UserSummary[]>("/friends/requests");
+  }
+
   sendFriendRequest(friendId: number): Promise<MessageResponse> {
     return this.apiService.post<MessageResponse>(
       `/friends/${friendId}/request`,
