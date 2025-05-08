@@ -189,7 +189,6 @@ export default function PokerTable({ gameId }: PokerTableProps) {
 
   return (
     <div className={styles.pokerTableContainer}>
-    <div>
       {/* Tutorial Card Component */}
       <TutorialCard />
       {/* Game Results Display */}
