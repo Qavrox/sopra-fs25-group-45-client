@@ -26,7 +26,7 @@ const UsersListPage: React.FC = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const data = await apiClient.getUsers(); // ✅ the correct method
+        const data = await apiClient.getUsers(); 
         setUsers(data);
       } catch (err) {
         console.error('Failed to fetch users:', err);
