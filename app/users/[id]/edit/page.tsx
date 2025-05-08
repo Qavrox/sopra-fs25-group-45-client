@@ -46,7 +46,8 @@ const EditProfilePage: React.FC = () => {
     try {
       console.log('Submitting values:', values);
       await api.updateUserProfile(Number(id), values);
-      console.log('Profile updated successfully:');
+      console.log('Profile updated successfully');
+      router.back();
     } catch (error) {
       console.error('Error updating profile:', error);
     }
