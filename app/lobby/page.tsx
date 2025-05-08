@@ -27,28 +27,69 @@ export default function Lobby() {
 
   return (
     <main className="lobby-container">
-      {/* profile button */}
-      <button
-        onClick={navigateToProfile}
-        className="profile-button"
-        style={{
-          position: 'absolute',
-          top: '20px',
-          right: '20px',
-          backgroundColor: '#1890ff',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          padding: '8px 16px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          cursor: 'pointer',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
-        }}
-      >
-        <UserOutlined /> Profile
-      </button>
+      {/* profile, friends, and friend requests buttons */}
+      <div style={{
+        position: 'absolute',
+        top: '20px',
+        right: '20px',
+        display: 'flex',
+        gap: '8px'
+      }}>
+        <button
+          onClick={navigateToProfile}
+          className="profile-button"
+          style={{
+            backgroundColor: '#1890ff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            padding: '8px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            cursor: 'pointer',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+          }}
+        >
+          <UserOutlined /> Profile
+        </button>
+        <button
+          onClick={() => router.push('/lobby/friends')}
+          className="profile-button"
+          style={{
+            backgroundColor: '#1890ff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            padding: '8px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            cursor: 'pointer',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+          }}
+        >
+          <UserOutlined /> Friends
+        </button>
+        <button
+          onClick={() => router.push('/lobby/friendrequests')}
+          className="profile-button"
+          style={{
+            backgroundColor: '#1890ff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            padding: '8px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            cursor: 'pointer',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+          }}
+        >
+          <UserOutlined /> Friend Requests
+        </button>
+      </div>
       
       <h1 className="lobby-title">Game Tables</h1>
       <div className="game-cards-container">

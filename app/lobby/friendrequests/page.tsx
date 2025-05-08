@@ -1,7 +1,6 @@
 'use client';
 
 import { useApi } from '@/hooks/useApi';
-import useLocalStorage from '@/hooks/useLocalStorage';
 import { UserSummary } from '@/types/user';
 import React, { useEffect, useState } from 'react';
 import { Card, Table, Tag, Button, Typography, Alert } from 'antd';
@@ -11,7 +10,6 @@ const FriendRequestsPage: React.FC = () => {
   const apiClient = useApi();
   const [friendRequests, setFriendRequests] = useState<UserSummary[]>([]);
   const [loading, setLoading] = useState(true);
-  const { value: token } = useLocalStorage<string>('token', '');
   const [error, setError] = useState<string | null>(null);
 
 
@@ -30,7 +28,7 @@ const FriendRequestsPage: React.FC = () => {
     }
 
     fetchFriendRequests();
-  }, [token]);
+  }, [apiClient]);
   
   const handleAccept = async (id: number) => {
     try {
@@ -50,56 +48,11 @@ const FriendRequestsPage: React.FC = () => {
     }
   };
 
-  const mockRequests: UserSummary[] = [
-    {
-      id: 1,
-      username: "pokerMaster",
-      online: true,
-      creationDate: "2024-03-20T10:30:00Z",
-      birthday: "1990-05-15"
-    },
-    {
-      id: 2,
-      username: "cardShark",
-      online: false,
-      creationDate: "2024-03-21T15:45:00Z",
-      birthday: "1988-11-22"
-    },
-    {
-      id: 3,
-      username: "aceOfSpades",
-      online: true,
-      creationDate: "2024-03-22T09:15:00Z",
-      birthday: "1995-03-08"
-    }
-  ];
-
-  useEffect(() => {
-    // For testing, directly set the mock data
-    setFriendRequests(mockRequests);
-    setLoading(false);
-  }, []); // Empty dependency array means this runs once on mount
   const columns = [
     {
       title: 'Username',
       dataIndex: 'username',
       key: 'username',
-    },
-    {
-      title: 'Status',
-      dataIndex: 'online',
-      key: 'online',
-      render: (online: boolean) => (
-        <Tag color={online ? 'success' : 'default'}>
-          {online ? 'Online' : 'Offline'}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Requested',
-      dataIndex: 'creationDate',
-      key: 'creationDate',
-      render: (date: string) => new Date(date).toLocaleDateString(),
     },
     {
       title: 'Actions',
