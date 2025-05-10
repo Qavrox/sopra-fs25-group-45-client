@@ -19,6 +19,8 @@ export default function GameTable({ gameId }: PokerTableProps) {
   const [betAmount, setBetAmount] = useState<number>(0);
   const [gameResults, setGameResults] = useState<GameResults | null>(null);
   const [winProbability, setWinProbability] = useState<number | null>(null);
+  const [isLoadingAdvice, setIsLoadingAdvice] = useState(false);
+  const [pokerAdvice, setPokerAdvice] = useState<string | null>(null);
   const router = useRouter();
   const hasJoined = useRef(false);
 
@@ -135,6 +137,24 @@ export default function GameTable({ gameId }: PokerTableProps) {
     // This is a dummy function for now
     console.log('New game requested');
   };
+
+  const handleGetAdvice = async () => {
+    if (!game) return;
+    
+    setIsLoadingAdvice(true);
+    setPokerAdvice(null);
+    
+    try {
+      const response = await apiClient.getPokerAdvice(gameId);
+      setPokerAdvice(response.advice);
+      setError(null);
+    } catch (err) {
+      setError('Failed to get poker advice');
+      console.error(err);
+    } finally {
+      setIsLoadingAdvice(false);
+    }
+  };
   
   // Helper function to render a card with proper suit and value display
   const renderCard = (card: string) => {
@@ -225,6 +245,29 @@ export default function GameTable({ gameId }: PokerTableProps) {
         {/* Tutorial Card Component */}
         <TutorialCard />
         
+        {/* Help Button and Advice Display */}
+        <div className={styles.helpContainer}>
+          <button 
+            onClick={handleGetAdvice}
+            className={styles.helpButton}
+            disabled={isLoadingAdvice}
+          >
+            <span className={styles.helpIcon}>?</span>
+            <span className={styles.helpText}>Need help? Get help from Gemini</span>
+          </button>
+          {isLoadingAdvice && (
+            <div className={styles.adviceLoading}>
+              <div className={styles.loadingSpinner}></div>
+              <span>Getting advice...</span>
+            </div>
+          )}
+          {pokerAdvice && (
+            <div className={styles.adviceDisplay}>
+              {pokerAdvice}
+            </div>
+          )}
+        </div>
+
         {/* Game Results Display */}
         {isGameOver && gameResults && (
           <div className={styles.gameResults}>
