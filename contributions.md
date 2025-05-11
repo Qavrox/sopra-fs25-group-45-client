@@ -110,6 +110,9 @@ reason).
 | **[@lydia-milena]**   | 08.05    | [Link to PR 2](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/b1271ba4c92ded9e96928be0ba8708240b8ccfff) | Implemented friends display and fixed up the user profile display and edit front end | User Story 7 and general functionality |
 | **[@unscttp]**   | 05.05    | [Link to PR 1](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/1c11cfa8ef12641cb2cb85dad684f2620a2b53c5) | Implemented myprofile page | basic app function |
 | **[@unscttp]**   | 07.05    | [Link to PR 2](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/cee27e96dea613f6b601bcd4ea1b3c7ee625eed4) | Implemented List of all users | basic app function |
+| **[@IsSaudade]**   | 11.05    | [Link to commit 1](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/37/commits/af67e983bfc25135938cf5e9b9757bf75cc77654) | Beautify homepage and tutorial page | 
+For better user experience  |
+| **[@IsSaudade]**   | 11.05     | [Link to commit 2](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/37/commits/af67e983bfc25135938cf5e9b9757bf75cc77654) | Beautify lobby page and gametable | For better user experiencee |
 ---
 
 ## Contributions Week 6 - [Begin Date] to [End Date]
