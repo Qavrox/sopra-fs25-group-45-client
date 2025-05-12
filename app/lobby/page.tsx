@@ -4,7 +4,7 @@ import { UserOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '../api/apiClient';
 import type { Game } from '@/types/game';
-import styles from './page.module.css'; 
+import styles from './page.module.css';
 
 export default function Lobby() {
     const [rooms, setRooms] = useState<Game[]>([]);
@@ -24,9 +24,17 @@ export default function Lobby() {
 
     return (
         <main className={styles.lobbyWrapper}>
-            <button className={styles.profileButton} onClick={navigateToProfile}>
-                <UserOutlined /> Profile
-            </button>
+            <div className={styles.topRightButtons}>
+                <button className={styles.profileButton} onClick={navigateToProfile}>
+                    <UserOutlined /> Profile
+                </button>
+                <button className={styles.profileButton} onClick={() => router.push('/lobby/friends')}>
+                    <UserOutlined /> Friends
+                </button>
+                <button className={styles.profileButton} onClick={() => router.push('/lobby/friendrequests')}>
+                    <UserOutlined /> Friend Requests
+                </button>
+            </div>
 
             <h1 className={styles.title}>Game Tables</h1>
 
@@ -58,7 +66,6 @@ export default function Lobby() {
                 <button onClick={() => router.push('/lobby/rooms')} className={styles.browseButton}>
                     Browse All Tables →
                 </button>
-                <br/>
                 <button onClick={() => router.push('/users/list')} className={styles.browseButton}>
                     See List of All Users →
                 </button>
