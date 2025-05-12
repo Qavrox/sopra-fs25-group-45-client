@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Tabs, Card, Typography, List, Divider, Row, Col } from 'antd';
 import { BookOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import styles from './RulesAndTutorials.module.css';
+import { useRouter } from 'next/navigation';
 
 
 const { Title, Paragraph, Text, Link } = Typography;
@@ -42,7 +43,7 @@ const rulesData = {
 
 export default function RulesAndTutorials() {
   const [activeTab, setActiveTab] = useState('rules');
-
+  const router = useRouter();
   return (
       <div className={styles.pageWrapper}>
         <Title level={2} style={{textAlign: 'center', marginBottom: '32px'}}>
@@ -128,6 +129,11 @@ export default function RulesAndTutorials() {
               </Card>
             </TabPane>
           </Tabs>
+        </div>
+        <div className={styles.returnButtonWrapper}>
+          <button className={styles.returnButton} onClick={() => router.push('/')}>
+            Back to homepage
+          </button>
         </div>
       </div>
   );

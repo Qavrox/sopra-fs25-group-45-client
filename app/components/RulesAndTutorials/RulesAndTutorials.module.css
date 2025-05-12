@@ -57,3 +57,24 @@
     color: #fff;
     margin-bottom: 16px;
 }
+
+.returnButtonWrapper {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.returnButton {
+    background-color: transparent;
+    border: 2px solid #fff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.returnButton:hover {
+    background-color: #fff;
+    color: #003300;
+}

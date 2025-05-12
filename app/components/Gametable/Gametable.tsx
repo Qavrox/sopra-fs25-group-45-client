@@ -287,6 +287,9 @@ export default function GameTable({ gameId }: PokerTableProps) {
             >
               New Game
             </button>
+            <button className={styles.returnButton} onClick={() => router.push('/lobby')}>
+            Back to lobby
+            </button>
           </div>
         )}
         
