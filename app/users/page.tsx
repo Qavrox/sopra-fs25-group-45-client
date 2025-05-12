@@ -193,7 +193,7 @@ const UserProfilePage: React.FC = () => {
   ];
 
   const goBack = () => {
-    router.push("/lobby");
+    router.back();
   };
 
   return (

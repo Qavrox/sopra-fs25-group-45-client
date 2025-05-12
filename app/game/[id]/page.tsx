@@ -1,6 +1,6 @@
 'use client';
 import { useParams } from 'next/navigation';
-import PokerTable from "@/components/Gametable/Gametable"
+import GameTable from "@/components/Gametable/Gametable"
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/api/apiClient';
@@ -22,7 +22,7 @@ export default function GamePage() {
 
   return (
     <main className="game-table-container">
-      <PokerTable gameId={Number(id)} />
+      <GameTable gameId={Number(id)} />
     </main>
   );
 }

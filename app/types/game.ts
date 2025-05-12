@@ -57,7 +57,7 @@ export interface Game {
   callAmount: number;
   smallBlindIndex: number;
   numberOfPlayers: number;
-  communityCards: number[];
+  communityCards: string[];
   players: Player[];
   currentPlayerId: number;
 }
