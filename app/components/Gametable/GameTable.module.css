@@ -77,16 +77,22 @@
 /* Poker Table */
 .pokerTable {
   position: relative;
-  width: 800px;
-  height: 500px;
-  border-radius: 200px;
-  background: #0c7a41;
-  border: 20px solid #603311;
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 1000px;
+  height: 600px;
+  background-image: url("/images/background1.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  border-radius: 20px;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.4), inset 0 0 30px rgba(0, 0, 0, 0.3);
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 }
+
 
 /* Loading and Error States */
 .loadingContainer, .errorContainer {

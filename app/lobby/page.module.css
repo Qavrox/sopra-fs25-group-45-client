@@ -1,0 +1,120 @@
+.lobbyWrapper {
+    min-height: 100vh;
+    background-image: url("/images/background1.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 40px 24px;
+    position: relative;
+    backdrop-filter: brightness(0.85);
+}
+
+.profileButton {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #1890ff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: background 0.2s;
+}
+.profileButton:hover {
+    background-color: #40a9ff;
+}
+
+.title {
+    text-align: center;
+    font-size: 48px;
+    color: #fff;
+    font-weight: bold;
+    margin-bottom: 48px;
+    text-shadow: 2px 2px 6px #000;
+}
+
+.cardsWrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 32px;
+    padding: 0 20px;
+}
+
+.roomCard {
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 20px;
+    width: 240px;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.roomCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.blindInfo {
+    font-size: 14px;
+    color: #ccc;
+    margin-top: 4px;
+}
+
+.createWrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 32px;
+}
+
+.createCard {
+    border: 2px dashed #aaa;
+    border-radius: 12px;
+    width: 240px;
+    padding: 24px;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #ddd;
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.createCard:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+.createIcon {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.subtext {
+    font-size: 13px;
+    opacity: 0.7;
+    margin: 2px 0;
+}
+
+.browseAll {
+    margin-top: 40px;
+    text-align: center;
+}
+.browseButton {
+    background: none;
+    border: none;
+    color: #ddd;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+.browseButton:hover {
+    color: #fff;
+}
