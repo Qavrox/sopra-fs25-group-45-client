@@ -1,7 +1,7 @@
 // apiClient.ts
 import { ApiService } from "./apiService";
 import type { LoginRequest, LoginResponse } from "@/types/auth";
-import type { MessageResponse } from "@/types/message";
+import type { MessageResponse, PokerAdviceResponse } from "@/types/message";
 import type { UserProfile, UserProfileUpdate, UserSummary } from "@/types/user";
 import type {
   Game,
@@ -224,6 +224,10 @@ export class ApiClient {
     return this.apiService.get<ProbabilityResponse>(
       `/games/${gameId}/probability`,
     );
+  }
+
+  getPokerAdvice(gameId: number): Promise<PokerAdviceResponse> {
+    return this.apiService.get<PokerAdviceResponse>(`/games/${gameId}/advice`);
   }
 
   startBetting(gameId: number): Promise<MessageResponse> {
