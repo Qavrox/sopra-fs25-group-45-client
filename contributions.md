@@ -66,7 +66,7 @@ reason).
 
 ---
 
-## Contributions Week 3 - [Begin Date] to [End Date]
+## Contributions Week 3 - [11.04] to [27.04]
 
 | **Student**        | **Date** | **Link to Commit** | **Description**                 | **Relevance**                       |
 | ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
@@ -83,7 +83,7 @@ reason).
 
 ---
 
-## Contributions Week 4 - [Begin Date] to [End Date]
+## Contributions Week 4 - [28.04] to [04.05]
 
 | **Student**        | **Date** | **Link to Commit** | **Description**                 | **Relevance**                       |
 | ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
@@ -96,7 +96,7 @@ reason).
 |                    | 04.05   | [Link to Commit 2](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/fc26d74abbbfd13b76aa6c0dff14d8efc543082f) | Beautify Browse Available Tables and enhance user experience  | Interface-beautification |
 ---
 
-## Contributions Week 5 - [Begin Date] to [End Date]
+## Contributions Week 5 - [05.05] to [11.05]
 
 | **Student**        | **Date** | **Link to Commit** | **Description**                 | **Relevance**                       |
 | ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
