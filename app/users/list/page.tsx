@@ -26,8 +26,18 @@ const UsersListPage: React.FC = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const data = await apiClient.getUsers(); 
-        setUsers(data);
+        const data = await apiClient.getUsers();
+
+        // 强制转换为 User[]，并补全字段
+        const enrichedUsers: User[] = data.map((user: any) => ({
+          id: user.id,
+          username: user.username,
+          online: user.online,
+          name: user.name ?? 'Unknown',
+          experienceLevel: user.experienceLevel ?? 'Beginner',
+        }));
+
+        setUsers(enrichedUsers);
       } catch (err) {
         console.error('Failed to fetch users:', err);
         setError('Failed to load users.');
@@ -65,48 +75,48 @@ const UsersListPage: React.FC = () => {
       dataIndex: 'online',
       key: 'online',
       render: (online: boolean) => (
-        <Tag color={online ? 'green' : 'default'}>
-          {online ? 'Online' : 'Offline'}
-        </Tag>
+          <Tag color={online ? 'green' : 'default'}>
+            {online ? 'Online' : 'Offline'}
+          </Tag>
       ),
     },
     {
       title: 'Action',
       key: 'action',
       render: (_: any, record: User) => (
-        <Button
-          type="link"
-          onClick={() => router.push(`/users/${record.id}`)}
-        >
-          View Profile
-        </Button>
+          <Button
+              type="link"
+              onClick={() => router.push(`/users/${record.id}`)}
+          >
+            View Profile
+          </Button>
       ),
     },
   ];
 
   return (
-    <div className="card-container" style={{ padding: '20px' }}>
-      <Card
-        title={
-          <Title level={3}>
-            <TeamOutlined style={{ marginRight: 8 }} />
-            All Users
-          </Title>
-        }
-      >
-        {error ? (
-          <Alert message="Error" description={error} type="error" showIcon />
-        ) : (
-          <Table
-            dataSource={users}
-            columns={columns}
-            rowKey="id"
-            loading={loading}
-            pagination={{ pageSize: 10 }}
-          />
-        )}
-      </Card>
-    </div>
+      <div className="card-container" style={{ padding: '20px' }}>
+        <Card
+            title={
+              <Title level={3}>
+                <TeamOutlined style={{ marginRight: 8 }} />
+                All Users
+              </Title>
+            }
+        >
+          {error ? (
+              <Alert message="Error" description={error} type="error" showIcon />
+          ) : (
+              <Table
+                  dataSource={users}
+                  columns={columns}
+                  rowKey="id"
+                  loading={loading}
+                  pagination={{ pageSize: 10 }}
+              />
+          )}
+        </Card>
+      </div>
   );
 };
 
