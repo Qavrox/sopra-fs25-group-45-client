@@ -4,7 +4,7 @@ import { UserOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '../api/apiClient';
 import type { Game } from '@/types/game';
-import styles from './page.module.css'; // 使用模块化样式
+import styles from './page.module.css'; 
 
 export default function Lobby() {
     const [rooms, setRooms] = useState<Game[]>([]);
@@ -25,12 +25,11 @@ export default function Lobby() {
     return (
         <main className={styles.lobbyWrapper}>
             <button className={styles.profileButton} onClick={navigateToProfile}>
-                <UserOutlined/> Profile
+                <UserOutlined /> Profile
             </button>
 
             <h1 className={styles.title}>Game Tables</h1>
 
-            {/* 第一行：Create Table */}
             <div className={styles.createWrapper}>
                 <div className={styles.createCard} onClick={() => router.push('/lobby/create')}>
                     <div className={styles.createIcon}>＋</div>
@@ -40,7 +39,6 @@ export default function Lobby() {
                 </div>
             </div>
 
-            {/* 第二行：已有房间 */}
             <div className={styles.cardsWrapper}>
                 {rooms.map((room) => (
                     <div
@@ -56,10 +54,13 @@ export default function Lobby() {
                 ))}
             </div>
 
-
             <div className={styles.browseAll}>
                 <button onClick={() => router.push('/lobby/rooms')} className={styles.browseButton}>
                     Browse All Tables →
+                </button>
+                <br/>
+                <button onClick={() => router.push('/users/list')} className={styles.browseButton}>
+                    See List of All Users →
                 </button>
             </div>
         </main>
