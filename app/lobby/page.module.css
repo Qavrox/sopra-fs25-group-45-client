@@ -9,10 +9,18 @@
     backdrop-filter: brightness(0.85);
 }
 
-.profileButton {
+.topRightButtons {
     position: absolute;
     top: 20px;
     right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+
+.profileButton {
     background-color: #1890ff;
     color: white;
     border: none;
@@ -25,6 +33,9 @@
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     transition: background 0.2s;
+    white-space: nowrap;
+    min-width: 130px;
+    justify-content: center;
 }
 .profileButton:hover {
     background-color: #40a9ff;
@@ -105,7 +116,13 @@
 .browseAll {
     margin-top: 40px;
     text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
 }
+
 .browseButton {
     background: none;
     border: none;
