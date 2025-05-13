@@ -2,7 +2,7 @@
 import { ApiService } from "./apiService";
 import type { LoginRequest, LoginResponse } from "@/types/auth";
 import type { MessageResponse, PokerAdviceResponse } from "@/types/message";
-import type { UserProfile, UserProfileUpdate, UserSummary } from "@/types/user";
+import type { GameHistoryItem, LeaderboardItem, StatisticsData, UserProfile, UserProfileUpdate, UserSummary } from "@/types/user";
 import type {
   Game,
   GameActionRequest,
@@ -246,6 +246,19 @@ export class ApiClient {
       `/users/${userId}/preferences`,
       payload,
     );
+  }
+
+  // --- Game History and Statistics Endpoints ---
+  getUserGameHistory(userId: number): Promise<GameHistoryItem[]> {
+    return this.apiService.get<GameHistoryItem[]>(`/users/${userId}/history`);
+  }
+
+  getUserStatistics(userId: number): Promise<StatisticsData> {
+    return this.apiService.get<StatisticsData>(`/users/${userId}/statistics`);
+  }
+
+  getLeaderboard(): Promise<LeaderboardItem[]> {
+    return this.apiService.get<LeaderboardItem[]>(`/leaderboard`);
   }
 }
 // Export a singleton instance for convenience.
