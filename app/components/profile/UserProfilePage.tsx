@@ -80,6 +80,8 @@ const UserProfilePage: React.FC = () => {
   const [loadingHistory, setLoadingHistory] = useState<boolean>(true);
   const [loadingStats, setLoadingStats] = useState<boolean>(true);
   const [loadingLeaderboard, setLoadingLeaderboard] = useState<boolean>(true);
+  // Add state for leaderboard type
+  const [leaderboardType, setLeaderboardType] = useState<'winnings' | 'winrate'>('winnings');
 
   const { value: localId } = useLocalStorage<string>("user_id", "");
 
@@ -139,11 +141,11 @@ const UserProfilePage: React.FC = () => {
         console.error("Error fetching game history:", error);
         // Fallback to mock data if API fails
         setGameHistory([
-          { id: 1, date: "2025-03-25", result: "Win", winnings: 120 },
-          { id: 2, date: "2025-03-23", result: "Loss", winnings: -50 },
-          { id: 3, date: "2025-03-20", result: "Win", winnings: 75 },
-          { id: 4, date: "2025-03-18", result: "Loss", winnings: -30 },
-          { id: 5, date: "2025-03-15", result: "Win", winnings: 200 },
+          { id: 1, playedAt: "2025-03-25", result: "Win", winnings: 120 },
+          { id: 2, playedAt: "2025-03-23", result: "Loss", winnings: -50 },
+          { id: 3, playedAt: "2025-03-20", result: "Win", winnings: 75 },
+          { id: 4, playedAt: "2025-03-18", result: "Loss", winnings: -30 },
+          { id: 5, playedAt: "2025-03-15", result: "Win", winnings: 200 },
         ]);
       } finally {
         setLoadingHistory(false);
@@ -185,18 +187,22 @@ const UserProfilePage: React.FC = () => {
     const fetchLeaderboard = async () => {
       setLoadingLeaderboard(true);
       try {
-        // This endpoint needs to be implemented in the API
-        const response = await apiClient.getLeaderboard();
+        let response;
+        if (leaderboardType === 'winnings') {
+          response = await apiClient.getLeaderboardByWinnings();
+        } else {
+          response = await apiClient.getLeaderboardByWinRate();
+        }
         setLeaderboard(response);
       } catch (error) {
         console.error("Error fetching leaderboard:", error);
         // Fallback to mock data if API fails
         setLeaderboard([
-          { id: 1, username: "PokerKing", name: "John Doe", totalWinnings: 1250, winRate: 65, gamesPlayed: 20, rank: 1 },
-          { id: 2, username: "CardShark", name: "Jane Smith", totalWinnings: 980, winRate: 58, gamesPlayed: 15, rank: 2 },
-          { id: 3, username: "AcePlayer", name: "Mike Johnson", totalWinnings: 820, winRate: 52, gamesPlayed: 18, rank: 3 },
-          { id: 4, username: "PokerPro", name: "Sarah Williams", totalWinnings: 750, winRate: 48, gamesPlayed: 22, rank: 4 },
-          { id: 5, username: "RoyalFlush", name: "David Brown", totalWinnings: 680, winRate: 45, gamesPlayed: 25, rank: 5 },
+          { id: 1, username: "poker_king", name: "Alex Smith", totalWinnings: 5000, winRate: 75, gamesPlayed: 20, rank: 1 },
+          { id: 2, username: "card_shark", name: "Emma Johnson", totalWinnings: 4200, winRate: 68, gamesPlayed: 25, rank: 2 },
+          { id: 3, username: "royal_flush", name: "Michael Brown", totalWinnings: 3800, winRate: 62, gamesPlayed: 18, rank: 3 },
+          { id: 4, username: "all_in", name: "Sophia Davis", totalWinnings: 3500, winRate: 60, gamesPlayed: 30, rank: 4 },
+          { id: 5, username: "bluff_master", name: "William Wilson", totalWinnings: 3200, winRate: 55, gamesPlayed: 22, rank: 5 },
         ]);
       } finally {
         setLoadingLeaderboard(false);
@@ -204,7 +210,7 @@ const UserProfilePage: React.FC = () => {
     };
 
     fetchLeaderboard();
-  }, [apiClient]);
+  }, [leaderboardType, apiClient]);
 
   // Helper function to get color based on experience level
   const getLevelColor = (level: string) => {
@@ -224,22 +230,14 @@ const UserProfilePage: React.FC = () => {
   const historyColumns = [
     {
       title: "Game ID",
-      dataIndex: "gameId",
-      key: "gameId",
+      dataIndex: "id",
+      key: "id",
     },
     {
       title: "Date",
       dataIndex: "playedAt",
       key: "playedAt",
-      render: (text: string) => {
-        try {
-          const date = new Date(text);
-          return isNaN(date.getTime()) ? "Unknown Date" : date.toLocaleDateString();
-        } catch (error) {
-          console.error("Error parsing date:", text, error);
-          return "Unknown Date";
-        }
-      },
+      render: (text: string) => new Date(text).toLocaleDateString(),
     },
     {
       title: "Result",
@@ -294,70 +292,48 @@ const UserProfilePage: React.FC = () => {
   ];
 
   // Leaderboard columns
-  const leaderboardColumns: ColumnsType<LeaderboardItem> = [
+  const leaderboardColumns = [
     {
       title: "Rank",
       dataIndex: "rank",
       key: "rank",
       render: (rank: number) => (
-        <span style={{ fontWeight: 'bold' }}>#{rank}</span>
+        <span style={{ fontWeight: "bold" }}>{rank}</span>
       ),
     },
     {
       title: "Player",
       dataIndex: "username",
       key: "username",
-      render: (username: string, record: LeaderboardItem) => (
-        <div>
-          <span style={{ fontWeight: 'bold' }}>{record.name}</span>
-          <br />
-          <Text type="secondary">@{username}</Text>
-        </div>
-      ),
     },
     {
       title: "Total Winnings",
       dataIndex: "totalWinnings",
       key: "totalWinnings",
-      render: (value: number) => (
-        <span style={{ color: value >= 0 ? "green" : "red", fontWeight: 'bold' }}>
-          ${value}
-        </span>
-      ),
-      sorter: (a: LeaderboardItem, b: LeaderboardItem) => a.totalWinnings - b.totalWinnings,
-      defaultSortOrder: 'descend',
+      render: (value: number) => `$${value}`,
     },
     {
       title: "Win Rate",
       dataIndex: "winRate",
       key: "winRate",
       render: (value: number) => `${value}%`,
-      sorter: (a: LeaderboardItem, b: LeaderboardItem) => a.winRate - b.winRate,
     },
     {
       title: "Games",
       dataIndex: "gamesPlayed",
       key: "gamesPlayed",
-      sorter: (a: LeaderboardItem, b: LeaderboardItem) => a.gamesPlayed - b.gamesPlayed,
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_: any, record: LeaderboardItem) => (
-        <Button
-          type="primary"
-          size="small"
-          onClick={() => router.push(`/users/${record.id}`)}
-        >
-          View Profile
-        </Button>
-      ),
     },
   ];
 
   const goBack = () => {
     router.back();
   };
+
+  // Check if the current user is viewing their own profile
+  const isOwnProfile = localId && id && Number(localId) === Number(id);
+
+  // Check if the viewed user is already a friend
+  const isFriend = friends.some((friend: any) => friend.id === Number(id));
 
   return (
     <div className="card-container">
@@ -389,46 +365,46 @@ const UserProfilePage: React.FC = () => {
               <div style={{ display: "flex", alignItems: "flex-start", marginBottom: 24 }}>
                 <Avatar
                   size={100}
-                  src={`/images/avatar${profile.profileImage}.png`}
+                  src={`/images/avatar${profile.profileImage || 0}.png`}
                   style={{ marginRight: 24 }}
                 />
                 <div style={{ flex: 1 }}>
                   <Title level={2} style={{ margin: 0 }}>
-                    {profile.name}
+                    {profile.name || 'Anonymous'}
                   </Title>
                   <Text type="secondary" style={{ fontSize: 16 }}>@{profile.username}</Text>
                   <div style={{ marginTop: 12 }}>
-                    <Tag color={getLevelColor(profile.experienceLevel)} style={{ fontSize: 14, padding: "4px 8px" }}>
-                      {profile.experienceLevel}
-                    </Tag>
+                    {profile.experienceLevel && (
+                      <Tag color={getLevelColor(profile.experienceLevel)} style={{ fontSize: 14, padding: "4px 8px" }}>
+                        {profile.experienceLevel}
+                      </Tag>
+                    )}
                     <Tag color={profile.online ? "success" : "default"} style={{ fontSize: 14, padding: "4px 8px" }}>
                       {profile.online ? "Online" : "Offline"}
                     </Tag>
                   </div>
                   <div style={{ marginTop: 12 }}>
-                    <Text>Member since: {new Date(profile.creationDate).toLocaleDateString()}</Text>
+                    <Text>Member since: {profile.creationDate ? new Date(profile.creationDate).toLocaleDateString() : 'Unknown'}</Text>
                   </div>
-                  {id && localId && Number(id) != Number(localId) && (
-                    <div style={{ marginTop: 12 }}>
-                      <Button 
-                        type="primary"
-                        onClick={() => sendFriendRequest(Number(id))}
-                        style={{ marginRight: 8 }}
-                      >
-                        Send Friend Request
-                      </Button>
-                    </div>
+                  
+                  {!isOwnProfile && !isFriend && (
+                    <Button 
+                      type="primary"
+                      onClick={() => sendFriendRequest(Number(id))}
+                      style={{ marginTop: 12 }}
+                    >
+                      Add Friend
+                    </Button>
                   )}
-                  {Number(id) == Number(localId) && (
-                    <div style={{ marginTop: 12 }}>
-                      <Button 
-                        type="primary"
-                        onClick={() => router.push(`/users/${id}/edit`)}
-                        style={{ marginRight: 8 }}
-                      >
-                        Edit Profile
-                      </Button>
-                    </div>                    
+                  
+                  {isOwnProfile && (
+                    <Button 
+                      type="primary"
+                      onClick={() => router.push(`/users/${id}/edit`)}
+                      style={{ marginTop: 12 }}
+                    >
+                      Edit Profile
+                    </Button>
                   )}
                 </div>
               </div>
@@ -467,20 +443,6 @@ const UserProfilePage: React.FC = () => {
                     rowKey="id" 
                     pagination={{ pageSize: 5 }}
                     loading={loadingHistory}
-                    locale={{ emptyText: 'No game history available' }}
-                  />
-                </TabPane>
-                <TabPane 
-                  tab={<span><OrderedListOutlined /> Leaderboard</span>} 
-                  key="leaderboard"
-                >
-                  <Table 
-                    dataSource={leaderboard} 
-                    columns={leaderboardColumns} 
-                    rowKey="id" 
-                    pagination={{ pageSize: 5 }}
-                    loading={loadingLeaderboard}
-                    locale={{ emptyText: 'Leaderboard data not available' }}
                   />
                 </TabPane>
                 <TabPane 
@@ -500,7 +462,34 @@ const UserProfilePage: React.FC = () => {
                     columns={friendColumns} 
                     rowKey="id" 
                     pagination={{ pageSize: 5 }}
-                    locale={{ emptyText: 'No friends yet' }}
+                  />
+                </TabPane>
+                <TabPane 
+                  tab={<span><OrderedListOutlined /> Leaderboard</span>} 
+                  key="leaderboard"
+                >
+                  <div style={{ marginBottom: 16 }}>
+                    <Button.Group>
+                      <Button 
+                        type={leaderboardType === 'winnings' ? 'primary' : 'default'}
+                        onClick={() => setLeaderboardType('winnings')}
+                      >
+                        By Winnings
+                      </Button>
+                      <Button 
+                        type={leaderboardType === 'winrate' ? 'primary' : 'default'}
+                        onClick={() => setLeaderboardType('winrate')}
+                      >
+                        By Win Rate
+                      </Button>
+                    </Button.Group>
+                  </div>
+                  <Table 
+                    dataSource={leaderboard} 
+                    columns={leaderboardColumns} 
+                    rowKey="id" 
+                    pagination={{ pageSize: 5 }}
+                    loading={loadingLeaderboard}
                   />
                 </TabPane>
                 <TabPane 
@@ -513,7 +502,7 @@ const UserProfilePage: React.FC = () => {
                         <Text strong>Display Name:</Text>
                       </Col>
                       <Col span={16}>
-                        <Text>{profile.name}</Text>
+                        <Text>{profile.name || 'Not set'}</Text>
                       </Col>
                       <Col span={8}>
                         <Text strong>Username:</Text>
@@ -525,21 +514,23 @@ const UserProfilePage: React.FC = () => {
                         <Text strong>Birthday:</Text>
                       </Col>
                       <Col span={16}>
-                        <Text>{new Date(profile.birthday).toLocaleDateString()}</Text>
+                        <Text>{profile.birthday ? new Date(profile.birthday).toLocaleDateString() : 'Not set'}</Text>
                       </Col>
                       <Col span={8}>
                         <Text strong>Experience Level:</Text>
                       </Col>
                       <Col span={16}>
-                        <Tag color={getLevelColor(profile.experienceLevel)}>
-                          {profile.experienceLevel}
-                        </Tag>
+                        {profile.experienceLevel && (
+                          <Tag color={getLevelColor(profile.experienceLevel)}>
+                            {profile.experienceLevel}
+                          </Tag>
+                        )}
                       </Col>
                       <Col span={8}>
                         <Text strong>Member Since:</Text>
                       </Col>
                       <Col span={16}>
-                        <Text>{new Date(profile.creationDate).toLocaleDateString()}</Text>
+                        <Text>{profile.creationDate ? new Date(profile.creationDate).toLocaleDateString() : 'Unknown'}</Text>
                       </Col>
                     </Row>
                   </div>

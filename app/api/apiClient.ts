@@ -257,8 +257,17 @@ export class ApiClient {
     return this.apiService.get<StatisticsData>(`/users/${userId}/statistics`);
   }
 
+  getLeaderboardByWinnings(): Promise<LeaderboardItem[]> {
+    return this.apiService.get<LeaderboardItem[]>(`/leaderboard/winnings`);
+  }
+
+  getLeaderboardByWinRate(): Promise<LeaderboardItem[]> {
+    return this.apiService.get<LeaderboardItem[]>(`/leaderboard/winrate`);
+  }
+
+  // use as default
   getLeaderboard(): Promise<LeaderboardItem[]> {
-    return this.apiService.get<LeaderboardItem[]>(`/leaderboard`);
+    return this.getLeaderboardByWinnings();
   }
 }
 // Export a singleton instance for convenience.
