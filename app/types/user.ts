@@ -48,7 +48,7 @@ export interface UserProfileUpdate {
 
 export interface GameHistoryItem {
   id: number;
-  date: string;
+  playedAt: Date;
   result: string;
   winnings: number;
 }
