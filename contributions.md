@@ -94,6 +94,8 @@ reason).
 | **[@Qavrox]**   | 01.05    | [Link to Commit 3](https://github.com/Qavrox/sopra-fs25-group-45-client/tree/HomePage) | Implemented a landing page for users to log in or register | To help users to log in or register |
 | **[@IsSaudade]** | 02.05   | [Link to Commit 1](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/7c41c4253f72f2e809e3e9f7c01827be4eb42e6e) | Beautify and improve the homepage |Interface-beautification |
 |                    | 04.05   | [Link to Commit 2](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/fc26d74abbbfd13b76aa6c0dff14d8efc543082f) | Beautify Browse Available Tables and enhance user experience  | Interface-beautification |
+| **[@lydia-milena]**   |     |  |  | No Contributions, joker used |
+| **[@lydia-milena]**   |     |  |  | No Contributions, joker used |
 ---
 
 ## Contributions Week 5 - [05.05] to [11.05]
