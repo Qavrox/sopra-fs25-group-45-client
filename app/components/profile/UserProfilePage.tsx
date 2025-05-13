@@ -120,9 +120,12 @@ const UserProfilePage: React.FC = () => {
           id: user.id,
           username: user.username,
           online: user.online,
-          name: user.name ?? "Unknown",
-          experienceLevel: user.experienceLevel ?? "Beginner",
+          name: user.name ?? 'Unknown',
+          experienceLevel: user.experienceLevel ?? 'Beginner',
+          creationDate: user.creationDate ?? '',        
+          birthday: user.birthday ?? null              
         })) as UserSummary[];
+
 
 
         setFriends(enrichedFriends);
