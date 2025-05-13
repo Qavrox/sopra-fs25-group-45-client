@@ -3,8 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useApiClient } from "@/hooks/useApi";
-import type { GameHistoryItem } from "@/types/user";
-
 import {
   Card,
   Avatar,
@@ -21,12 +19,12 @@ import {
   Alert,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import {ExperienceLevel, UserProfile, UserSummary} from "@/types/user";
-import {
-  UserOutlined,
-  TrophyOutlined,
-  HistoryOutlined,
-  TeamOutlined,
+import { ExperienceLevel, UserProfile } from "@/types/user";
+import { 
+  UserOutlined, 
+  TrophyOutlined, 
+  HistoryOutlined, 
+  TeamOutlined, 
   ArrowLeftOutlined,
   OrderedListOutlined
 } from "@ant-design/icons";
@@ -36,6 +34,12 @@ import { useApi } from '@/hooks/useApi';
 const { Title, Text } = Typography;
 const { TabPane } = Tabs;
 
+interface GameHistoryItem {
+  id: number;
+  playedAt: string;
+  result: string;
+  winnings: number;
+}
 
 interface StatisticsData {
   gamesPlayed: number;
@@ -61,7 +65,7 @@ interface LeaderboardItem {
 const UserProfilePage: React.FC = () => {
   const { id } = useParams();
   const router = useRouter();
-  const apiClient = useApi();
+  const apiClient = useApi(); 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -81,8 +85,7 @@ const UserProfilePage: React.FC = () => {
 
   const { value: localId } = useLocalStorage<string>("user_id", "");
 
-  const [friends, setFriends] = useState<UserSummary[]>([]);
-
+  const [friends, setFriends] = useState([]);
 
   const sendFriendRequest = async (friendid : number) => {
     try{
@@ -111,21 +114,7 @@ const UserProfilePage: React.FC = () => {
     const fetchFriends = async () => {
       try {
         const response = await apiClient.getFriends();
-
-        const enrichedFriends = response.map((user: any) => ({
-          id: user.id,
-          username: user.username,
-          online: user.online,
-          name: user.name ?? 'Unknown',
-          experienceLevel: user.experienceLevel ?? 'Beginner',
-          creationDate: user.creationDate ?? '',
-          birthday: user.birthday ?? null
-        })) as UserSummary[];
-
-
-
-        setFriends(enrichedFriends);
-
+        setFriends(response);
       } catch (error) {
         console.error("Failed to fetch friends:", error);
       }
@@ -142,25 +131,22 @@ const UserProfilePage: React.FC = () => {
   useEffect(() => {
     const fetchGameHistory = async () => {
       if (!id) return;
-
+      
       setLoadingHistory(true);
       try {
         // This endpoint needs to be implemented in the API
         const response = await apiClient.getUserGameHistory(Number(id));
-        setGameHistory(response as GameHistoryItem[]);
-
+        setGameHistory(response);
       } catch (error) {
         console.error("Error fetching game history:", error);
         // Fallback to mock data if API fails
         setGameHistory([
-          { id: 1, playedAt: new Date("2025-03-25"), result: "Win", winnings: 120 },
-          { id: 2, playedAt: new Date("2025-03-23"), result: "Loss", winnings: -50 },
-          { id: 3, playedAt: new Date("2025-03-20"), result: "Win", winnings: 75 },
-          { id: 4, playedAt: new Date("2025-03-18"), result: "Loss", winnings: -30 },
-          { id: 5, playedAt: new Date("2025-03-15"), result: "Win", winnings: 200 },
-        ] as GameHistoryItem[]);
-
-
+          { id: 1, playedAt: "2025-03-25", result: "Win", winnings: 120 },
+          { id: 2, playedAt: "2025-03-23", result: "Loss", winnings: -50 },
+          { id: 3, playedAt: "2025-03-20", result: "Win", winnings: 75 },
+          { id: 4, playedAt: "2025-03-18", result: "Loss", winnings: -30 },
+          { id: 5, playedAt: "2025-03-15", result: "Win", winnings: 200 },
+        ]);
       } finally {
         setLoadingHistory(false);
       }
@@ -173,7 +159,7 @@ const UserProfilePage: React.FC = () => {
   useEffect(() => {
     const fetchUserStatistics = async () => {
       if (!id) return;
-
+      
       setLoadingStats(true);
       try {
         // This endpoint needs to be implemented in the API
@@ -258,7 +244,7 @@ const UserProfilePage: React.FC = () => {
       dataIndex: "result",
       key: "result",
       render: (text: string) => (
-          <Tag color={text === "Win" ? "success" : "error"}>{text}</Tag>
+        <Tag color={text === "Win" ? "success" : "error"}>{text}</Tag>
       ),
     },
     {
@@ -266,7 +252,7 @@ const UserProfilePage: React.FC = () => {
       dataIndex: "winnings",
       key: "winnings",
       render: (value: number) => (
-          <span style={{ color: value >= 0 ? "green" : "red" }}>
+        <span style={{ color: value >= 0 ? "green" : "red" }}>
           {value >= 0 ? `+${value}` : value}
         </span>
       ),
@@ -285,22 +271,22 @@ const UserProfilePage: React.FC = () => {
       dataIndex: "online",
       key: "online",
       render: (online: boolean) => (
-          <Tag color={online ? "success" : "default"}>
-            {online ? "Online" : "Offline"}
-          </Tag>
+        <Tag color={online ? "success" : "default"}>
+          {online ? "Online" : "Offline"}
+        </Tag>
       ),
     },
     {
       title: "Action",
       key: "action",
       render: (_: any, record: { id: number }) => (
-          <Button
-              type="primary"
-              size="small"
-              onClick={() => router.push(`/users/${record.id}`)}
-          >
-            View Profile
-          </Button>
+        <Button
+          type="primary"
+          size="small"
+          onClick={() => router.push(`/users/${record.id}`)}
+        >
+          View Profile
+        </Button>
       ),
     },
   ];
@@ -312,7 +298,7 @@ const UserProfilePage: React.FC = () => {
       dataIndex: "rank",
       key: "rank",
       render: (rank: number) => (
-          <span style={{ fontWeight: "bold" }}>{rank}</span>
+        <span style={{ fontWeight: "bold" }}>{rank}</span>
       ),
     },
     {
@@ -350,213 +336,213 @@ const UserProfilePage: React.FC = () => {
   const isFriend = friends.some((friend: any) => friend.id === Number(id));
 
   return (
-      <div className="card-container">
-        {error ? (
-            <Alert
-                message="Error"
-                description={error}
-                type="error"
-                showIcon
-                style={{ width: "800px", maxWidth: "90%" }}
-            />
-        ) : (
-            <Card
-                title={
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <Button
-                        icon={<ArrowLeftOutlined />}
-                        style={{ marginRight: 16 }}
-                        onClick={goBack}
-                    />
-                    <Title level={3} style={{ margin: 0 }}>User Profile</Title>
+    <div className="card-container">
+      {error ? (
+        <Alert
+          message="Error"
+          description={error}
+          type="error"
+          showIcon
+          style={{ width: "800px", maxWidth: "90%" }}
+        />
+      ) : (
+        <Card
+          title={
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Button 
+                icon={<ArrowLeftOutlined />} 
+                style={{ marginRight: 16 }} 
+                onClick={goBack}
+              />
+              <Title level={3} style={{ margin: 0 }}>User Profile</Title>
+            </div>
+          }
+          style={{ width: "800px", maxWidth: "90%" }}
+          loading={loading}
+        >
+          {profile ? (
+            <>
+              <div style={{ display: "flex", alignItems: "flex-start", marginBottom: 24 }}>
+                <Avatar
+                  size={100}
+                  src={`/images/avatar${profile.profileImage || 0}.png`}
+                  style={{ marginRight: 24 }}
+                />
+                <div style={{ flex: 1 }}>
+                  <Title level={2} style={{ margin: 0 }}>
+                    {profile.name || 'Anonymous'}
+                  </Title>
+                  <Text type="secondary" style={{ fontSize: 16 }}>@{profile.username}</Text>
+                  <div style={{ marginTop: 12 }}>
+                    {profile.experienceLevel && (
+                      <Tag color={getLevelColor(profile.experienceLevel)} style={{ fontSize: 14, padding: "4px 8px" }}>
+                        {profile.experienceLevel}
+                      </Tag>
+                    )}
+                    <Tag color={profile.online ? "success" : "default"} style={{ fontSize: 14, padding: "4px 8px" }}>
+                      {profile.online ? "Online" : "Offline"}
+                    </Tag>
                   </div>
-                }
-                style={{ width: "800px", maxWidth: "90%" }}
-                loading={loading}
-            >
-              {profile ? (
-                  <>
-                    <div style={{ display: "flex", alignItems: "flex-start", marginBottom: 24 }}>
-                      <Avatar
-                          size={100}
-                          src={`/images/avatar${profile.profileImage || 0}.png`}
-                          style={{ marginRight: 24 }}
-                      />
-                      <div style={{ flex: 1 }}>
-                        <Title level={2} style={{ margin: 0 }}>
-                          {profile.name || 'Anonymous'}
-                        </Title>
-                        <Text type="secondary" style={{ fontSize: 16 }}>@{profile.username}</Text>
-                        <div style={{ marginTop: 12 }}>
-                          {profile.experienceLevel && (
-                              <Tag color={getLevelColor(profile.experienceLevel)} style={{ fontSize: 14, padding: "4px 8px" }}>
-                                {profile.experienceLevel}
-                              </Tag>
-                          )}
-                          <Tag color={profile.online ? "success" : "default"} style={{ fontSize: 14, padding: "4px 8px" }}>
-                            {profile.online ? "Online" : "Offline"}
+                  <div style={{ marginTop: 12 }}>
+                    <Text>Member since: {profile.creationDate ? new Date(profile.creationDate).toLocaleDateString() : 'Unknown'}</Text>
+                  </div>
+                  
+                  {!isOwnProfile && !isFriend && (
+                    <Button 
+                      type="primary"
+                      onClick={() => sendFriendRequest(Number(id))}
+                      style={{ marginTop: 12 }}
+                    >
+                      Add Friend
+                    </Button>
+                  )}
+                  
+                  {isOwnProfile && (
+                    <Button 
+                      type="primary"
+                      onClick={() => router.push(`/users/${id}/edit`)}
+                      style={{ marginTop: 12 }}
+                    >
+                      Edit Profile
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              <Divider />
+
+              <Row gutter={16} style={{ marginBottom: 24 }}>
+                <Col span={6}>
+                  <Statistic title="Games Played" value={statistics.gamesPlayed} loading={loadingStats} />
+                </Col>
+                <Col span={6}>
+                  <Statistic title="Win Rate" value={statistics.winRate} suffix="%" loading={loadingStats} />
+                </Col>
+                <Col span={6}>
+                  <Statistic 
+                    title="Total Winnings" 
+                    value={statistics.totalWinnings} 
+                    prefix="$"
+                    valueStyle={{ color: statistics.totalWinnings >= 0 ? 'green' : 'red' }}
+                    loading={loadingStats}
+                  />
+                </Col>
+                <Col span={6}>
+                  <Statistic title="Avg. Position" value={statistics.averagePosition} precision={1} loading={loadingStats} />
+                </Col>
+              </Row>
+
+              <Tabs defaultActiveKey="history">
+                <TabPane 
+                  tab={<span><HistoryOutlined /> Game History</span>} 
+                  key="history"
+                >
+                  <Table 
+                    dataSource={gameHistory} 
+                    columns={historyColumns} 
+                    rowKey="id" 
+                    pagination={{ pageSize: 5 }}
+                    loading={loadingHistory}
+                  />
+                </TabPane>
+                <TabPane 
+                  tab={<span><TrophyOutlined /> Achievements</span>} 
+                  key="achievements"
+                >
+                  <div style={{ padding: "20px 0", textAlign: "center" }}>
+                    <Text type="secondary">No achievements yet</Text>
+                  </div>
+                </TabPane>
+                <TabPane 
+                  tab={<span><TeamOutlined /> Friends</span>} 
+                  key="friends"
+                >
+                  <Table 
+                    dataSource={friends} 
+                    columns={friendColumns} 
+                    rowKey="id" 
+                    pagination={{ pageSize: 5 }}
+                  />
+                </TabPane>
+                <TabPane 
+                  tab={<span><OrderedListOutlined /> Leaderboard</span>} 
+                  key="leaderboard"
+                >
+                  <div style={{ marginBottom: 16 }}>
+                    <Button.Group>
+                      <Button 
+                        type={leaderboardType === 'winnings' ? 'primary' : 'default'}
+                        onClick={() => setLeaderboardType('winnings')}
+                      >
+                        By Winnings
+                      </Button>
+                      <Button 
+                        type={leaderboardType === 'winrate' ? 'primary' : 'default'}
+                        onClick={() => setLeaderboardType('winrate')}
+                      >
+                        By Win Rate
+                      </Button>
+                    </Button.Group>
+                  </div>
+                  <Table 
+                    dataSource={leaderboard} 
+                    columns={leaderboardColumns} 
+                    rowKey="id" 
+                    pagination={{ pageSize: 5 }}
+                    loading={loadingLeaderboard}
+                  />
+                </TabPane>
+                <TabPane 
+                  tab={<span><UserOutlined /> Personal Info</span>} 
+                  key="personal"
+                >
+                  <div style={{ padding: "10px 0" }}>
+                    <Row gutter={[16, 16]}>
+                      <Col span={8}>
+                        <Text strong>Display Name:</Text>
+                      </Col>
+                      <Col span={16}>
+                        <Text>{profile.name || 'Not set'}</Text>
+                      </Col>
+                      <Col span={8}>
+                        <Text strong>Username:</Text>
+                      </Col>
+                      <Col span={16}>
+                        <Text>{profile.username}</Text>
+                      </Col>
+                      <Col span={8}>
+                        <Text strong>Birthday:</Text>
+                      </Col>
+                      <Col span={16}>
+                        <Text>{profile.birthday ? new Date(profile.birthday).toLocaleDateString() : 'Not set'}</Text>
+                      </Col>
+                      <Col span={8}>
+                        <Text strong>Experience Level:</Text>
+                      </Col>
+                      <Col span={16}>
+                        {profile.experienceLevel && (
+                          <Tag color={getLevelColor(profile.experienceLevel)}>
+                            {profile.experienceLevel}
                           </Tag>
-                        </div>
-                        <div style={{ marginTop: 12 }}>
-                          <Text>Member since: {profile.creationDate ? new Date(profile.creationDate).toLocaleDateString() : 'Unknown'}</Text>
-                        </div>
-
-                        {!isOwnProfile && !isFriend && (
-                            <Button
-                                type="primary"
-                                onClick={() => sendFriendRequest(Number(id))}
-                                style={{ marginTop: 12 }}
-                            >
-                              Add Friend
-                            </Button>
                         )}
-
-                        {isOwnProfile && (
-                            <Button
-                                type="primary"
-                                onClick={() => router.push(`/users/${id}/edit`)}
-                                style={{ marginTop: 12 }}
-                            >
-                              Edit Profile
-                            </Button>
-                        )}
-                      </div>
-                    </div>
-
-                    <Divider />
-
-                    <Row gutter={16} style={{ marginBottom: 24 }}>
-                      <Col span={6}>
-                        <Statistic title="Games Played" value={statistics.gamesPlayed} loading={loadingStats} />
                       </Col>
-                      <Col span={6}>
-                        <Statistic title="Win Rate" value={statistics.winRate} suffix="%" loading={loadingStats} />
+                      <Col span={8}>
+                        <Text strong>Member Since:</Text>
                       </Col>
-                      <Col span={6}>
-                        <Statistic
-                            title="Total Winnings"
-                            value={statistics.totalWinnings}
-                            prefix="$"
-                            valueStyle={{ color: statistics.totalWinnings >= 0 ? 'green' : 'red' }}
-                            loading={loadingStats}
-                        />
-                      </Col>
-                      <Col span={6}>
-                        <Statistic title="Avg. Position" value={statistics.averagePosition} precision={1} loading={loadingStats} />
+                      <Col span={16}>
+                        <Text>{profile.creationDate ? new Date(profile.creationDate).toLocaleDateString() : 'Unknown'}</Text>
                       </Col>
                     </Row>
-
-                    <Tabs defaultActiveKey="history">
-                      <TabPane
-                          tab={<span><HistoryOutlined /> Game History</span>}
-                          key="history"
-                      >
-                        <Table
-                            dataSource={gameHistory}
-                            columns={historyColumns}
-                            rowKey="id"
-                            pagination={{ pageSize: 5 }}
-                            loading={loadingHistory}
-                        />
-                      </TabPane>
-                      <TabPane
-                          tab={<span><TrophyOutlined /> Achievements</span>}
-                          key="achievements"
-                      >
-                        <div style={{ padding: "20px 0", textAlign: "center" }}>
-                          <Text type="secondary">No achievements yet</Text>
-                        </div>
-                      </TabPane>
-                      <TabPane
-                          tab={<span><TeamOutlined /> Friends</span>}
-                          key="friends"
-                      >
-                        <Table
-                            dataSource={friends}
-                            columns={friendColumns}
-                            rowKey="id"
-                            pagination={{ pageSize: 5 }}
-                        />
-                      </TabPane>
-                      <TabPane
-                          tab={<span><OrderedListOutlined /> Leaderboard</span>}
-                          key="leaderboard"
-                      >
-                        <div style={{ marginBottom: 16 }}>
-                          <Button.Group>
-                            <Button
-                                type={leaderboardType === 'winnings' ? 'primary' : 'default'}
-                                onClick={() => setLeaderboardType('winnings')}
-                            >
-                              By Winnings
-                            </Button>
-                            <Button
-                                type={leaderboardType === 'winrate' ? 'primary' : 'default'}
-                                onClick={() => setLeaderboardType('winrate')}
-                            >
-                              By Win Rate
-                            </Button>
-                          </Button.Group>
-                        </div>
-                        <Table
-                            dataSource={leaderboard}
-                            columns={leaderboardColumns}
-                            rowKey="id"
-                            pagination={{ pageSize: 5 }}
-                            loading={loadingLeaderboard}
-                        />
-                      </TabPane>
-                      <TabPane
-                          tab={<span><UserOutlined /> Personal Info</span>}
-                          key="personal"
-                      >
-                        <div style={{ padding: "10px 0" }}>
-                          <Row gutter={[16, 16]}>
-                            <Col span={8}>
-                              <Text strong>Display Name:</Text>
-                            </Col>
-                            <Col span={16}>
-                              <Text>{profile.name || 'Not set'}</Text>
-                            </Col>
-                            <Col span={8}>
-                              <Text strong>Username:</Text>
-                            </Col>
-                            <Col span={16}>
-                              <Text>{profile.username}</Text>
-                            </Col>
-                            <Col span={8}>
-                              <Text strong>Birthday:</Text>
-                            </Col>
-                            <Col span={16}>
-                              <Text>{profile.birthday ? new Date(profile.birthday).toLocaleDateString() : 'Not set'}</Text>
-                            </Col>
-                            <Col span={8}>
-                              <Text strong>Experience Level:</Text>
-                            </Col>
-                            <Col span={16}>
-                              {profile.experienceLevel && (
-                                  <Tag color={getLevelColor(profile.experienceLevel)}>
-                                    {profile.experienceLevel}
-                                  </Tag>
-                              )}
-                            </Col>
-                            <Col span={8}>
-                              <Text strong>Member Since:</Text>
-                            </Col>
-                            <Col span={16}>
-                              <Text>{profile.creationDate ? new Date(profile.creationDate).toLocaleDateString() : 'Unknown'}</Text>
-                            </Col>
-                          </Row>
-                        </div>
-                      </TabPane>
-                    </Tabs>
-                  </>
-              ) : (
-                  <Skeleton avatar paragraph={{ rows: 6 }} active />
-              )}
-            </Card>
-        )}
-      </div>
+                  </div>
+                </TabPane>
+              </Tabs>
+            </>
+          ) : (
+            <Skeleton avatar paragraph={{ rows: 6 }} active />
+          )}
+        </Card>
+      )}
+    </div>
   );
 };
 
