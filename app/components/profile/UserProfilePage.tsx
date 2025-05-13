@@ -19,7 +19,7 @@ import {
   Alert,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { ExperienceLevel, UserProfile } from "@/types/user";
+import {ExperienceLevel, UserProfile, UserSummary} from "@/types/user";
 import { 
   UserOutlined, 
   TrophyOutlined, 
@@ -85,7 +85,8 @@ const UserProfilePage: React.FC = () => {
 
   const { value: localId } = useLocalStorage<string>("user_id", "");
 
-  const [friends, setFriends] = useState([]);
+  const [friends, setFriends] = useState<UserSummary[]>([]);
+
 
   const sendFriendRequest = async (friendid : number) => {
     try{
