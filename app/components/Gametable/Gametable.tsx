@@ -108,6 +108,12 @@ export default function GameTable({ gameId }: PokerTableProps) {
       console.error(err);
     }
   };
+  
+  const extractErrorMessage = (err: any): string => {
+    if (err?.response?.data?.message) return err.response.data.message;
+    if (err?.message) return err.message;
+    return 'An unknown error occurred';
+  };
 
   const handleAction = async () => {
     if (!game || !selectedAction) return;
@@ -128,7 +134,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
       setSelectedAction(null);
       setBetAmount(0);
     } catch (err) {
-      setError('Failed to submit action');
+      setError(extractErrorMessage(err));
       console.error(err);
     }
   };
@@ -155,6 +161,8 @@ export default function GameTable({ gameId }: PokerTableProps) {
       setIsLoadingAdvice(false);
     }
   };
+
+  
   
   // Helper function to render a card with proper suit and value display
   const renderCard = (card: string) => {
@@ -286,6 +294,9 @@ export default function GameTable({ gameId }: PokerTableProps) {
               className={styles.newGameButton}
             >
               New Game
+            </button>
+            <button className={styles.returnButton} onClick={() => router.push('/lobby')}>
+            Back to lobby
             </button>
           </div>
         )}
