@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useApiClient } from "@/hooks/useApi";
+import type { GameHistoryItem } from "@/types/user";
+
 import {
   Card,
   Avatar,
@@ -34,12 +36,6 @@ import { useApi } from '@/hooks/useApi';
 const { Title, Text } = Typography;
 const { TabPane } = Tabs;
 
-interface GameHistoryItem {
-  id: number;
-  playedAt: string;
-  result: string;
-  winnings: number;
-}
 
 interface StatisticsData {
   gamesPlayed: number;
@@ -122,8 +118,8 @@ const UserProfilePage: React.FC = () => {
           online: user.online,
           name: user.name ?? 'Unknown',
           experienceLevel: user.experienceLevel ?? 'Beginner',
-          creationDate: user.creationDate ?? '',        
-          birthday: user.birthday ?? null              
+          creationDate: user.creationDate ?? '',
+          birthday: user.birthday ?? null
         })) as UserSummary[];
 
 
@@ -157,12 +153,14 @@ const UserProfilePage: React.FC = () => {
         console.error("Error fetching game history:", error);
         // Fallback to mock data if API fails
         setGameHistory([
-          { id: 1, playedAt: "2025-03-25", result: "Win", winnings: 120 },
-          { id: 2, playedAt: "2025-03-23", result: "Loss", winnings: -50 },
-          { id: 3, playedAt: "2025-03-20", result: "Win", winnings: 75 },
-          { id: 4, playedAt: "2025-03-18", result: "Loss", winnings: -30 },
-          { id: 5, playedAt: "2025-03-15", result: "Win", winnings: 200 },
-        ]);
+          { id: 1, playedAt: new Date("2025-03-25"), result: "Win", winnings: 120 },
+          { id: 2, playedAt: new Date("2025-03-23"), result: "Loss", winnings: -50 },
+          { id: 3, playedAt: new Date("2025-03-20"), result: "Win", winnings: 75 },
+          { id: 4, playedAt: new Date("2025-03-18"), result: "Loss", winnings: -30 },
+          { id: 5, playedAt: new Date("2025-03-15"), result: "Win", winnings: 200 },
+        ] as GameHistoryItem[]);
+
+
       } finally {
         setLoadingHistory(false);
       }
