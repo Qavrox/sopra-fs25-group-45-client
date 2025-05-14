@@ -6,6 +6,9 @@ import { Game, GameActionRequest, Player, PlayerAction, GameStatus, GameResults 
 import { useRouter } from 'next/navigation';
 import styles from './GameTable.module.css';
 import TutorialCard from '../RulesAndTutorials/TutorialCard';
+import { UserProfile } from '@/types/user';
+import { Avatar } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 
 interface PokerTableProps {
   gameId: number;
@@ -23,6 +26,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
   const [pokerAdvice, setPokerAdvice] = useState<string | null>(null);
   const router = useRouter();
   const hasJoined = useRef(false);
+  const [playerProfiles, setPlayerProfiles] = useState<{ [key: number]: UserProfile }>({});
 
   const POLLING_INTERVAL = 2000; // Poll every 2 seconds
 
@@ -85,6 +89,27 @@ export default function GameTable({ gameId }: PokerTableProps) {
       hasJoined.current = false; // Reset the ref when component unmounts
     };
   }, [gameId, router, gameResults]);
+
+  useEffect(() => {
+    const fetchPlayerProfiles = async () => {
+      if (!game) return;
+      
+      const profiles: { [key: number]: UserProfile } = {};
+      for (const player of game.players) {
+        if (!profiles[player.userId]) {
+          try {
+            const profile = await apiClient.getUserProfile(player.userId);
+            profiles[player.userId] = profile;
+          } catch (error) {
+            console.error(`Failed to fetch profile for user ${player.userId}:`, error);
+          }
+        }
+      }
+      setPlayerProfiles(profiles);
+    };
+
+    fetchPlayerProfiles();
+  }, [game]);
 
   const handleStartBetting = async () => {
     if (!game) return;
@@ -373,7 +398,16 @@ export default function GameTable({ gameId }: PokerTableProps) {
                   }}
                 >
                   <div className={styles.playerInfo}>
-                    <div className={styles.playerName}>Player {player.userId}</div>
+                    <div className={styles.playerName}>
+                      <Avatar
+                        src={playerProfiles[player.userId] ? `/images/avatar${playerProfiles[player.userId].profileImage || 0}.png` : undefined}
+                        icon={!playerProfiles[player.userId] && <UserOutlined />}
+                        size={100
+                      }
+                        style={{ marginRight: '12px' }}
+                      />
+                      Player {player.userId}
+                    </div>
                     <div className={styles.playerCredit}>${player.credit}</div>
                     <div className={styles.playerBet}>Bet: ${player.currentBet}</div>
                     {player.lastAction && (

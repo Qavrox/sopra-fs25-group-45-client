@@ -42,3 +42,30 @@ export interface UserProfileUpdate {
   experienceLevel?: ExperienceLevel;
   birthday?: string;
 }
+
+
+// Add these interfaces to your user types file
+
+export interface GameHistoryItem {
+  id: number;
+  playedAt: Date;
+  result: string;
+  winnings: number;
+}
+
+export interface StatisticsData {
+  gamesPlayed: number;
+  winRate: number;
+  totalWinnings: number;
+  averagePosition: number;
+}
+
+export interface LeaderboardItem {
+  id: number;
+  username: string;
+  name: string;
+  totalWinnings: number;
+  winRate: number;
+  gamesPlayed: number;
+  rank: number;
+}
