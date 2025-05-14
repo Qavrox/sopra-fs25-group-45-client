@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { apiClient } from '../../api/apiClient';
 import { GameStatus, type Game } from '@/types/game';
 import { useRouter } from 'next/navigation';
-import { Divider } from 'antd';
+import { Button, Divider } from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 
 export default function RoomBrowser() {
   const [rooms, setRooms] = useState<Game[]>([]);
@@ -35,9 +36,20 @@ export default function RoomBrowser() {
   }
   if (loading) return <p className="text-center text-gray-500">Loading rooms...</p>;
 
+  const goBack = () => {
+    router.back();
+  };
+
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Available Rooms</h2>
+      <div className="flex items-center gap-4 mb-4">
+        <Button
+          icon={<ArrowLeftOutlined />}
+          onClick={goBack}
+        />
+        <h2 className="text-2xl font-bold">Available Rooms</h2>
+      </div>
+
       {rooms.length === 0 ? (
         <p className="text-gray-600">No rooms available right now.</p>
       ) : (
