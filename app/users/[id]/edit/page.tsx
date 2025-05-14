@@ -19,9 +19,14 @@ const EditProfilePage: React.FC = () => {
   const api = useApi();
 
   const availableImages = [
+    { value: 'avatar0.png', src: '/images/avatar0.png', alt: 'Avatar 0' },
     { value: 'avatar1.png', src: '/images/avatar1.png', alt: 'Avatar 1' },
     { value: 'avatar2.png', src: '/images/avatar2.png', alt: 'Avatar 2' },
-    { value: 'avatar0.png', src: '/images/avatar0.png', alt: 'Avatar 0' },
+    { value: 'avatar3.png', src: '/images/avatar3.png', alt: 'Avatar 3' },
+    { value: 'avatar4.png', src: '/images/avatar4.png', alt: 'Avatar 4' },
+    { value: 'avatar5.png', src: '/images/avatar5.png', alt: 'Avatar 5' },
+    { value: 'avatar6.png', src: '/images/avatar6.png', alt: 'Avatar 6' },
+    { value: 'avatar7.png', src: '/images/avatar7.png', alt: 'Avatar 7' },
   ];
 
   const [currentImageIndex, setCurrentImageIndex] = useState(
