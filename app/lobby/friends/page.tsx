@@ -4,7 +4,7 @@ import { useApi } from '@/hooks/useApi';
 import { UserSummary } from '@/types/user';
 import React, { useEffect, useState } from 'react';
 import { Card, Table, Tag, Button, Typography, Alert } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, UserOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 
 const FriendsPage: React.FC = () => {
@@ -69,6 +69,10 @@ const FriendsPage: React.FC = () => {
     },
   ];
 
+  const goBack = () => {
+    router.back();
+  };
+
   return (
     <div className="card-container">
       {error ? (
@@ -83,6 +87,11 @@ const FriendsPage: React.FC = () => {
         <Card
           title={
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Button
+                icon={<ArrowLeftOutlined />}
+                style={{ marginRight: 16 }}
+                onClick={goBack}
+              />
               <UserOutlined />
               <Typography.Title level={3} style={{ margin: 0 }}>
                 Friends

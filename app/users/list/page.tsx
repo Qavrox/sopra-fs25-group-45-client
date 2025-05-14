@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useApiClient } from '@/hooks/useApi';
 import { Card, Table, Tag, Button, Typography, Alert } from 'antd';
-import { TeamOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, TeamOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
 
@@ -48,6 +48,10 @@ const UsersListPage: React.FC = () => {
 
     fetchUsers();
   }, [apiClient]);
+
+  const goBack = () => {
+    router.back();
+  };
 
   const columns = [
     {
@@ -99,6 +103,11 @@ const UsersListPage: React.FC = () => {
         <Card
             title={
               <Title level={3}>
+                    <Button
+                        icon={<ArrowLeftOutlined />}
+                        style={{ marginRight: 16 }}
+                        onClick={goBack}
+                    />
                 <TeamOutlined style={{ marginRight: 8 }} />
                 All Users
               </Title>

@@ -4,13 +4,16 @@ import { useApi } from '@/hooks/useApi';
 import { UserSummary } from '@/types/user';
 import React, { useEffect, useState } from 'react';
 import { Card, Table, Tag, Button, Typography, Alert } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, UserOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/navigation';
 
 const FriendRequestsPage: React.FC = () => {
   const apiClient = useApi();
   const [friendRequests, setFriendRequests] = useState<UserSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
 
 
   useEffect(() => {
@@ -82,6 +85,10 @@ const FriendRequestsPage: React.FC = () => {
     },
   ];
 
+  const goBack = () => {
+    router.back();
+  };
+
   return (
     <div className="card-container">
       {error ? (
@@ -96,6 +103,11 @@ const FriendRequestsPage: React.FC = () => {
         <Card
           title={
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Button
+                icon={<ArrowLeftOutlined />}
+                style={{ marginRight: 16 }}
+                onClick={goBack}
+              />
               <UserOutlined />
               <Typography.Title level={3} style={{ margin: 0 }}>
                 Friend Requests
