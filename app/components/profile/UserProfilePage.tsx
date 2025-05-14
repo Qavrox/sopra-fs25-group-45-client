@@ -65,7 +65,6 @@ const UserProfilePage: React.FC = () => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [gameHistory, setGameHistory] = useState<GameHistoryItem[]>([]);
   const [statistics, setStatistics] = useState<StatisticsData>({
     gamesPlayed: 0,
     winRate: 0,
@@ -73,7 +72,6 @@ const UserProfilePage: React.FC = () => {
     averagePosition: 0,
   });
   const [leaderboard, setLeaderboard] = useState<LeaderboardItem[]>([]);
-  const [loadingHistory, setLoadingHistory] = useState<boolean>(true);
   const [loadingStats, setLoadingStats] = useState<boolean>(true);
   const [loadingLeaderboard, setLoadingLeaderboard] = useState<boolean>(true);
   // Add state for leaderboard type
@@ -112,19 +110,8 @@ const UserProfilePage: React.FC = () => {
       try {
         const response = await apiClient.getFriends();
 
-        const enrichedFriends = response.map((user: any) => ({
-          id: user.id,
-          username: user.username,
-          online: user.online,
-          name: user.name ?? 'Unknown',
-          experienceLevel: user.experienceLevel ?? 'Beginner',
-          creationDate: user.creationDate ?? '',
-          birthday: user.birthday ?? null
-        })) as UserSummary[];
 
-
-
-        setFriends(enrichedFriends);
+        setFriends(response);
 
       } catch (error) {
         console.error("Failed to fetch friends:", error);
@@ -138,36 +125,7 @@ const UserProfilePage: React.FC = () => {
     }
   }, [id, apiClient]);
 
-  // Fetch game history
-  useEffect(() => {
-    const fetchGameHistory = async () => {
-      if (!id) return;
 
-      setLoadingHistory(true);
-      try {
-        // This endpoint needs to be implemented in the API
-        const response = await apiClient.getUserGameHistory(Number(id));
-        setGameHistory(response as GameHistoryItem[]);
-
-      } catch (error) {
-        console.error("Error fetching game history:", error);
-        // Fallback to mock data if API fails
-        setGameHistory([
-          { id: 1, playedAt: new Date("2025-03-25"), result: "Win", winnings: 120 },
-          { id: 2, playedAt: new Date("2025-03-23"), result: "Loss", winnings: -50 },
-          { id: 3, playedAt: new Date("2025-03-20"), result: "Win", winnings: 75 },
-          { id: 4, playedAt: new Date("2025-03-18"), result: "Loss", winnings: -30 },
-          { id: 5, playedAt: new Date("2025-03-15"), result: "Win", winnings: 200 },
-        ] as GameHistoryItem[]);
-
-
-      } finally {
-        setLoadingHistory(false);
-      }
-    };
-
-    fetchGameHistory();
-  }, [id, apiClient]);
 
   // Fetch user statistics
   useEffect(() => {
@@ -181,13 +139,6 @@ const UserProfilePage: React.FC = () => {
         setStatistics(response);
       } catch (error) {
         console.error("Error fetching user statistics:", error);
-        // Fallback to mock data if API fails
-        setStatistics({
-          gamesPlayed: 7,
-          winRate: 30,
-          totalWinnings: 315,
-          averagePosition: 3.2,
-        });
       } finally {
         setLoadingStats(false);
       }
@@ -210,14 +161,7 @@ const UserProfilePage: React.FC = () => {
         setLeaderboard(response);
       } catch (error) {
         console.error("Error fetching leaderboard:", error);
-        // Fallback to mock data if API fails
-        setLeaderboard([
-          { id: 1, username: "poker_king", name: "Alex Smith", totalWinnings: 5000, winRate: 75, gamesPlayed: 20, rank: 1 },
-          { id: 2, username: "card_shark", name: "Emma Johnson", totalWinnings: 4200, winRate: 68, gamesPlayed: 25, rank: 2 },
-          { id: 3, username: "royal_flush", name: "Michael Brown", totalWinnings: 3800, winRate: 62, gamesPlayed: 18, rank: 3 },
-          { id: 4, username: "all_in", name: "Sophia Davis", totalWinnings: 3500, winRate: 60, gamesPlayed: 30, rank: 4 },
-          { id: 5, username: "bluff_master", name: "William Wilson", totalWinnings: 3200, winRate: 55, gamesPlayed: 22, rank: 5 },
-        ]);
+
       } finally {
         setLoadingLeaderboard(false);
       }
@@ -273,37 +217,7 @@ const UserProfilePage: React.FC = () => {
     },
   ];
 
-  // Friends list columns
-  const friendColumns = [
-    {
-      title: "Username",
-      dataIndex: "username",
-      key: "username",
-    },
-    {
-      title: "Status",
-      dataIndex: "online",
-      key: "online",
-      render: (online: boolean) => (
-          <Tag color={online ? "success" : "default"}>
-            {online ? "Online" : "Offline"}
-          </Tag>
-      ),
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_: any, record: { id: number }) => (
-          <Button
-              type="primary"
-              size="small"
-              onClick={() => router.push(`/users/${record.id}`)}
-          >
-            View Profile
-          </Button>
-      ),
-    },
-  ];
+ 
 
   // Leaderboard columns
   const leaderboardColumns = [
@@ -447,18 +361,7 @@ const UserProfilePage: React.FC = () => {
                     </Row>
 
                     <Tabs defaultActiveKey="history">
-                      <TabPane
-                          tab={<span><HistoryOutlined /> Game History</span>}
-                          key="history"
-                      >
-                        <Table
-                            dataSource={gameHistory}
-                            columns={historyColumns}
-                            rowKey="id"
-                            pagination={{ pageSize: 5 }}
-                            loading={loadingHistory}
-                        />
-                      </TabPane>
+  
                       <TabPane
                           tab={<span><TrophyOutlined /> Achievements</span>}
                           key="achievements"
@@ -467,17 +370,7 @@ const UserProfilePage: React.FC = () => {
                           <Text type="secondary">No achievements yet</Text>
                         </div>
                       </TabPane>
-                      <TabPane
-                          tab={<span><TeamOutlined /> Friends</span>}
-                          key="friends"
-                      >
-                        <Table
-                            dataSource={friends}
-                            columns={friendColumns}
-                            rowKey="id"
-                            pagination={{ pageSize: 5 }}
-                        />
-                      </TabPane>
+
                       <TabPane
                           tab={<span><OrderedListOutlined /> Leaderboard</span>}
                           key="leaderboard"
