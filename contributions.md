@@ -96,6 +96,8 @@ reason).
 |                    | 04.05   | [Link to Commit 2](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/fc26d74abbbfd13b76aa6c0dff14d8efc543082f) | Beautify Browse Available Tables and enhance user experience  | Interface-beautification |
 | **[@lydia-milena]**   |     |  |  | No Contributions, joker used |
 | **[@lydia-milena]**   |     |  |  | No Contributions, joker used |
+| **[@unscttp]**   | 02.05    | [Link to commit 1](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/8e2e297293e1f2a02b00ecf696d376374adf3c9b) | Initial attempt for display of friends list | Attempt on basic user interaction, overwritten by further work  |
+| **[@unscttp]**   | 02.05     | [Link to commit 2](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/1c11cfa8ef12641cb2cb85dad684f2620a2b53c5) | Initial attempt on personal profile page | Attempt on basic user interaction, overwritten by further work |
 ---
 
 ## Contributions Week 5 - [05.05] to [11.05]
