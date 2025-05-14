@@ -47,20 +47,6 @@ export default function Lobby() {
                 </div>
             </div>
 
-            <div className={styles.cardsWrapper}>
-                {rooms.map((room) => (
-                    <div
-                        key={room.id}
-                        className={styles.roomCard}
-                        onClick={() => router.push(`/game/${room.id}`)}
-                    >
-                        <h3>Game #{room.id}</h3>
-                        <p>{room.players.length} players · {room.gameStatus}</p>
-                        <p className="text-sm">Small Blind: {room.smallBlind}</p>
-                        <p className="text-sm">Big Blind: {room.bigBlind}</p>
-                    </div>
-                ))}
-            </div>
 
             <div className={styles.browseAll}>
                 <button onClick={() => router.push('/lobby/rooms')} className={styles.browseButton}>
