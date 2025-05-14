@@ -97,7 +97,7 @@ reason).
 | **[@lydia-milena]**   |     |  |  | No Contributions, joker used |
 | **[@lydia-milena]**   |     |  |  | No Contributions, joker used |
 | **[@unscttp]**   | 02.05    | [Link to commit 1](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/8e2e297293e1f2a02b00ecf696d376374adf3c9b) | Initial attempt for display of friends list | Attempt on basic user interaction, overwritten by further work, joker used  |
-| **[@unscttp]**   | 02.05     | [Link to commit 2](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/1c11cfa8ef12641cb2cb85dad684f2620a2b53c5) | Initial attempt on personal profile page | Attempt on basic user interaction, overwritten by further work, joker used |
+| **[@unscttp]**   |  | |  | joker used |
 ---
 
 ## Contributions Week 5 - [05.05] to [11.05]
