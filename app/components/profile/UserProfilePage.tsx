@@ -109,10 +109,7 @@ const UserProfilePage: React.FC = () => {
     const fetchFriends = async () => {
       try {
         const response = await apiClient.getFriends();
-
-
         setFriends(response);
-
       } catch (error) {
         console.error("Failed to fetch friends:", error);
       }
@@ -261,7 +258,9 @@ const UserProfilePage: React.FC = () => {
   const isOwnProfile = localId && id && Number(localId) === Number(id);
 
   // Check if the viewed user is already a friend
-  const isFriend = friends.some((friend: any) => friend.id === Number(id));
+  const isFriend = (userId: number) => {
+    return friends.some(friend => friend.id === userId);
+  };
 
   return (
       <div className="card-container">
@@ -315,14 +314,19 @@ const UserProfilePage: React.FC = () => {
                           <Text>Member since: {profile.creationDate ? new Date(profile.creationDate).toLocaleDateString() : 'Unknown'}</Text>
                         </div>
 
-                        {!isOwnProfile && !isFriend && (
-                            <Button
+                        {!isOwnProfile && (
+                          <div>
+                            {isFriend(Number(id)) ? (
+                              <Tag color="success">Friend</Tag>
+                            ) : (
+                              <Button
                                 type="primary"
                                 onClick={() => sendFriendRequest(Number(id))}
-                                style={{ marginTop: 12 }}
-                            >
-                              Add Friend
-                            </Button>
+                              >
+                                Send Friend Request
+                              </Button>
+                            )}
+                          </div>
                         )}
 
                         {isOwnProfile && (
