@@ -3,12 +3,15 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from "next/navigation";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { Button, Form, Input, Select, DatePicker } from "antd";
+import { Button, Form, Input, Select, DatePicker, Card } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import dayjs from 'dayjs';
 import { getApiDomain } from "@/utils/domain";
 import { useApi } from '@/hooks/useApi';
 import Image from 'next/image';
 import { UserProfileUpdate } from '@/types/user';
+import { Typography } from 'antd';
+const { Title } = Typography;
 
 const EditProfilePage: React.FC = () => {
   const { id } = useParams();
@@ -79,10 +82,36 @@ const EditProfilePage: React.FC = () => {
     });
   };
 
+  const goBack = () => {
+    router.back();
+  };
+
   return (
     <div>
-      <h1>Edit Profile</h1>
-      <div className="user-profile-image-container">
+
+      <div className="card-container">
+
+        <Card
+          title={
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Button
+                  icon={<ArrowLeftOutlined />}
+                  style={{ marginRight: 16 }}
+                  onClick={goBack}
+              />
+              <Title level={3} style={{ margin: 0 }}>User Profile</Title>
+            </div>
+          }
+          style={{ width: "500px", maxWidth: "90%" }}
+        >
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center', 
+          gap: '10px' 
+          }}
+        >
         <Form
           form={form}
           name="login"
@@ -95,7 +124,7 @@ const EditProfilePage: React.FC = () => {
           }}
         >
           <Form.Item
-            style={{ width: 150 }}
+            style={{ width: 180 }}
             name="name"
             label="Name"
             rules={[{ required: false, message: "Please input your name!" }]}
@@ -104,7 +133,7 @@ const EditProfilePage: React.FC = () => {
           </Form.Item>
 
           <Form.Item
-            style={{ width: 150 }}
+            style={{ width: 180 }}
             name="birthday"
             label="Birthday"
             rules={[{ required: false, message: "Please input your birthday!" }]}
@@ -118,7 +147,7 @@ const EditProfilePage: React.FC = () => {
           </Form.Item>
 
           <Form.Item
-            style={{ width: 150 }}
+            style={{ width: 180 }}
             name="level"
             label="Level"
             rules={[{ required: false, message: "Please input your name!" }]}
@@ -183,6 +212,9 @@ const EditProfilePage: React.FC = () => {
             </Button>
           </Form.Item>
         </Form>
+        </div>
+        </Card>
+
       </div>
     </div>
   );
