@@ -186,7 +186,8 @@ export class ApiClient {
   }
 
   deleteGame(gameId: number): Promise<MessageResponse> {
-    return this.apiService.delete<MessageResponse>(`/games/${gameId}`);
+    return this.apiService.deleteWithAuth<MessageResponse>(`/games/${gameId}`,
+      this.token ?? "");
   }
 
   joinGame(gameId: number, password: string): Promise<MessageResponse> {
@@ -196,7 +197,8 @@ export class ApiClient {
   }
 
   leaveGame(gameId: number): Promise<MessageResponse> {
-    return this.apiService.delete<MessageResponse>(`/games/${gameId}/join`);
+    return this.apiService.deleteWithAuth<MessageResponse>(`/games/${gameId}/join`,
+      this.token ?? "");
   }
 
   submitGameAction(

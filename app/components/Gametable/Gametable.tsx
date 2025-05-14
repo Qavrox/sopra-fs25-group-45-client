@@ -68,6 +68,9 @@ export default function GameTable({ gameId }: PokerTableProps) {
       } catch (err) {
         setError('Failed to fetch game state');
         console.error(err);
+        setTimeout(() => {
+          router.push("/lobby");
+        }, 1000);
       }
     };
 
@@ -142,6 +145,21 @@ export default function GameTable({ gameId }: PokerTableProps) {
   const handleNewGame = () => {
     // This is a dummy function for now
     console.log('New game requested');
+  };
+
+  const handleReturnToLobby = async () => {
+  if (!isHost) {
+    router.push('/lobby');
+    return;
+  }
+
+  try {
+    await apiClient.deleteGame(gameId);
+  } catch (err) {
+    console.error('Failed to delete game:', err);
+  } finally {
+    router.push('/lobby');
+  }
   };
 
   const handleGetAdvice = async () => {
@@ -295,7 +313,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
             >
               New Game
             </button>
-            <button className={styles.returnButton} onClick={() => router.push('/lobby')}>
+            <button className={styles.returnButton} onClick={handleReturnToLobby}>
             Back to lobby
             </button>
           </div>

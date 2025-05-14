@@ -56,6 +56,24 @@ export class ApiService {
   }
 
   /**
+   * DELETE request with Authorization header.
+   * @param endpoint  API endpoint (e.g. "/games/123")
+   * @param token     Bearer token; if empty string it would not be added
+   */
+  public async deleteWithAuth<T>(endpoint: string, token: string): Promise<T> {
+    const url = `${this.baseURL}${endpoint}`;
+    const headers: HeadersInit = token
+      ? { ...this.defaultHeaders, Authorization: `Bearer ${token}` }
+      : this.defaultHeaders;
+
+    const res = await fetch(url, { method: "DELETE", headers });
+    return this.processResponse<T>(
+      res,
+      "An error occurred while deleting the data.\n",
+    );
+  }
+
+  /**
    * GET request.
    * @param endpoint - The API endpoint (e.g. "/users").
    * @returns JSON data of type T.
