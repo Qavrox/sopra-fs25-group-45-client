@@ -126,4 +126,8 @@ reason).
 | **[@TauSigma5]**   | 15.05    | [Link to PR 2](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/36) | Add UI for AI Tips | Finishes Task #43 and completes US#11 | 
 | **[@Qavrox]**   | 13.05    | [Link to PR 1](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/38) | Implemented History&leadboard frontend | To meet US#9 |
 | **[@Qavrox]**   | 13.05    | [Link to PR 2](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/79) | Implemented History&leadboard backend | To meet US#9 | 
+| **[@lydia-milena]**   | 14.05    | [Link to PR 1](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/48/commits/824bc15543ee39d88486106f8f7441a43f089e84)| Did a set of frontend fixes| General User Experience |
+|   | 14.05    | [Link to PR 1](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/51/commits)
+|||
+| **[@lydia-milena]**   | 15.05    | [Link to PR 2](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/92/commits/48ad9ff1bb87e41a936c5f7db00a8e42f9b005f2) |Added more tests to the backend| General backend functionality|
 ---
