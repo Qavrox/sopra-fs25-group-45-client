@@ -22,6 +22,11 @@ export default function Lobby() {
         router.push(userId ? `/users/${userId}` : '/login');
     };
 
+    function handleLogout(): void {
+        apiClient.logout();
+        router.push('/');
+    }
+
     return (
         <main className={styles.lobbyWrapper}>
             <div className={styles.topRightButtons}>
@@ -33,6 +38,9 @@ export default function Lobby() {
                 </button>
                 <button className={styles.profileButton} onClick={() => router.push('/lobby/friendrequests')}>
                     <UserOutlined /> Friend Requests
+                </button>
+                <button className={styles.profileButton} onClick={handleLogout}>
+                    <UserOutlined /> Logout
                 </button>
             </div>
 
