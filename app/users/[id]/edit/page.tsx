@@ -154,7 +154,7 @@ const EditProfilePage: React.FC = () => {
 
           <Form.Item
             style={{ width: 180 }}
-            name="level"
+            name="experienceLevel"
             label="Level"
             rules={[{ required: false, message: "Please input your name!" }]}
           >
