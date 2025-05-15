@@ -124,5 +124,6 @@ reason).
 | ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
 | **[@TauSigma5]**   | 15.05    | [Link to PR 1](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/78) | Add add google secret manager to enable deploy on app engine | Finishes task #86 |
 | **[@TauSigma5]**   | 15.05    | [Link to PR 2](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/36) | Add UI for AI Tips | Finishes Task #43 and completes US#11 | 
-
+| **[@Qavrox]**   | 13.05    | [Link to PR 1](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/38) | Implemented History&leadboard frontend | To meet US#9 |
+| **[@Qavrox]**   | 13.05    | [Link to PR 2](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/79) | Implemented History&leadboard backend | To meet US#9 | 
 ---
