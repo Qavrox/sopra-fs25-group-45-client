@@ -130,4 +130,7 @@ reason).
 |   | 14.05    | [Link to PR 1](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/51/commits)
 |||
 | **[@lydia-milena]**   | 15.05    | [Link to PR 2](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/92/commits/48ad9ff1bb87e41a936c5f7db00a8e42f9b005f2) |Added more tests to the backend| General backend functionality|
+| **[@unscttp]**   | 14.05    | [Link to PR 1](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/4d7abb2f643d0b0a1bf1996644f58bc37672e06d) | Implemented game archive function | Basic gaming function |
+| **[@unscttp]**   | 12.05    | [Link to PR 2](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/f28d2e4e7d5e73678950d644b5420ba4169bb981)| Frontent modifications to improve user experience | User experience improvement | 
+| **[@unscttp]**   | 13.05    | [Link to PR 3](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/74ed6c7b7e533d21e91f1f070cbdc488713a7c6d) | Same as above | Same as above | 
 ---
