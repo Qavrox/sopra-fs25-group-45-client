@@ -118,6 +118,11 @@ reason).
 | **[@IsSaudade]**   | 11.05     | [Link to commit 2](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/37/commits/af67e983bfc25135938cf5e9b9757bf75cc77654) | Beautify lobby page and gametable | For better user experiencee |
 ---
 
-## Contributions Week 6 - [Begin Date] to [End Date]
+## Contributions Week 6 - 12.05 to 19.05
 
-_Continue with the same table format as above._
+| **Student**        | **Date** | **Link to Commit** | **Description**                 | **Relevance**                       |
+| ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
+| **[@TauSigma5]**   | 15.05    | [Link to PR 1](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/78) | Add add google secret manager to enable deploy on app engine | Finishes task #86 |
+| **[@TauSigma5]**   | 15.05    | [Link to PR 2](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/36) | Add UI for AI Tips | Finishes Task #43 and completes US#11 | 
+
+---
