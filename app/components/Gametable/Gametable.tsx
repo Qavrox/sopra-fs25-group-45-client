@@ -127,6 +127,12 @@ export default function GameTable({ gameId }: PokerTableProps) {
   const handleWinProbability = async () => {
     if (!game) return;
     
+    // Toggle win probability display
+    if (winProbability !== null) {
+      setWinProbability(null);
+      return;
+    }
+    
     try {
       const response = await apiClient.getWinProbability(gameId);
       setWinProbability(response.probability);
@@ -190,8 +196,13 @@ export default function GameTable({ gameId }: PokerTableProps) {
   const handleGetAdvice = async () => {
     if (!game) return;
     
+    // Toggle advice display
+    if (pokerAdvice !== null) {
+      setPokerAdvice(null);
+      return;
+    }
+    
     setIsLoadingAdvice(true);
-    setPokerAdvice(null);
     
     try {
       const response = await apiClient.getPokerAdvice(gameId);
