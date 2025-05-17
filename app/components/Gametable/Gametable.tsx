@@ -9,6 +9,7 @@ import TutorialCard from '../RulesAndTutorials/TutorialCard';
 import { UserProfile } from '@/types/user';
 import { Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
+import Timer from '../Timer/Timer';
 
 interface PokerTableProps {
   gameId: number;
@@ -27,6 +28,9 @@ export default function GameTable({ gameId }: PokerTableProps) {
   const router = useRouter();
   const hasJoined = useRef(false);
   const [playerProfiles, setPlayerProfiles] = useState<{ [key: number]: UserProfile }>({});
+  const [showTimer, setShowTimer] = useState(false);
+  const [isPlayerTurn, setIsPlayerTurn] = useState(false);
+
 
   const POLLING_INTERVAL = 2000; // Poll every 2 seconds
 
@@ -193,6 +197,33 @@ export default function GameTable({ gameId }: PokerTableProps) {
   }
   };
 
+  const handleTimeUp = async () => {
+    if (isPlayerTurn) {
+        try {
+            if (game && game.currentPlayerId === apiClient.getUserId() && game.gameStatus !== GameStatus.GAMEOVER && game.gameStatus !== GameStatus.WAITING && game.gameStatus !== GameStatus.READY) {
+                await apiClient.submitGameAction(gameId, {
+                    userId: game.currentPlayerId,
+                    action: PlayerAction.FOLD,
+                    amount: 0
+                });
+                setShowTimer(false);
+                setIsPlayerTurn(false);
+            }
+        } catch (error) {
+            console.error('Failed to auto-fold:', error);
+        }
+    }
+  };
+  useEffect(() => {
+    if (game && game.currentPlayerId === apiClient.getUserId() && game.gameStatus !== GameStatus.GAMEOVER && game.gameStatus !== GameStatus.WAITING && game.gameStatus !== GameStatus.READY) {
+        setIsPlayerTurn(true);
+        setShowTimer(true);
+    } else {
+        setIsPlayerTurn(false);
+        setShowTimer(false);
+    }
+}, [game, apiClient.getUserId()]);
+
   const handleGetAdvice = async () => {
     if (!game) return;
     
@@ -354,9 +385,20 @@ export default function GameTable({ gameId }: PokerTableProps) {
             </button>
           </div>
         )}
+          {/* Timer */}
+            {showTimer && (
+              <div className={styles.timerContainer}>
+                  <Timer 
+                      initialTime={30}
+                      onTimeUp={handleTimeUp}
+                      isRunning={isPlayerTurn}
+                  />
+              </div>
+            )}
         
-        {/* Table */}
         <div className={styles.pokerTable}>
+  
+
           {/* Community Cards */}
           <div className={styles.communityCards}>
             {game.communityCards.map((card, index) => (
@@ -501,6 +543,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
                 </button>
               )}
             </div>
+      
           )}
         </div>
       </div>
