@@ -115,7 +115,7 @@ reason).
 | **[@unscttp]**   | 05.05    | [Link to PR 1](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/1c11cfa8ef12641cb2cb85dad684f2620a2b53c5) | Implemented myprofile page | basic app function |
 | **[@unscttp]**   | 07.05    | [Link to PR 2](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/cee27e96dea613f6b601bcd4ea1b3c7ee625eed4) | Implemented List of all users | basic app function |
 | **[@IsSaudade]**   | 11.05    | [Link to commit 1](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/37/commits/af67e983bfc25135938cf5e9b9757bf75cc77654) | Beautify homepage and tutorial page | For better user experience  |
-| **[@IsSaudade]**   | 11.05     | [Link to commit 2](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/37/commits/af67e983bfc25135938cf5e9b9757bf75cc77654) | Beautify lobby page and gametable | For better user experiencee |
+| **[@IsSaudade]**   | 11.05     | [Link to commit 2](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/37/commits/af67e983bfc25135938cf5e9b9757bf75cc77654) | Beautify lobby page and gametable | For better user experience |
 ---
 
 ## Contributions Week 6 - 12.05 to 19.05
@@ -133,4 +133,6 @@ reason).
 | **[@unscttp]**   | 14.05    | [Link to PR 1](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/4d7abb2f643d0b0a1bf1996644f58bc37672e06d) | Implemented game archive function | Basic gaming function |
 | **[@unscttp]**   | 12.05    | [Link to PR 2](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/f28d2e4e7d5e73678950d644b5420ba4169bb981)| Frontent modifications to improve user experience | User experience improvement | 
 | **[@unscttp]**   | 13.05    | [Link to PR 3](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/74ed6c7b7e533d21e91f1f070cbdc488713a7c6d) | Same as above | Same as above | 
+| **[@IsSaudade]**   | 13.05    | [Link to commit 1](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/4b669db0bd3dc1b7bdd8296ab78daf7a80d7491f) | try to fix Deploy to Vercel / deploy (push) Failed issues  | necessary for deployment  |
+| **[@IsSaudade]**   | 18.05     | [Link to PR 1](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/72) | Display only the actions relevant to the current state of the game |ensure the right game process |
 ---
