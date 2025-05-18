@@ -11,7 +11,7 @@ import {
   Tag,
   Divider,
   Typography,
-  Tabs,
+  Tabs, // Keep Tabs import
   Table,
   Button,
   Statistic,
@@ -19,6 +19,7 @@ import {
   Col,
   Skeleton,
   Alert,
+  Segmented, 
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import {ExperienceLevel, UserProfile, UserSummary} from "@/types/user";
@@ -26,15 +27,17 @@ import {
   UserOutlined,
   TrophyOutlined,
   HistoryOutlined,
-  TeamOutlined,
+  // TeamOutlined, // Make sure TeamOutlined is imported if you use it for a tab icon - No longer needed if not used elsewhere
   ArrowLeftOutlined,
-  OrderedListOutlined
+  OrderedListOutlined,
+  UsergroupAddOutlined // Icon for friends leaderboard
 } from "@ant-design/icons";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { useApi } from '@/hooks/useApi';
 
 const { Title, Text } = Typography;
-const { TabPane } = Tabs;
+// Remove TabPane import as it's deprecated
+// const { TabPane } = Tabs; 
 
 
 interface StatisticsData {
@@ -71,12 +74,16 @@ const UserProfilePage: React.FC = () => {
     totalWinnings: 0,
     averagePosition: 0,
   });
+  const [gameHistory, setGameHistory] = useState<GameHistoryItem[]>([]);
   const [leaderboard, setLeaderboard] = useState<LeaderboardItem[]>([]);
   const [loadingStats, setLoadingStats] = useState<boolean>(true);
   const [loadingLeaderboard, setLoadingLeaderboard] = useState<boolean>(true);
-  // Add state for leaderboard type
-  const [leaderboardType, setLeaderboardType] = useState<'winnings' | 'winrate'>('winnings');
+  // const [leaderboardType, setLeaderboardType] = useState<'winnings' | 'winrate' | 'friends-winnings' | 'friends-winrate'>('winnings'); 
+  
+  const [leaderboardScope, setLeaderboardScope] = useState<'global' | 'friends'>('global');
+  const [leaderboardSortBy, setLeaderboardSortBy] = useState<'winnings' | 'winrate'>('winnings');
 
+  const [loadingHistory, setLoadingHistory] = useState<boolean>(true);
   const { value: localId } = useLocalStorage<string>("user_id", "");
 
   const [friends, setFriends] = useState<UserSummary[]>([]);
@@ -150,12 +157,20 @@ const UserProfilePage: React.FC = () => {
       setLoadingLeaderboard(true);
       try {
         let response;
-        if (leaderboardType === 'winnings') {
-          response = await apiClient.getLeaderboardByWinnings();
-        } else {
-          response = await apiClient.getLeaderboardByWinRate();
+        if (leaderboardScope === 'global') {
+          if (leaderboardSortBy === 'winnings') {
+            response = await apiClient.getLeaderboardByWinnings();
+          } else { // 'winrate'
+            response = await apiClient.getLeaderboardByWinRate();
+          }
+        } else { // 'friends'
+          if (leaderboardSortBy === 'winnings') {
+            response = await apiClient.getFriendLeaderboardByWinnings();
+          } else { // 'winrate'
+            response = await apiClient.getFriendLeaderboardByWinRate();
+          }
         }
-        setLeaderboard(response);
+        setLeaderboard(response as LeaderboardItem[]);
       } catch (error) {
         console.error("Error fetching leaderboard:", error);
 
@@ -165,7 +180,7 @@ const UserProfilePage: React.FC = () => {
     };
 
     fetchLeaderboard();
-  }, [leaderboardType, apiClient]);
+  }, [leaderboardScope, leaderboardSortBy, apiClient]);
 
   // Helper function to get color based on experience level
   const getLevelColor = (level: string) => {
@@ -180,6 +195,30 @@ const UserProfilePage: React.FC = () => {
         return "default";
     }
   };
+
+  // Fetch game history
+  useEffect(() => {
+    const fetchGameHistory = async () => {
+      if (!id) return;
+
+      setLoadingHistory(true);
+      try {
+        // This endpoint needs to be implemented in the API
+        const response = await apiClient.getUserGameHistory(Number(id));
+        setGameHistory(response as GameHistoryItem[]);
+
+      } catch (error) {
+        console.error("Error fetching game history:", error);
+        // Fallback to an empty array if API fails
+        setGameHistory([]);
+
+
+      } finally {
+        setLoadingHistory(false);
+      }
+    };
+    fetchGameHistory();
+  }, [id, apiClient]);  
 
   // Game history columns for the table
   const historyColumns = [
@@ -213,8 +252,6 @@ const UserProfilePage: React.FC = () => {
       ),
     },
   ];
-
- 
 
   // Leaderboard columns
   const leaderboardColumns = [
@@ -262,6 +299,108 @@ const UserProfilePage: React.FC = () => {
     return friends.some(friend => friend.id === userId);
   };
 
+  // Define tab items here
+  const tabItems = [
+    {
+      key: 'personal',
+      label: <span><UserOutlined /> Personal Info</span>,
+      children: (
+        <div style={{ padding: "10px 0" }}>
+          <Row gutter={[16, 16]}>
+            <Col span={8}>
+              <Text strong>Display Name:</Text>
+            </Col>
+            <Col span={16}>
+              <Text>{profile?.name || 'Not set'}</Text>
+            </Col>
+            <Col span={8}>
+              <Text strong>Username:</Text>
+            </Col>
+            <Col span={16}>
+              <Text>{profile?.username}</Text>
+            </Col>
+            <Col span={8}>
+              <Text strong>Birthday:</Text>
+            </Col>
+            <Col span={16}>
+              <Text>{profile?.birthday ? new Date(profile.birthday).toLocaleDateString() : 'Not set'}</Text>
+            </Col>
+            <Col span={8}>
+              <Text strong>Experience Level:</Text>
+            </Col>
+            <Col span={16}>
+              {profile?.experienceLevel && (
+                  <Tag color={getLevelColor(profile.experienceLevel)}>
+                    {profile.experienceLevel}
+                  </Tag>
+              )}
+            </Col>
+            <Col span={8}>
+              <Text strong>Member Since:</Text>
+            </Col>
+            <Col span={16}>
+              <Text>{profile?.creationDate ? new Date(profile.creationDate).toLocaleDateString() : 'Unknown'}</Text>
+            </Col>
+          </Row>
+        </div>
+      ),
+    },
+    // Conditionally add the Game History tab
+    ...(isOwnProfile ? [{
+      key: 'history',
+      label: <span><HistoryOutlined /> Game History</span>,
+      children: (
+        <Table
+            dataSource={gameHistory}
+            columns={historyColumns} // Ensure historyColumns is defined
+            rowKey="id"
+            pagination={{ pageSize: 5 }}
+            loading={loadingHistory}
+            locale={{ emptyText: <Text style={{ color: 'white' }}>No Data</Text> }}
+        />
+      ),
+    }] : []),
+    {
+      key: 'leaderboard',
+      label: <span><OrderedListOutlined /> Leaderboard</span>,
+      children: (
+        <>
+          <div style={{ marginBottom: 16, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Text strong>Type:</Text>
+              <Segmented
+                options={[
+                  { label: 'Global', value: 'global' },
+                  { label: 'Friends', value: 'friends' },
+                ]}
+                value={leaderboardScope}
+                onChange={(value) => setLeaderboardScope(value as 'global' | 'friends')}
+              />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Text strong>Sort by:</Text>
+              <Segmented
+                options={[
+                  { label: 'Winnings', value: 'winnings' },
+                  { label: 'Winning Rates', value: 'winrate' },
+                ]}
+                value={leaderboardSortBy}
+                onChange={(value) => setLeaderboardSortBy(value as 'winnings' | 'winrate')}
+              />
+            </div>
+          </div>
+          <Table
+              dataSource={leaderboard}
+              columns={leaderboardColumns} // Ensure leaderboardColumns is defined
+              rowKey="rank" // Changed from "id" to "rank"
+              pagination={{ pageSize: 5 }}
+              loading={loadingLeaderboard}
+          />
+        </>
+      ),
+    },
+  ];
+
   return (
       <div className="card-container">
         {error ? (
@@ -299,7 +438,7 @@ const UserProfilePage: React.FC = () => {
                         <Title level={2} style={{ margin: 0 }}>
                           {profile.name || 'Anonymous'}
                         </Title>
-                        <Text type="secondary" style={{ fontSize: 16 }}>@{profile.username}</Text>
+                        <Text type="secondary" style={{ color: 'white', fontSize: 16 }}>@{profile.username}</Text>
                         <div style={{ marginTop: 12 }}>
                           {profile.experienceLevel && (
                               <Tag color={getLevelColor(profile.experienceLevel)} style={{ fontSize: 14, padding: "4px 8px" }}>
@@ -344,109 +483,25 @@ const UserProfilePage: React.FC = () => {
                     <Divider />
 
                     <Row gutter={16} style={{ marginBottom: 24 }}>
-                      <Col span={6}>
-                        <Statistic title="Games Played" value={statistics.gamesPlayed} loading={loadingStats} />
+                      <Col span={8}>
+                        <Statistic title={<Text style={{ color: 'white' }}>Games Played</Text>} value={statistics.gamesPlayed} loading={loadingStats} />
                       </Col>
-                      <Col span={6}>
-                        <Statistic title="Win Rate" value={statistics.winRate} suffix="%" loading={loadingStats} />
+                      <Col span={8}>
+                        <Statistic title={<Text style={{ color: 'white' }}>Win Rate</Text>} value={statistics.winRate} suffix="%" loading={loadingStats} />
                       </Col>
-                      <Col span={6}>
+                      <Col span={8}>
                         <Statistic
-                            title="Total Winnings"
+                            title={<Text style={{ color: 'white' }}>Total Winnings</Text>}
                             value={statistics.totalWinnings}
                             prefix="$"
                             valueStyle={{ color: statistics.totalWinnings >= 0 ? 'green' : 'red' }}
                             loading={loadingStats}
                         />
                       </Col>
-                      <Col span={6}>
-                        <Statistic title="Avg. Position" value={statistics.averagePosition} precision={1} loading={loadingStats} />
-                      </Col>
                     </Row>
 
-                    <Tabs defaultActiveKey="history">
-  
-                      <TabPane
-                          tab={<span><TrophyOutlined /> Achievements</span>}
-                          key="achievements"
-                      >
-                        <div style={{ padding: "20px 0", textAlign: "center" }}>
-                          <Text type="secondary">No achievements yet</Text>
-                        </div>
-                      </TabPane>
-
-                      <TabPane
-                          tab={<span><OrderedListOutlined /> Leaderboard</span>}
-                          key="leaderboard"
-                      >
-                        <div style={{ marginBottom: 16 }}>
-                          <Button.Group>
-                            <Button
-                                type={leaderboardType === 'winnings' ? 'primary' : 'default'}
-                                onClick={() => setLeaderboardType('winnings')}
-                            >
-                              By Winnings
-                            </Button>
-                            <Button
-                                type={leaderboardType === 'winrate' ? 'primary' : 'default'}
-                                onClick={() => setLeaderboardType('winrate')}
-                            >
-                              By Win Rate
-                            </Button>
-                          </Button.Group>
-                        </div>
-                        <Table
-                            dataSource={leaderboard}
-                            columns={leaderboardColumns}
-                            rowKey="id"
-                            pagination={{ pageSize: 5 }}
-                            loading={loadingLeaderboard}
-                        />
-                      </TabPane>
-                      <TabPane
-                          tab={<span><UserOutlined /> Personal Info</span>}
-                          key="personal"
-                      >
-                        <div style={{ padding: "10px 0" }}>
-                          <Row gutter={[16, 16]}>
-                            <Col span={8}>
-                              <Text strong>Display Name:</Text>
-                            </Col>
-                            <Col span={16}>
-                              <Text>{profile.name || 'Not set'}</Text>
-                            </Col>
-                            <Col span={8}>
-                              <Text strong>Username:</Text>
-                            </Col>
-                            <Col span={16}>
-                              <Text>{profile.username}</Text>
-                            </Col>
-                            <Col span={8}>
-                              <Text strong>Birthday:</Text>
-                            </Col>
-                            <Col span={16}>
-                              <Text>{profile.birthday ? new Date(profile.birthday).toLocaleDateString() : 'Not set'}</Text>
-                            </Col>
-                            <Col span={8}>
-                              <Text strong>Experience Level:</Text>
-                            </Col>
-                            <Col span={16}>
-                              {profile.experienceLevel && (
-                                  <Tag color={getLevelColor(profile.experienceLevel)}>
-                                    {profile.experienceLevel}
-                                  </Tag>
-                              )}
-                            </Col>
-                            <Col span={8}>
-                              <Text strong>Member Since:</Text>
-                            </Col>
-                            <Col span={16}>
-                              <Text>{profile.creationDate ? new Date(profile.creationDate).toLocaleDateString() : 'Unknown'}</Text>
-                            </Col>
-                          </Row>
-                        </div>
-                      </TabPane>
-                    </Tabs>
+                    {/* Use items prop for Tabs */}
+                    <Tabs defaultActiveKey={"personal"} items={tabItems} />
                   </>
               ) : (
                   <Skeleton avatar paragraph={{ rows: 6 }} active />

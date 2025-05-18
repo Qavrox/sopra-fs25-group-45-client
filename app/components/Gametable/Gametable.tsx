@@ -9,6 +9,7 @@ import TutorialCard from '../RulesAndTutorials/TutorialCard';
 import { UserProfile } from '@/types/user';
 import { Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
+import Timer from '../Timer/Timer';
 
 interface PokerTableProps {
   gameId: number;
@@ -27,8 +28,28 @@ export default function GameTable({ gameId }: PokerTableProps) {
   const router = useRouter();
   const hasJoined = useRef(false);
   const [playerProfiles, setPlayerProfiles] = useState<{ [key: number]: UserProfile }>({});
+  const [showTimer, setShowTimer] = useState(false);
+  const [isPlayerTurn, setIsPlayerTurn] = useState(false);
 
   const POLLING_INTERVAL = 2000; // Poll every 2 seconds
+  const ERROR_DISPLAY_DURATION = 5000; // Display errors for 5 seconds
+
+  // Set up error auto-clearing
+  useEffect(() => {
+    let errorTimeout: NodeJS.Timeout;
+    
+    if (error) {
+      errorTimeout = setTimeout(() => {
+        setError(null);
+      }, ERROR_DISPLAY_DURATION);
+    }
+    
+    return () => {
+      if (errorTimeout) {
+        clearTimeout(errorTimeout);
+      }
+    };
+  }, [error]);
 
   useEffect(() => {
     const initializeGame = async () => {
@@ -42,7 +63,6 @@ export default function GameTable({ gameId }: PokerTableProps) {
         // Then fetch the game details
         const gameData = await apiClient.getGameDetails(gameId);
         setGame(gameData);
-        setError(null);
       } catch (err: any) {
         setError(err.message || 'Failed to join game');
         console.error(err);
@@ -181,20 +201,46 @@ export default function GameTable({ gameId }: PokerTableProps) {
   };
 
   const handleReturnToLobby = async () => {
-  if (!isHost) {
-    router.push('/lobby');
-    return;
-  }
+    if (!isHost) {
+      router.push('/lobby');
+      return;
+    }
 
-  try {
-    await apiClient.deleteGame(gameId);
-  } catch (err) {
-    setError(extractErrorMessage(err));
-    console.error('Failed to delete game:', err);
-  } finally {
-    router.push('/lobby');
-  }
+    try {
+      await apiClient.deleteGame(gameId);
+    } catch (err) {
+      console.error('Failed to delete game:', err);
+    } finally {
+      router.push('/lobby');
+    }
   };
+
+  const handleTimeUp = async () => {
+    if (isPlayerTurn) {
+        try {
+            if (game && game.currentPlayerId === apiClient.getUserId() && game.gameStatus !== GameStatus.GAMEOVER && game.gameStatus !== GameStatus.WAITING && game.gameStatus !== GameStatus.READY) {
+                await apiClient.submitGameAction(gameId, {
+                    userId: game.currentPlayerId,
+                    action: PlayerAction.FOLD,
+                    amount: 0
+                });
+                setShowTimer(false);
+                setIsPlayerTurn(false);
+            }
+        } catch (error) {
+            console.error('Failed to auto-fold:', error);
+        }
+    }
+  };
+  useEffect(() => {
+    if (game && game.currentPlayerId === apiClient.getUserId() && game.gameStatus !== GameStatus.GAMEOVER && game.gameStatus !== GameStatus.WAITING && game.gameStatus !== GameStatus.READY) {
+        setIsPlayerTurn(true);
+        setShowTimer(true);
+    } else {
+        setIsPlayerTurn(false);
+        setShowTimer(false);
+    }
+}, [game, apiClient.getUserId()]);
 
   const handleGetAdvice = async () => {
     if (!game) return;
@@ -219,8 +265,6 @@ export default function GameTable({ gameId }: PokerTableProps) {
     }
   };
 
-  
-  
   // Helper function to render a card with proper suit and value display
   const renderCard = (card: string) => {
     if (!card || card.length < 2) return null;
@@ -274,8 +318,8 @@ export default function GameTable({ gameId }: PokerTableProps) {
     return <div className={styles.loadingContainer}>Loading game...</div>;
   }
 
-  if (error || !game) {
-    return <div className={styles.errorContainer}>{error || 'Game not found'}</div>;
+  if (!game) {
+    return <div className={styles.errorContainer}>Game not found</div>;
   }
 
   const isCurrentPlayersTurn = game.currentPlayerId === apiClient.getUserId();
@@ -289,22 +333,45 @@ export default function GameTable({ gameId }: PokerTableProps) {
 
   return (
     <div className={styles.mainContainer}>
+      {/* Error Dialog */}
+      {error && (
+        <div className={styles.errorDialog}>
+          <div className={styles.errorContent}>
+            <div className={styles.errorMessage}>{error}</div>
+            <button 
+              className={styles.errorCloseButton}
+              onClick={() => setError(null)}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Top Win Probability Button - Completely separate from the poker table */}
-      {canCheckProbability && (
-        <div className={styles.topControlsContainer}>
+      <div className={styles.topControlsContainer}>
+        {canStartGame && (
+          <button 
+            onClick={handleStartBetting}
+            className={styles.startGameButton}
+          >
+            Start Game
+          </button>
+        )}
+        {canCheckProbability && (
           <button 
             onClick={handleWinProbability}
             className={styles.winProbabilityButton}
           >
             Check Win Probability
           </button>
-          {winProbability !== null && (
-            <div className={styles.winProbabilityDisplay}>
-              Win Probability: {(winProbability * 100).toFixed(2)}%
-            </div>
-          )}
-        </div>
-      )}
+        )}
+        {winProbability !== null && (
+          <div className={styles.winProbabilityDisplay}>
+            Win Probability: {(winProbability * 100).toFixed(2)}%
+          </div>
+        )}
+      </div>
 
       <div className={styles.pokerTableContainer}>
         {/* Tutorial Card Component */}
@@ -341,25 +408,85 @@ export default function GameTable({ gameId }: PokerTableProps) {
               <h3>Winner: Player {gameResults.winner.userId}</h3>
               <p>Winning Hand: {gameResults.winningHand}</p>
             </div>
+            
+            {/* Display Community Cards */}
+            <div className={styles.resultsSection}>
+              <h4>Community Cards</h4>
+              <div className={styles.resultCards}>
+                {game.communityCards.map((card, index) => (
+                  <div key={`community-${index}`} className={styles.resultCardWrapper}>
+                    {renderCard(card)}
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Display Winner's Hand */}
+            <div className={styles.resultsSection}>
+              <h4>Winner's Hand - Player {gameResults.winner.userId}</h4>
+              <div className={styles.resultCards}>
+                {gameResults.winner.hand.map((card, index) => (
+                  <div key={`winner-${index}`} className={styles.resultCardWrapper}>
+                    {renderCard(card)}
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Display All Players' Hands */}
+            <div className={styles.resultsSection}>
+              <h4>All Players' Hands</h4>
+              <div className={styles.allPlayerCards}>
+                {game.players.filter(player => player.userId !== gameResults.winner.userId).map((player) => (
+                  <div key={`player-${player.userId}`} className={styles.playerHandResult}>
+                    <div className={styles.playerHandLabel}>
+                      Player {player.userId} {player.hasFolded ? "(Folded)" : ""}
+                    </div>
+                    <div className={styles.resultCards}>
+                      {player.hand.map((card, index) => (
+                        <div key={`player-${player.userId}-card-${index}`} className={styles.resultCardWrapper}>
+                          {renderCard(card)}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
             <div className={styles.gameStats}>
               <h4>Statistics</h4>
               <p>Participation Rate: {gameResults.statistics.participationRate}%</p>
               <p>Pots Won: {gameResults.statistics.potsWon}</p>
             </div>
-            <button 
-              onClick={handleNewGame}
-              className={styles.newGameButton}
-            >
-              New Game
-            </button>
-            <button className={styles.returnButton} onClick={handleReturnToLobby}>
-            Back to lobby
-            </button>
+            
+            <div className={styles.resultButtons}>
+              <button 
+                onClick={handleNewGame}
+                className={styles.newGameButton}
+              >
+                New Game
+              </button>
+              <button className={styles.returnButton} onClick={handleReturnToLobby}>
+                Back to Lobby
+              </button>
+            </div>
           </div>
         )}
+          {/* Timer */}
+            {showTimer && (
+              <div className={styles.timerContainer}>
+                  <Timer 
+                      initialTime={30}
+                      onTimeUp={handleTimeUp}
+                      isRunning={isPlayerTurn}
+                  />
+              </div>
+            )}
         
-        {/* Table */}
         <div className={styles.pokerTable}>
+  
+
           {/* Community Cards */}
           <div className={styles.communityCards}>
             {game.communityCards.map((card, index) => (
@@ -380,18 +507,6 @@ export default function GameTable({ gameId }: PokerTableProps) {
             <span className={styles.statusValue}>{game.gameStatus}</span>
           </div>
 
-          {/* Host Controls */}
-          {canStartGame && (
-            <div className={styles.hostControls}>
-              <button 
-                onClick={handleStartBetting}
-                className={styles.startGameButton}
-              >
-                Start Game
-              </button>
-            </div>
-          )}
-
           {/* Player Seats */}
           <div className={styles.playersContainer}>
             {game.players.map((player, index) => {
@@ -401,11 +516,13 @@ export default function GameTable({ gameId }: PokerTableProps) {
               const y = Math.sin((angle * Math.PI) / 180) * radius;
               const isActive = !player.hasFolded && game.currentPlayerId === player.userId;
               const isCurrentUser = player.userId === apiClient.getUserId();
+              const shouldShowCards = isCurrentUser || isGameOver; // Show cards for current user or when game is over
+              const isWinner = isGameOver && gameResults && gameResults.winner.userId === player.userId;
 
               return (
                 <div
                   key={player.id}
-                  className={`${styles.playerSeat} ${isActive ? styles.activePlayer : ''} ${isCurrentUser ? styles.currentPlayer : ''}`}
+                  className={`${styles.playerSeat} ${isActive ? styles.activePlayer : ''} ${isCurrentUser ? styles.currentPlayer : ''} ${isWinner ? styles.winnerPlayer : ''}`}
                   style={{
                     left: `calc(50% + ${x}px)`,
                     top: `calc(50% + ${y}px)`,
@@ -416,8 +533,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
                       <Avatar
                         src={playerProfiles[player.userId] ? `/images/avatar${playerProfiles[player.userId].profileImage || 0}.png` : undefined}
                         icon={!playerProfiles[player.userId] && <UserOutlined />}
-                        size={100
-                      }
+                        size={100}
                         style={{ marginRight: '12px' }}
                       />
                       Player {player.userId}
@@ -430,10 +546,13 @@ export default function GameTable({ gameId }: PokerTableProps) {
                     {player.hasFolded && (
                       <div className={styles.playerFolded}>FOLDED</div>
                     )}
+                    {isWinner && (
+                      <div className={styles.winnerBadge}>WINNER!</div>
+                    )}
                   </div>
                   
-                  {/* Only show cards for current user in player positions if game is ongoing*/}
-                  {isCurrentUser && player.hand.length > 0 && !isGameOver && (
+                  {/* Show cards for current user or when game is over */}
+                  {shouldShowCards && player.hand.length > 0 && (
                     <div className={styles.playerCards}>
                       {player.hand.map((card, i) => (
                         <div key={i} className={styles.playerCardWrapper}>
@@ -451,60 +570,79 @@ export default function GameTable({ gameId }: PokerTableProps) {
           {currentUserPlayer && isCurrentPlayersTurn && !currentUserPlayer.hasFolded && 
            game.gameStatus !== GameStatus.WAITING && game.gameStatus !== GameStatus.READY && 
            game.gameStatus !== GameStatus.GAMEOVER && (
-            <div className={styles.actionControlsContainer}>
-              <div className={styles.actionTitle}>Your Turn - Choose an Action</div>
-              <div className={styles.actionButtons}>
-                <button
-                  onClick={() => setSelectedAction(PlayerAction.FOLD)}
-                  className={`${styles.actionButton} ${styles.foldButton}`}
-                >
-                  Fold
-                </button>
-                <button
-                  onClick={() => setSelectedAction(PlayerAction.CHECK)}
-                  className={`${styles.actionButton} ${styles.checkButton}`}
-                >
-                  Check
-                </button>
-                <button
-                  onClick={() => setSelectedAction(PlayerAction.CALL)}
-                  className={`${styles.actionButton} ${styles.callButton}`}
-                >
-                  Call ${game.callAmount}
-                </button>
-              </div>
-              <div className={styles.betControls}>
-                <input
-                  type="number"
-                  value={betAmount}
-                  onChange={(e) => setBetAmount(Number(e.target.value))}
-                  className={styles.betInput}
-                  placeholder="Bet Amount"
-                  min={game.callAmount}
-                />
-                <button
-                  onClick={() => setSelectedAction(PlayerAction.BET)}
-                  className={`${styles.actionButton} ${styles.betButton}`}
-                >
-                  Bet
-                </button>
-                <button
-                  onClick={() => setSelectedAction(PlayerAction.RAISE)}
-                  className={`${styles.actionButton} ${styles.raiseButton}`}
-                >
-                  Raise
-                </button>
-              </div>
-              {selectedAction && (
-                <button
-                  onClick={handleAction}
-                  className={styles.confirmButton}
-                >
-                  Confirm {selectedAction}
-                </button>
+                  <div className={styles.actionControlsContainer}>
+                    <div className={styles.actionTitle}>Your Turn - Choose an Action</div>
+                    <div className={styles.actionButtons}>
+                      <button
+                          onClick={() => setSelectedAction(PlayerAction.FOLD)}
+                          className={`${styles.actionButton} ${styles.foldButton}`}
+                      >
+                        Fold
+                      </button>
+
+                      {/* Only show Check if no call amount */}
+                      {game.callAmount === 0 && (
+                          <button
+                              onClick={() => setSelectedAction(PlayerAction.CHECK)}
+                              className={`${styles.actionButton} ${styles.checkButton}`}
+                          >
+                            Check
+                          </button>
+                      )}
+
+                      {/* Only show Call if there's a call amount */}
+                      {game.callAmount > 0 && (
+                          <button
+                              onClick={() => setSelectedAction(PlayerAction.CALL)}
+                              className={`${styles.actionButton} ${styles.callButton}`}
+                          >
+                            Call ${game.callAmount}
+                          </button>
+                      )}
+                    </div>
+
+                    <div className={styles.betControls}>
+                      <input
+                          type="number"
+                          value={betAmount}
+                          onChange={(e) => setBetAmount(Number(e.target.value))}
+                          className={styles.betInput}
+                          placeholder="Bet Amount"
+                          min={game.callAmount}
+                      />
+
+                      {/* Show Bet only if no one has bet yet */}
+                      {game.callAmount === 0 && (
+                          <button
+                              onClick={() => setSelectedAction(PlayerAction.BET)}
+                              className={`${styles.actionButton} ${styles.betButton}`}
+                          >
+                            Bet
+                          </button>
+                      )}
+
+                      {/* Show Raise only if someone has already bet */}
+                      {game.callAmount > 0 && (
+                          <button
+                              onClick={() => setSelectedAction(PlayerAction.RAISE)}
+                              className={`${styles.actionButton} ${styles.raiseButton}`}
+                          >
+                            Raise
+                          </button>
+                      )}
+                    </div>
+
+                    {selectedAction && (
+                        <button
+                            onClick={handleAction}
+                            className={styles.confirmButton}
+                        >
+                          Confirm {selectedAction}
+                        </button>
+                    )}
+                  </div>
               )}
-            </div>
-          )}
+
         </div>
       </div>
     </div>
