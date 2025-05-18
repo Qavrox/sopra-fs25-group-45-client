@@ -374,20 +374,69 @@ export default function GameTable({ gameId }: PokerTableProps) {
               <h3>Winner: Player {gameResults.winner.userId}</h3>
               <p>Winning Hand: {gameResults.winningHand}</p>
             </div>
+            
+            {/* Display Community Cards */}
+            <div className={styles.resultsSection}>
+              <h4>Community Cards</h4>
+              <div className={styles.resultCards}>
+                {game.communityCards.map((card, index) => (
+                  <div key={`community-${index}`} className={styles.resultCardWrapper}>
+                    {renderCard(card)}
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Display Winner's Hand */}
+            <div className={styles.resultsSection}>
+              <h4>Winner's Hand - Player {gameResults.winner.userId}</h4>
+              <div className={styles.resultCards}>
+                {gameResults.winner.hand.map((card, index) => (
+                  <div key={`winner-${index}`} className={styles.resultCardWrapper}>
+                    {renderCard(card)}
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Display All Players' Hands */}
+            <div className={styles.resultsSection}>
+              <h4>All Players' Hands</h4>
+              <div className={styles.allPlayerCards}>
+                {game.players.filter(player => player.userId !== gameResults.winner.userId).map((player) => (
+                  <div key={`player-${player.userId}`} className={styles.playerHandResult}>
+                    <div className={styles.playerHandLabel}>
+                      Player {player.userId} {player.hasFolded ? "(Folded)" : ""}
+                    </div>
+                    <div className={styles.resultCards}>
+                      {player.hand.map((card, index) => (
+                        <div key={`player-${player.userId}-card-${index}`} className={styles.resultCardWrapper}>
+                          {renderCard(card)}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
             <div className={styles.gameStats}>
               <h4>Statistics</h4>
               <p>Participation Rate: {gameResults.statistics.participationRate}%</p>
               <p>Pots Won: {gameResults.statistics.potsWon}</p>
             </div>
-            <button 
-              onClick={handleNewGame}
-              className={styles.newGameButton}
-            >
-              New Game
-            </button>
-            <button className={styles.returnButton} onClick={handleReturnToLobby}>
-            Back to lobby
-            </button>
+            
+            <div className={styles.resultButtons}>
+              <button 
+                onClick={handleNewGame}
+                className={styles.newGameButton}
+              >
+                New Game
+              </button>
+              <button className={styles.returnButton} onClick={handleReturnToLobby}>
+                Back to Lobby
+              </button>
+            </div>
           </div>
         )}
         
@@ -422,11 +471,13 @@ export default function GameTable({ gameId }: PokerTableProps) {
               const y = Math.sin((angle * Math.PI) / 180) * radius;
               const isActive = !player.hasFolded && game.currentPlayerId === player.userId;
               const isCurrentUser = player.userId === apiClient.getUserId();
+              const shouldShowCards = isCurrentUser || isGameOver; // Show cards for current user or when game is over
+              const isWinner = isGameOver && gameResults && gameResults.winner.userId === player.userId;
 
               return (
                 <div
                   key={player.id}
-                  className={`${styles.playerSeat} ${isActive ? styles.activePlayer : ''} ${isCurrentUser ? styles.currentPlayer : ''}`}
+                  className={`${styles.playerSeat} ${isActive ? styles.activePlayer : ''} ${isCurrentUser ? styles.currentPlayer : ''} ${isWinner ? styles.winnerPlayer : ''}`}
                   style={{
                     left: `calc(50% + ${x}px)`,
                     top: `calc(50% + ${y}px)`,
@@ -450,10 +501,13 @@ export default function GameTable({ gameId }: PokerTableProps) {
                     {player.hasFolded && (
                       <div className={styles.playerFolded}>FOLDED</div>
                     )}
+                    {isWinner && (
+                      <div className={styles.winnerBadge}>WINNER!</div>
+                    )}
                   </div>
                   
-                  {/* Only show cards for current user in player positions if game is ongoing*/}
-                  {isCurrentUser && player.hand.length > 0 && !isGameOver && (
+                  {/* Show cards for current user or when game is over */}
+                  {shouldShowCards && player.hand.length > 0 && (
                     <div className={styles.playerCards}>
                       {player.hand.map((card, i) => (
                         <div key={i} className={styles.playerCardWrapper}>
