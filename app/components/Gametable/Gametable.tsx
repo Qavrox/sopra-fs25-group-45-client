@@ -287,21 +287,29 @@ export default function GameTable({ gameId }: PokerTableProps) {
   return (
     <div className={styles.mainContainer}>
       {/* Top Win Probability Button - Completely separate from the poker table */}
-      {canCheckProbability && (
-        <div className={styles.topControlsContainer}>
+      <div className={styles.topControlsContainer}>
+        {canStartGame && (
+          <button 
+            onClick={handleStartBetting}
+            className={styles.startGameButton}
+          >
+            Start Game
+          </button>
+        )}
+        {canCheckProbability && (
           <button 
             onClick={handleWinProbability}
             className={styles.winProbabilityButton}
           >
             Check Win Probability
           </button>
-          {winProbability !== null && (
-            <div className={styles.winProbabilityDisplay}>
-              Win Probability: {(winProbability * 100).toFixed(2)}%
-            </div>
-          )}
-        </div>
-      )}
+        )}
+        {winProbability !== null && (
+          <div className={styles.winProbabilityDisplay}>
+            Win Probability: {(winProbability * 100).toFixed(2)}%
+          </div>
+        )}
+      </div>
 
       <div className={styles.pokerTableContainer}>
         {/* Tutorial Card Component */}
@@ -376,18 +384,6 @@ export default function GameTable({ gameId }: PokerTableProps) {
             <span className={styles.statusLabel}>Status:</span> 
             <span className={styles.statusValue}>{game.gameStatus}</span>
           </div>
-
-          {/* Host Controls */}
-          {canStartGame && (
-            <div className={styles.hostControls}>
-              <button 
-                onClick={handleStartBetting}
-                className={styles.startGameButton}
-              >
-                Start Game
-              </button>
-            </div>
-          )}
 
           {/* Player Seats */}
           <div className={styles.playersContainer}>
