@@ -826,6 +826,7 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
 
 .returnButton:hover {
   background-color: #45a049;
