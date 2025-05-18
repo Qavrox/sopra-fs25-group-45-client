@@ -27,8 +27,26 @@ export default function GameTable({ gameId }: PokerTableProps) {
   const router = useRouter();
   const hasJoined = useRef(false);
   const [playerProfiles, setPlayerProfiles] = useState<{ [key: number]: UserProfile }>({});
-
+  
   const POLLING_INTERVAL = 2000; // Poll every 2 seconds
+  const ERROR_DISPLAY_DURATION = 5000; // Display errors for 5 seconds
+
+  // Set up error auto-clearing
+  useEffect(() => {
+    let errorTimeout: NodeJS.Timeout;
+    
+    if (error) {
+      errorTimeout = setTimeout(() => {
+        setError(null);
+      }, ERROR_DISPLAY_DURATION);
+    }
+    
+    return () => {
+      if (errorTimeout) {
+        clearTimeout(errorTimeout);
+      }
+    };
+  }, [error]);
 
   useEffect(() => {
     const initializeGame = async () => {
@@ -42,7 +60,6 @@ export default function GameTable({ gameId }: PokerTableProps) {
         // Then fetch the game details
         const gameData = await apiClient.getGameDetails(gameId);
         setGame(gameData);
-        setError(null);
       } catch (err: any) {
         setError(err.message || 'Failed to join game');
         console.error(err);
@@ -68,8 +85,8 @@ export default function GameTable({ gameId }: PokerTableProps) {
           }
         }
         
-        setError(null);
-      } catch (err) {
+        // Don't clear user-facing errors on poll success
+      } catch (err: any) {
         setError('Failed to fetch game state');
         console.error(err);
         setTimeout(() => {
@@ -118,7 +135,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
       await apiClient.startBetting(gameId);
       // We'll rely on the poll to update the game state
       // rather than setting a local state variable
-    } catch (err) {
+    } catch (err: any) {
       setError('Failed to start betting');
       console.error(err);
     }
@@ -136,8 +153,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
     try {
       const response = await apiClient.getWinProbability(gameId);
       setWinProbability(response.probability);
-      setError(null);
-    } catch (err) {
+    } catch (err: any) {
       setError('Failed to fetch win probability');
       console.error(err);
     }
@@ -179,18 +195,18 @@ export default function GameTable({ gameId }: PokerTableProps) {
   };
 
   const handleReturnToLobby = async () => {
-  if (!isHost) {
-    router.push('/lobby');
-    return;
-  }
+    if (!isHost) {
+      router.push('/lobby');
+      return;
+    }
 
-  try {
-    await apiClient.deleteGame(gameId);
-  } catch (err) {
-    console.error('Failed to delete game:', err);
-  } finally {
-    router.push('/lobby');
-  }
+    try {
+      await apiClient.deleteGame(gameId);
+    } catch (err) {
+      console.error('Failed to delete game:', err);
+    } finally {
+      router.push('/lobby');
+    }
   };
 
   const handleGetAdvice = async () => {
@@ -207,8 +223,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
     try {
       const response = await apiClient.getPokerAdvice(gameId);
       setPokerAdvice(response.advice);
-      setError(null);
-    } catch (err) {
+    } catch (err: any) {
       setError('Failed to get poker advice');
       console.error(err);
     } finally {
@@ -216,8 +231,6 @@ export default function GameTable({ gameId }: PokerTableProps) {
     }
   };
 
-  
-  
   // Helper function to render a card with proper suit and value display
   const renderCard = (card: string) => {
     if (!card || card.length < 2) return null;
@@ -424,8 +437,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
                       <Avatar
                         src={playerProfiles[player.userId] ? `/images/avatar${playerProfiles[player.userId].profileImage || 0}.png` : undefined}
                         icon={!playerProfiles[player.userId] && <UserOutlined />}
-                        size={100
-                      }
+                        size={100}
                         style={{ marginRight: '12px' }}
                       />
                       Player {player.userId}
