@@ -267,6 +267,16 @@ export class ApiClient {
     return this.apiService.get<LeaderboardItem[]>(`/leaderboard/winrate`);
   }
 
+  getFriendLeaderboardByWinnings(): Promise<LeaderboardItem[]> {
+    return this.apiService.get<LeaderboardItem[]>(`/leaderboard/friends/winnings`);
+  }
+
+  getFriendLeaderboardByWinRate(): Promise<LeaderboardItem[]> {
+    return this.apiService.get<LeaderboardItem[]>(`/leaderboard/friends/winrate`);
+  }
+
+
+
   // use as default
   getLeaderboard(): Promise<LeaderboardItem[]> {
     return this.getLeaderboardByWinnings();
