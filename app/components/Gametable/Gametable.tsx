@@ -271,8 +271,8 @@ export default function GameTable({ gameId }: PokerTableProps) {
     return <div className={styles.loadingContainer}>Loading game...</div>;
   }
 
-  if (error || !game) {
-    return <div className={styles.errorContainer}>{error || 'Game not found'}</div>;
+  if (!game) {
+    return <div className={styles.errorContainer}>Game not found</div>;
   }
 
   const isCurrentPlayersTurn = game.currentPlayerId === apiClient.getUserId();
@@ -286,6 +286,21 @@ export default function GameTable({ gameId }: PokerTableProps) {
 
   return (
     <div className={styles.mainContainer}>
+      {/* Error Dialog */}
+      {error && (
+        <div className={styles.errorDialog}>
+          <div className={styles.errorContent}>
+            <div className={styles.errorMessage}>{error}</div>
+            <button 
+              className={styles.errorCloseButton}
+              onClick={() => setError(null)}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Top Win Probability Button - Completely separate from the poker table */}
       <div className={styles.topControlsContainer}>
         {canStartGame && (
