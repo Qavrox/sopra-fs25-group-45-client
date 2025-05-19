@@ -54,7 +54,7 @@ export default function RoomBrowser() {
         <p className="text-gray-600">No rooms available right now.</p>
       ) : (
         <div className="space-y-0">
-          {rooms.map((room, index) => (
+          {rooms.filter(room => room.gameStatus !== GameStatus.ARCHIVED).map((room, index) => (
             <div key={room.id}>
               <div className="p-4 flex justify-between items-center hover:bg-gray-50 transition">
                 <div>

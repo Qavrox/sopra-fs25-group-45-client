@@ -84,17 +84,18 @@ export default function GameTable({ gameId }: PokerTableProps) {
             const results = await apiClient.getGameResults(gameId);
             setGameResults(results);
           } catch (err) {
+            setError(extractErrorMessage(err))
             console.error('Failed to fetch game results:', err);
           }
         }
         
-        // Don't clear user-facing errors on poll success
-      } catch (err: any) {
-        setError('Failed to fetch game state');
-        console.error(err);
+        setError(null);
+      } catch (err) {
+        setError(extractErrorMessage(err));
+        console.error('Failed to fetch game state', err);
         setTimeout(() => {
           router.push("/lobby");
-        }, 1000);
+        }, 2000);
       }
     };
 
@@ -121,6 +122,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
             const profile = await apiClient.getUserProfile(player.userId);
             profiles[player.userId] = profile;
           } catch (error) {
+            setError(extractErrorMessage(error));
             console.error(`Failed to fetch profile for user ${player.userId}:`, error);
           }
         }
@@ -138,9 +140,9 @@ export default function GameTable({ gameId }: PokerTableProps) {
       await apiClient.startBetting(gameId);
       // We'll rely on the poll to update the game state
       // rather than setting a local state variable
-    } catch (err: any) {
-      setError('Failed to start betting');
-      console.error(err);
+    } catch (err) {
+      setError(extractErrorMessage(err));
+      console.error('Failed to start betting', err);
     }
   };
 
@@ -156,9 +158,10 @@ export default function GameTable({ gameId }: PokerTableProps) {
     try {
       const response = await apiClient.getWinProbability(gameId);
       setWinProbability(response.probability);
-    } catch (err: any) {
-      setError('Failed to fetch win probability');
-      console.error(err);
+      setError(null);
+    } catch (err) {
+      setError(extractErrorMessage(err));
+      console.error('Failed to fetch win probability', err);
     }
   };
   
@@ -253,9 +256,10 @@ export default function GameTable({ gameId }: PokerTableProps) {
     try {
       const response = await apiClient.getPokerAdvice(gameId);
       setPokerAdvice(response.advice);
-    } catch (err: any) {
-      setError('Failed to get poker advice');
-      console.error(err);
+      setError(null);
+    } catch (err) {
+      setError(extractErrorMessage(err));
+      console.error('Failed to get poker advice',err);
     } finally {
       setIsLoadingAdvice(false);
     }

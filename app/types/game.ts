@@ -40,7 +40,8 @@ export enum GameStatus {
   TURN = "TURN",
   RIVER = "RIVER",
   SHOWDOWN = "SHOWDOWN",
-  GAMEOVER = "GAMEOVER"
+  GAMEOVER = "GAMEOVER",
+  ARCHIVED = "ARCHIVED"
 }
 
 export interface Game {
