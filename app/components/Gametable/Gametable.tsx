@@ -202,13 +202,21 @@ export default function GameTable({ gameId }: PokerTableProps) {
 
   const handleReturnToLobby = async () => {
     if (!isHost) {
-      router.push('/lobby');
+      try {
+        await apiClient.leaveGame(gameId);
+      } catch (err) {
+        setError(extractErrorMessage(err));
+        console.error('Failed to leave game:', err);
+      } finally {
+        router.push('/lobby');
+      }
       return;
     }
 
     try {
       await apiClient.deleteGame(gameId);
     } catch (err) {
+      setError(extractErrorMessage(err));
       console.error('Failed to delete game:', err);
     } finally {
       router.push('/lobby');
