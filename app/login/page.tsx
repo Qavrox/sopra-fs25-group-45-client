@@ -17,7 +17,22 @@ const Login: React.FC = () => {
       router.push("/lobby");
     } catch (error) {
       if (error instanceof Error) {
-        alert(`Login failed: ${error.message}`);
+        // Check if it's an API error with status
+        if ('status' in error) {
+          const status = (error as any).status;
+          switch (status) {
+            case 400:
+              alert('Invalid password');
+              break;
+            case 404:
+              alert('Username does not exist.');
+              break;
+            default:
+              alert(`Login failed: ${error.message}`);
+          }
+        } else {
+          alert(`Login failed: ${error.message}`);
+        }
       } else {
         console.error("An unknown error occurred during login.");
       }
