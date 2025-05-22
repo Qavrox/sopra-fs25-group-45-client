@@ -75,21 +75,19 @@ export default function GameTable({ gameId }: PokerTableProps) {
 
     const fetchGameState = async () => {
       try {
-        const gameData = await apiClient.getGameDetails(gameId);
-        setGame(gameData);
-        
-        // If game is over, fetch results
-        if (gameData.gameStatus === GameStatus.GAMEOVER && !gameResults) {
-          try {
-            const results = await apiClient.getGameResults(gameId);
-            setGameResults(results);
-          } catch (err) {
-            setError(extractErrorMessage(err))
-            console.error('Failed to fetch game results:', err);
-          }
-        }
-        
-        setError(null);
+            const gameData = await apiClient.getGameDetails(gameId);
+    setGame(gameData);
+    
+    // If game is over, fetch results
+    if (gameData.gameStatus === GameStatus.GAMEOVER && !gameResults) {
+      try {
+        const results = await apiClient.getGameResults(gameId);
+        setGameResults(results);
+      } catch (err) {
+        setError(extractErrorMessage(err))
+        console.error('Failed to fetch game results:', err);
+      }
+    }
       } catch (err) {
         setError(extractErrorMessage(err));
         console.error('Failed to fetch game state', err);
@@ -578,79 +576,60 @@ export default function GameTable({ gameId }: PokerTableProps) {
           {currentUserPlayer && isCurrentPlayersTurn && !currentUserPlayer.hasFolded && 
            game.gameStatus !== GameStatus.WAITING && game.gameStatus !== GameStatus.READY && 
            game.gameStatus !== GameStatus.GAMEOVER && (
-                  <div className={styles.actionControlsContainer}>
-                    <div className={styles.actionTitle}>Your Turn - Choose an Action</div>
-                    <div className={styles.actionButtons}>
-                      <button
-                          onClick={() => setSelectedAction(PlayerAction.FOLD)}
-                          className={`${styles.actionButton} ${styles.foldButton}`}
-                      >
-                        Fold
-                      </button>
-
-                      {/* Only show Check if no call amount */}
-                      {game.callAmount === 0 && (
-                          <button
-                              onClick={() => setSelectedAction(PlayerAction.CHECK)}
-                              className={`${styles.actionButton} ${styles.checkButton}`}
-                          >
-                            Check
-                          </button>
-                      )}
-
-                      {/* Only show Call if there's a call amount */}
-                      {game.callAmount > 0 && (
-                          <button
-                              onClick={() => setSelectedAction(PlayerAction.CALL)}
-                              className={`${styles.actionButton} ${styles.callButton}`}
-                          >
-                            Call ${game.callAmount}
-                          </button>
-                      )}
-                    </div>
-
-                    <div className={styles.betControls}>
-                      <input
-                          type="number"
-                          value={betAmount}
-                          onChange={(e) => setBetAmount(Number(e.target.value))}
-                          className={styles.betInput}
-                          placeholder="Bet Amount"
-                          min={game.callAmount}
-                      />
-
-                      {/* Show Bet only if no one has bet yet */}
-                      {game.callAmount === 0 && (
-                          <button
-                              onClick={() => setSelectedAction(PlayerAction.BET)}
-                              className={`${styles.actionButton} ${styles.betButton}`}
-                          >
-                            Bet
-                          </button>
-                      )}
-
-                      {/* Show Raise only if someone has already bet */}
-                      {game.callAmount > 0 && (
-                          <button
-                              onClick={() => setSelectedAction(PlayerAction.RAISE)}
-                              className={`${styles.actionButton} ${styles.raiseButton}`}
-                          >
-                            Raise
-                          </button>
-                      )}
-                    </div>
-
-                    {selectedAction && (
-                        <button
-                            onClick={handleAction}
-                            className={styles.confirmButton}
-                        >
-                          Confirm {selectedAction}
-                        </button>
-                    )}
-                  </div>
+            <div className={styles.actionControlsContainer}>
+              <div className={styles.actionTitle}>Your Turn - Choose an Action</div>
+              <div className={styles.actionButtons}>
+                <button
+                  onClick={() => setSelectedAction(PlayerAction.FOLD)}
+                  className={`${styles.actionButton} ${styles.foldButton}`}
+                >
+                  Fold
+                </button>
+                <button
+                  onClick={() => setSelectedAction(PlayerAction.CHECK)}
+                  className={`${styles.actionButton} ${styles.checkButton}`}
+                >
+                  Check
+                </button>
+                <button
+                  onClick={() => setSelectedAction(PlayerAction.CALL)}
+                  className={`${styles.actionButton} ${styles.callButton}`}
+                >
+                  Call ${game.callAmount}
+                </button>
+              </div>
+              <div className={styles.betControls}>
+                <input
+                  type="number"
+                  value={betAmount}
+                  onChange={(e) => setBetAmount(Number(e.target.value))}
+                  className={styles.betInput}
+                  placeholder="Bet Amount"
+                  min={game.callAmount}
+                />
+                <button
+                  onClick={() => setSelectedAction(PlayerAction.BET)}
+                  className={`${styles.actionButton} ${styles.betButton}`}
+                >
+                  Bet
+                </button>
+                <button
+                  onClick={() => setSelectedAction(PlayerAction.RAISE)}
+                  className={`${styles.actionButton} ${styles.raiseButton}`}
+                >
+                  Raise
+                </button>
+              </div>
+              {selectedAction && (
+                <button
+                  onClick={handleAction}
+                  className={styles.confirmButton}
+                >
+                  Confirm {selectedAction}
+                </button>
               )}
-
+            </div>
+          )}
         </div>
       </div>
     </div>
