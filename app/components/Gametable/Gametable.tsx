@@ -56,8 +56,8 @@ export default function GameTable({ gameId }: PokerTableProps) {
       if (hasJoined.current) return; // Prevent double joining
       
       try {
-        // First try to join the game
-        await apiClient.joinGame(gameId, '');
+        // Join the game - no need to pass an empty password string now
+        await apiClient.joinGame(gameId);
         hasJoined.current = true;
         
         // Then fetch the game details

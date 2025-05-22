@@ -15,6 +15,7 @@ import type { Preferences, PreferencesUpdate } from "@/types/preferences";
 
 const TOKEN_STORAGE_KEY = "bearer_token";
 const USER_ID_STORAGE_KEY = "user_id";
+const GAME_PASSWORD_PREFIX = "game_password_";
 
 /**
  * Provides an abstraction for interacting with the backend API
@@ -85,6 +86,41 @@ export class ApiClient {
         `Bearer ${this.token}`;
     } else {
       delete (this.apiService as any).defaultHeaders["Authorization"];
+    }
+  }
+
+  // --- Game Password Management ---
+  
+  /**
+   * Store a game password in localStorage
+   * @param gameId The ID of the game
+   * @param password The password for the game
+   */
+  public storeGamePassword(gameId: number, password: string): void {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`${GAME_PASSWORD_PREFIX}${gameId}`, password);
+    }
+  }
+
+  /**
+   * Get a stored game password from localStorage
+   * @param gameId The ID of the game
+   * @returns The password for the game or null if not found
+   */
+  public getGamePassword(gameId: number): string | null {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(`${GAME_PASSWORD_PREFIX}${gameId}`);
+    }
+    return null;
+  }
+
+  /**
+   * Clear a stored game password from localStorage
+   * @param gameId The ID of the game
+   */
+  public clearGamePassword(gameId: number): void {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(`${GAME_PASSWORD_PREFIX}${gameId}`);
     }
   }
 
@@ -174,7 +210,13 @@ export class ApiClient {
 
   // --- Game Endpoints ---
   createGame(payload: GameCreationRequest): Promise<Game> {
-    return this.apiService.post<Game>("/games", payload);
+    return this.apiService.post<Game>("/games", payload).then(game => {
+      // Store password for private games
+      if (!payload.isPublic && payload.password) {
+        this.storeGamePassword(game.id, payload.password);
+      }
+      return game;
+    });
   }
 
   getPublicGames(): Promise<Game[]> {
@@ -190,13 +232,17 @@ export class ApiClient {
       this.token ?? "");
   }
 
-  joinGame(gameId: number, password: string): Promise<MessageResponse> {
+  joinGame(gameId: number, password?: string): Promise<MessageResponse> {
+    // If password is not provided, try to get it from storage
+    const finalPassword = password || this.getGamePassword(gameId) || "";
     return this.apiService.post<MessageResponse>(`/games/${gameId}/join`, {
-      password,
+      password: finalPassword,
     });
   }
 
   leaveGame(gameId: number): Promise<MessageResponse> {
+    // Clear password when leaving a game
+    this.clearGamePassword(gameId);
     return this.apiService.deleteWithAuth<MessageResponse>(`/games/${gameId}/join`,
       this.token ?? "");
   }

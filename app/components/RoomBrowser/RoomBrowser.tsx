@@ -21,10 +21,22 @@ export default function RoomBrowser() {
   }, []);
 
   const handleJoin = async (gameId: number, isPublic: boolean) => {
-    const password = isPublic ? '' : prompt('Enter password:') || '';
-
     try {
-      await apiClient.joinGame(gameId, password);
+      if (!isPublic) {
+        // For private games, prompt for password only if not stored
+        const storedPassword = apiClient.getGamePassword(gameId);
+        if (!storedPassword) {
+          const password = prompt('Enter password:') || '';
+          if (!password) return; // Cancel if no password entered
+          await apiClient.joinGame(gameId, password);
+        } else {
+          // Use stored password automatically
+          await apiClient.joinGame(gameId);
+        }
+      } else {
+        // For public games, no password needed
+        await apiClient.joinGame(gameId);
+      }
       router.push(`/game/${gameId}`);
     } catch (err: any) {
       alert(err.message || 'Failed to join game');
