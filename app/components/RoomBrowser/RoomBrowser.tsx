@@ -3,12 +3,16 @@ import { useEffect, useState } from 'react';
 import { apiClient } from '../../api/apiClient';
 import { GameStatus, type Game } from '@/types/game';
 import { useRouter } from 'next/navigation';
-import { Button, Divider } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { Button, Divider, Modal, Input, Form } from 'antd';
+import { ArrowLeftOutlined, LockOutlined } from '@ant-design/icons';
 
 export default function RoomBrowser() {
   const [rooms, setRooms] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showPrivateGameModal, setShowPrivateGameModal] = useState(false);
+  const [privateGameId, setPrivateGameId] = useState('');
+  const [privateGamePassword, setPrivateGamePassword] = useState('');
+  const [joiningPrivateGame, setJoiningPrivateGame] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -43,6 +47,30 @@ export default function RoomBrowser() {
     }
   };
 
+  const handleJoinPrivateGame = async () => {
+    if (!privateGameId.trim()) {
+      alert('Please enter a game ID');
+      return;
+    }
+
+    const gameId = parseInt(privateGameId);
+    if (isNaN(gameId)) {
+      alert('Invalid game ID');
+      return;
+    }
+
+    setJoiningPrivateGame(true);
+    try {
+      await apiClient.joinGame(gameId, privateGamePassword);
+      setShowPrivateGameModal(false);
+      router.push(`/game/${gameId}`);
+    } catch (err: any) {
+      alert(err.message || 'Failed to join private game');
+    } finally {
+      setJoiningPrivateGame(false);
+    }
+  };
+
   if (!apiClient.isAuthenticated()) {
     return <p className="text-center text-gray-500">Please log in to see available rooms.</p>;
   }
@@ -60,6 +88,17 @@ export default function RoomBrowser() {
           onClick={goBack}
         />
         <h2 className="text-2xl font-bold">Available Rooms</h2>
+      </div>
+
+      <div className="mb-6 flex justify-between items-center">
+        <Button 
+          icon={<LockOutlined />}
+          type="primary" 
+          onClick={() => setShowPrivateGameModal(true)}
+          className="bg-blue-600"
+        >
+          Join Private Game
+        </Button>
       </div>
 
       {rooms.length === 0 ? (
@@ -86,6 +125,44 @@ export default function RoomBrowser() {
           ))}
         </div>
       )}
+
+      <Modal
+        title="Join Private Game"
+        open={showPrivateGameModal}
+        onCancel={() => setShowPrivateGameModal(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setShowPrivateGameModal(false)}>
+            Cancel
+          </Button>,
+          <Button 
+            key="submit" 
+            type="primary" 
+            loading={joiningPrivateGame} 
+            onClick={handleJoinPrivateGame}
+            className="bg-blue-600"
+          >
+            Join
+          </Button>
+        ]}
+      >
+        <Form layout="vertical">
+          <Form.Item label="Game ID" required>
+            <Input 
+              placeholder="Enter Game ID" 
+              value={privateGameId}
+              onChange={(e) => setPrivateGameId(e.target.value)}
+              type="number"
+            />
+          </Form.Item>
+          <Form.Item label="Password">
+            <Input.Password 
+              placeholder="Enter password" 
+              value={privateGamePassword}
+              onChange={(e) => setPrivateGamePassword(e.target.value)}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 }
