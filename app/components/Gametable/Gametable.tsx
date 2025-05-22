@@ -198,13 +198,11 @@ export default function GameTable({ gameId }: PokerTableProps) {
       setGameResults(null);
       setWinProbability(null);
       setSelectedAction(null);
-      console.log('New game requested');
-
     }
     catch(err){ 
-      console.log('Failed new Round.')
+      setError(extractErrorMessage(err));
+      console.error('Failed to start new round:', err);
     }
-
   };
 
   const handleReturnToLobby = async () => {
@@ -243,6 +241,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
                 setIsPlayerTurn(false);
             }
         } catch (error) {
+            setError(extractErrorMessage(error));
             console.error('Failed to auto-fold:', error);
         }
     }

@@ -24,7 +24,7 @@ export class ApiService {
    */
   private async processResponse<T>(
     res: Response,
-    errorMessage: string,
+    _unused: string, // Keep parameter for backward compatibility
   ): Promise<T> {
     if (!res.ok) {
       let errorMessage = "An error occurred";
