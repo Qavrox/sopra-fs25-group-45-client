@@ -2,8 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useApiClient } from "@/hooks/useApi";
+//import { useApiClient } from "@/hooks/useApi";
 import type { GameHistoryItem } from "@/types/user";
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
+import { useApi } from '@/hooks/useApi';
 
 import {
   Card,
@@ -33,7 +37,7 @@ import {
   UsergroupAddOutlined // Icon for friends leaderboard
 } from "@ant-design/icons";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { useApi } from '@/hooks/useApi';
+// import { useApi } from '@/hooks/useApi'; // Remove this duplicate import
 
 const { Title, Text } = Typography;
 // Remove TabPane import as it's deprecated
@@ -88,6 +92,8 @@ const UserProfilePage: React.FC = () => {
 
   const [friends, setFriends] = useState<UserSummary[]>([]);
 
+  const [statsTimeRange, setStatsTimeRange] = useState<string>('all');
+
 
   const sendFriendRequest = async (friendid : number) => {
     try{
@@ -138,10 +144,23 @@ const UserProfilePage: React.FC = () => {
 
       setLoadingStats(true);
       try {
-        // This endpoint needs to be implemented in the API
-        const response = await apiClient.getUserStatistics(Number(id));
+        let startDate: string | undefined = undefined;
+        let endDate: string | undefined = undefined;
+        const now = dayjs();
+
+        if (statsTimeRange === '7days') {
+          startDate = now.subtract(7, 'day').startOf('day').toISOString();
+          endDate = now.toISOString();
+        } else if (statsTimeRange === '30days') {
+          startDate = now.subtract(30, 'day').startOf('day').toISOString();
+          endDate = now.toISOString();
+        }
+        // For 'all', startDate and endDate will remain undefined, which is correct.
+
+        const response = await apiClient.getUserStatistics(Number(id), startDate, endDate);
         setStatistics(response);
-      } catch (error) {
+      }
+ catch (error) {
         console.error("Error fetching user statistics:", error);
       } finally {
         setLoadingStats(false);
@@ -149,7 +168,7 @@ const UserProfilePage: React.FC = () => {
     };
 
     fetchUserStatistics();
-  }, [id, apiClient]);
+  }, [id, apiClient, statsTimeRange]);
 
   // Fetch leaderboard
   useEffect(() => {
@@ -231,7 +250,7 @@ const UserProfilePage: React.FC = () => {
       title: "Date",
       dataIndex: "playedAt",
       key: "playedAt",
-      render: (text: string) => new Date(text).toLocaleDateString(),
+      render: (text: string) => dayjs.utc(text).local().toDate().toLocaleString(),
     },
     {
       title: "Result",
@@ -481,6 +500,21 @@ const UserProfilePage: React.FC = () => {
                     </div>
 
                     <Divider />
+
+                    {isOwnProfile && (
+                      <div style={{ marginBottom: 24, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <Text strong>Statistics Time Range:</Text>
+                        <Segmented
+                          options={[
+                            { label: 'All Time', value: 'all' },
+                            { label: 'Last 7 Days', value: '7days' },
+                            { label: 'Last 30 Days', value: '30days' },
+                          ]}
+                          value={statsTimeRange}
+                          onChange={(value) => setStatsTimeRange(value as string)}
+                        />
+                      </div>
+                    )}
 
                     <Row gutter={16} style={{ marginBottom: 24 }}>
                       <Col span={8}>
