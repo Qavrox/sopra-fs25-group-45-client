@@ -164,9 +164,8 @@ export default function GameTable({ gameId }: PokerTableProps) {
   };
   
   const extractErrorMessage = (err: any): string => {
-    if (err?.response?.data?.message) return err.response.data.message;
-    if (err?.message) return err.message;
-    return 'An unknown error occurred';
+    // Just return the error message without any formatting
+    return err?.message || 'An unknown error occurred';
   };
 
   const handleAction = async () => {
