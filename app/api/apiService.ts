@@ -27,26 +27,16 @@ export class ApiService {
     errorMessage: string,
   ): Promise<T> {
     if (!res.ok) {
-      let errorDetail = res.statusText;
+      let errorMessage = "An error occurred";
       try {
         const errorInfo = await res.json();
         if (errorInfo?.message) {
-          errorDetail = errorInfo.message;
-        } else {
-          errorDetail = JSON.stringify(errorInfo);
+          errorMessage = errorInfo.message;
         }
       } catch {
-        // If parsing fails, keep using res.statusText
+        // If parsing fails, use a generic message
       }
-      const detailedMessage = `${errorDetail}`;
-      const error: ApplicationError = new Error(
-        detailedMessage,
-      ) as ApplicationError;
-      error.info = JSON.stringify(
-        { status: res.status, statusText: res.statusText },
-        null,
-        2,
-      );
+      const error: ApplicationError = new Error(errorMessage) as ApplicationError;
       error.status = res.status;
       throw error;
     }

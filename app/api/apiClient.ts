@@ -133,7 +133,7 @@ export class ApiClient {
     } catch (error) {
       this.setToken(null); // Clear token on login failure
       this.setUserId(null); // Clear userId on login failure
-      throw error;
+      throw error; // Directly propagate the error with server message
     }
   }
 
