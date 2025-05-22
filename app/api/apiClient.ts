@@ -255,8 +255,19 @@ export class ApiClient {
     return this.apiService.get<GameHistoryItem[]>(`/users/${userId}/history`);
   }
 
-  getUserStatistics(userId: number): Promise<StatisticsData> {
-    return this.apiService.get<StatisticsData>(`/users/${userId}/statistics`);
+  getUserStatistics(userId: number, startDate?: string, endDate?: string): Promise<StatisticsData> {
+    let url = `/users/${userId}/statistics`;
+    const params = new URLSearchParams();
+    if (startDate) {
+      params.append('startDateStr', startDate);
+    }
+    if (endDate) {
+      params.append('endDateStr', endDate);
+    }
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+    return this.apiService.get<StatisticsData>(url);
   }
 
   getLeaderboardByWinnings(): Promise<LeaderboardItem[]> {
