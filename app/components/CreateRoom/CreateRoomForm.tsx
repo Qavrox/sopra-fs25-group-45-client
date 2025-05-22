@@ -40,6 +40,8 @@ export default function CreateRoomForm() {
       };
 
       const game = await apiClient.createGame(gameRequest);
+      // Password is now automatically stored in the apiClient
+      
       router.push(`/game/${game.id}`);
     } catch (err: any) {
       alert(err.message || 'Unexpected error');
