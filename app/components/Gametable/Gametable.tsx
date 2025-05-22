@@ -193,9 +193,19 @@ export default function GameTable({ gameId }: PokerTableProps) {
     }
   };
 
-  const handleNewGame = () => {
-    // This is a dummy function for now
-    console.log('New game requested');
+  const handleNewGame = async () => {
+    try {
+      await apiClient.startNewRound(gameId);
+      setGameResults(null);
+      setWinProbability(null);
+      setSelectedAction(null);
+      console.log('New game requested');
+
+    }
+    catch(err){ 
+      console.log('Failed new Round.')
+    }
+
   };
 
   const handleReturnToLobby = async () => {
