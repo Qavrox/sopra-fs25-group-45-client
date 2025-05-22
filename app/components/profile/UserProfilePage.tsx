@@ -87,11 +87,12 @@ const UserProfilePage: React.FC = () => {
   const { value: localId } = useLocalStorage<string>("user_id", "");
 
   const [friends, setFriends] = useState<UserSummary[]>([]);
+  const [sentRequests, setSentRequests] = useState<boolean>(false);
 
-
-  const sendFriendRequest = async (friendid : number) => {
-    try{
+  const sendFriendRequest = async (friendid: number) => {
+    try {
       await apiClient.sendFriendRequest(friendid);
+      setSentRequests(true);
       console.log("Sending friend request");
     } catch (err) {
       console.error("Error sending friend request:", err);
@@ -461,8 +462,14 @@ const UserProfilePage: React.FC = () => {
                               <Button
                                 type="primary"
                                 onClick={() => sendFriendRequest(Number(id))}
+                                disabled={sentRequests}
+                                style={{
+                                  backgroundColor: sentRequests ? '#52c41a' : undefined,  
+                                  borderColor: sentRequests ? '#52c41a' : undefined,
+                                  color: sentRequests ? 'white' : undefined
+                                }}
                               >
-                                Send Friend Request
+                                {sentRequests ? 'Request Sent' : 'Send Friend Request'}
                               </Button>
                             )}
                           </div>
