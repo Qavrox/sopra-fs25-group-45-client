@@ -527,7 +527,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
           <div className={styles.playersContainer}>
             {game.players.map((player, index) => {
               const angle = (index * 360) / game.players.length;
-              const radius = 230; // Increased radius to push players further from center
+              const radius = 350; // Increased from 230 to 350 to push players further from center
               const x = Math.cos((angle * Math.PI) / 180) * radius;
               const y = Math.sin((angle * Math.PI) / 180) * radius;
               const isActive = !player.hasFolded && game.currentPlayerId === player.userId;
