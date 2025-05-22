@@ -75,21 +75,19 @@ export default function GameTable({ gameId }: PokerTableProps) {
 
     const fetchGameState = async () => {
       try {
-        const gameData = await apiClient.getGameDetails(gameId);
-        setGame(gameData);
-        
-        // If game is over, fetch results
-        if (gameData.gameStatus === GameStatus.GAMEOVER && !gameResults) {
-          try {
-            const results = await apiClient.getGameResults(gameId);
-            setGameResults(results);
-          } catch (err) {
-            setError(extractErrorMessage(err))
-            console.error('Failed to fetch game results:', err);
-          }
-        }
-        
-        setError(null);
+            const gameData = await apiClient.getGameDetails(gameId);
+    setGame(gameData);
+    
+    // If game is over, fetch results
+    if (gameData.gameStatus === GameStatus.GAMEOVER && !gameResults) {
+      try {
+        const results = await apiClient.getGameResults(gameId);
+        setGameResults(results);
+      } catch (err) {
+        setError(extractErrorMessage(err))
+        console.error('Failed to fetch game results:', err);
+      }
+    }
       } catch (err) {
         setError(extractErrorMessage(err));
         console.error('Failed to fetch game state', err);
