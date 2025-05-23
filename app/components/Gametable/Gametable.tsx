@@ -624,12 +624,12 @@ export default function GameTable({ gameId }: PokerTableProps) {
           <div className={styles.playersContainer}>
             {game.players.map((player, index) => {
               // Create safe zone for action controls by excluding bottom 60 degrees (60-120 degrees)
-              const safeZoneStart = 120;  // Start of exclusion zone (degrees) - bottom-right
-              const safeZoneEnd = 240;   // End of exclusion zone (degrees) - bottom-left
+              const safeZoneStart = 60;  // Start of exclusion zone (degrees) - bottom-right
+              const safeZoneEnd = 120;   // End of exclusion zone (degrees) - bottom-left
               const usableArc = 360 - (safeZoneEnd - safeZoneStart); // 300 degrees available
               
               // Calculate angle within the usable arc, starting from top (270 degrees)
-              let angle = 270 + (index * usableArc) / game.players.length;
+              let angle = 90 + (index * usableArc) / game.players.length;
               
               // If the calculated angle falls within the excluded zone, shift it
               if (angle >= safeZoneStart && angle <= safeZoneEnd) {
