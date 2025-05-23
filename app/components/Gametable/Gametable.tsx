@@ -477,12 +477,14 @@ export default function GameTable({ gameId }: PokerTableProps) {
             </div>
             
             <div className={styles.resultButtons}>
-              <button 
-                onClick={handleNewGame}
-                className={styles.newGameButton}
-              >
-                New Game
-              </button>
+              {isHost && (
+                <button 
+                  onClick={handleNewGame}
+                  className={styles.newGameButton}
+                >
+                  New Game
+                </button>
+              )}
               <button className={styles.returnButton} onClick={handleReturnToLobby}>
                 Back to Lobby
               </button>
