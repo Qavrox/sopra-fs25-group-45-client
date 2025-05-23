@@ -142,8 +142,8 @@ reason).
 
 | **Student**        | **Date** | **Link to Commit** | **Description**                 | **Relevance**                       |
 | ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
-| **[@TauSigma5]**   |     |  | |  |
-| **[@TauSigma5]**  |     |  | |  | 
+| **[@TauSigma5]**   |   22.05  |  [Link to PR](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/112) | A bunch of tests | Ensuring each task has at least 1 meaningful test |
+| **[@TauSigma5]**  |   22.05  | [Link to PR](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/111) | More tests | ensure more test coverage (there's more changes but I'm too lazy to link them all) | 
 | **[@Qavrox]**   |     |  | |  |
 | **[@Qavrox]**  |     |  | |  |
 | **[@lydia-milena]**   |  22.05   | [Link to commit](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/106/commits/e3570c3d1dfa66be75fd51c51c604de64fb140be) | Next Round Functionality| Basic Game Functionality  |
