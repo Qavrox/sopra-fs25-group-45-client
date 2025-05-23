@@ -472,7 +472,6 @@ export default function GameTable({ gameId }: PokerTableProps) {
             
             <div className={styles.gameStats}>
               <h4>Statistics</h4>
-              <p>Participation Rate: {gameResults.statistics.participationRate}%</p>
               <p>Pots Won: {gameResults.statistics.potsWon}</p>
             </div>
             
