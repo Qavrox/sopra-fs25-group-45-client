@@ -124,11 +124,6 @@ export default function GameTable({ gameId }: PokerTableProps) {
 
     // Set up polling for game state updates
     const intervalId = setInterval(() => {
-      // Stop polling if we have game results
-      if (gameResults) {
-        clearInterval(intervalId);
-        return;
-      }
       fetchGameState();
     }, POLLING_INTERVAL);
 
@@ -581,27 +576,23 @@ export default function GameTable({ gameId }: PokerTableProps) {
             </div>
             
             <div className={styles.resultButtons}>
-              {/* New Game Button for Host */}
-              {isHost && isGameOver && (
-                <button 
-                  onClick={handleNewGame}
-                  className={styles.newGameButton}
-                >
-                  New Game
-                </button>
+              {isHost ? (
+                <>
+                  <button 
+                    onClick={handleNewGame}
+                    className={styles.newGameButton}
+                  >
+                    New Game
+                  </button>
+                  <button className={styles.returnButton} onClick={handleReturnToLobby}>
+                    Back to Lobby
+                  </button>
+                </>
+              ) : (
+                <div className={styles.waitingMessage}>
+                  Wait for the host to start a new round or exit the game...
+                </div>
               )}
-              {/* Back to Game Button for Non-Host when game is over */}
-              {!isHost && isGameOver && gameResults && (
-                 <button
-                   onClick={handleBackToGame}
-                   className={styles.newGameButton} // Assuming similar styling to "New Game"
-                 >
-                   Back to Game
-                 </button>
-              )}
-              <button className={styles.returnButton} onClick={handleReturnToLobby}>
-                Back to Lobby
-              </button>
             </div>
           </div>
         )}
