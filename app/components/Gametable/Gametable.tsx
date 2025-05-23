@@ -276,7 +276,8 @@ export default function GameTable({ gameId }: PokerTableProps) {
 
     if (!isHost) {
       try {
-        await apiClient.leaveGame(gameId);
+        await apiClient.deleteGame(gameId);
+
       } catch (err) {
         setError(extractErrorMessage(err));
         console.error('Failed to leave game:', err);
