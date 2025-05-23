@@ -227,6 +227,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
       setGameResults(null);
       setWinProbability(null);
       setSelectedAction(null);
+      setError(null); // Clear any previous errors
     }
     catch(err){ 
       setError(extractErrorMessage(err));
@@ -234,7 +235,50 @@ export default function GameTable({ gameId }: PokerTableProps) {
     }
   };
 
+  const handleBackToGame = async () => {
+    if (!game) return;
+    const currentUserId = apiClient.getUserId();
+    if (game.creatorId === currentUserId) {
+      // Host should not see this button, but as a safeguard
+      return;
+    }
+
+    try {
+      const currentGameData = await apiClient.getGameDetails(gameId);
+      if (currentGameData.gameStatus === GameStatus.READY) {
+        // Game is ready, host has started a new round
+        setGameResults(null); // Clear previous game results
+        setWinProbability(null);
+        setSelectedAction(null);
+        setError(null); // Clear any messages
+        // The polling mechanism should pick up the new game state
+      } else if (currentGameData.gameStatus === GameStatus.GAMEOVER) {
+        setError("The host has not started a new round yet.");
+      } else if (currentGameData.gameStatus === GameStatus.ARCHIVED) {
+        setError("The host has closed the room. You will be returned to the lobby.");
+        setTimeout(() => router.push('/lobby'), 3000);
+      } else {
+        // For any other status, or if the game somehow reverted from GAMEOVER
+        // to an active state without being READY.
+        setError(null); // Clear any messages
+        // Rely on polling to update to the correct state if it's active.
+        // If it's an unexpected state, polling should eventually resolve or error out.
+      }
+    } catch (err) {
+      setError(extractErrorMessage(err));
+      console.error('Failed to check game status for Back to Game:', err);
+      // If checking status fails, it might be that the game was archived/deleted
+      // and the ID is no longer valid.
+      // Offer to go to lobby as a fallback.
+      setError("Could not retrieve game status. The game may have been closed. Redirecting to lobby...");
+      setTimeout(() => router.push('/lobby'), 3000);
+    }
+  };
+
   const handleReturnToLobby = async () => {
+    // Check if the current user is the host
+    const isHost = game && game.creatorId === apiClient.getUserId();
+
     if (!isHost) {
       try {
         await apiClient.leaveGame(gameId);
@@ -244,9 +288,10 @@ export default function GameTable({ gameId }: PokerTableProps) {
       } finally {
         router.push('/lobby');
       }
-      return;
+      return; // End execution for non-host
     }
 
+    // Host logic: delete the game and redirect
     try {
       await apiClient.deleteGame(gameId);
     } catch (err) {
@@ -537,13 +582,23 @@ export default function GameTable({ gameId }: PokerTableProps) {
             </div>
             
             <div className={styles.resultButtons}>
-              {game && apiClient.getUserId() === game.creatorId && (
+              {/* New Game Button for Host */}
+              {isHost && isGameOver && (
                 <button 
                   onClick={handleNewGame}
                   className={styles.newGameButton}
                 >
                   New Game
                 </button>
+              )}
+              {/* Back to Game Button for Non-Host when game is over */}
+              {!isHost && isGameOver && gameResults && (
+                 <button
+                   onClick={handleBackToGame}
+                   className={styles.newGameButton} // Assuming similar styling to "New Game"
+                 >
+                   Back to Game
+                 </button>
               )}
               <button className={styles.returnButton} onClick={handleReturnToLobby}>
                 Back to Lobby
