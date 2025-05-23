@@ -576,29 +576,6 @@ export default function GameTable({ gameId }: PokerTableProps) {
             </div>
             
             <div className={styles.resultButtons}>
-<<<<<<< HEAD
-              {/* New Game Button for Host */}
-              {isHost && isGameOver && (
-                <button 
-                  onClick={handleNewGame}
-                  className={styles.newGameButton}
-                >
-                  New Game
-                </button>
-              )}
-              {/* Back to Game Button for Non-Host when game is over */}
-              {!isHost && isGameOver && gameResults && (
-                 <button
-                   onClick={handleBackToGame}
-                   className={styles.newGameButton} // Assuming similar styling to "New Game"
-                 >
-                   Back to Game
-                 </button>
-              )}
-              <button className={styles.returnButton} onClick={handleReturnToLobby}>
-                Back to Lobby
-              </button>
-=======
               {isHost ? (
                 <>
                   <button 
@@ -616,7 +593,6 @@ export default function GameTable({ gameId }: PokerTableProps) {
                   Wait for the host to start a new round or exit the game...
                 </div>
               )}
->>>>>>> f4160aa (Small fixes for polling at the end of game)
             </div>
           </div>
         )}
