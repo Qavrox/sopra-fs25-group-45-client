@@ -136,3 +136,27 @@ reason).
 | **[@IsSaudade]**   | 13.05    | [Link to commit 1](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/4b669db0bd3dc1b7bdd8296ab78daf7a80d7491f) | try to fix Deploy to Vercel / deploy (push) Failed issues  | necessary for deployment  |
 | **[@IsSaudade]**   | 18.05     | [Link to PR 1](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/72) | Display only the actions relevant to the current state of the game |ensure the right game process |
 ---
+
+
+## Contributions Week 7 - 19.05 to 23.5
+
+| **Student**        | **Date** | **Link to Commit** | **Description**                 | **Relevance**                       |
+| ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
+| **[@TauSigma5]**   |     |  | |  |
+| **[@TauSigma5]**  |     |  | |  | 
+| **[@Qavrox]**   |     |  | |  |
+| **[@Qavrox]**  |     |  | |  |
+| **[@lydia-milena]**   |  22.05   | [Link to commit](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/106/commits/e3570c3d1dfa66be75fd51c51c604de64fb140be) | Next Round Functionality| Basic Game Functionality  |
+| **[@lydia-milena]**   |  22.05   | [Link to commit](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/110/commits) | Bug Fixes| Basic Functionality  |
+|    | 22.05   | [Link to commit](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/114/commits/ebf5deb0cf982c494f82e72328bcb1fbc76f1e98) | Bug Fixes| Basic Functionality  |
+|    | 22.05   | [Link to commit](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/121/commits) | Bug Fixes| Basic Functionality  |
+|    |  22.05  | [Link to commit](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/101/commits/1a5db529846ae51d443055432d5e777267f87e59) | Bug Fixes| Basic Functionality  |
+|    |  22.05  | [Link to commit](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/87/commits/6f16aaa777cda89f6a4985281e44de89406a38e5) | Bug Fixes| Basic Functionality  |
+|    |  22.05  | [Link to commit](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/85/commits/674ddc1cee2c5ea02eb6298a42de9c96210f1109) | Bug Fixes| Basic Functionality  |
+|    |  22.05  | [Link to commit](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/83) | Bug Fixes| Basic Functionality  |
+| **[@unscttp]**   |     |  | |  |
+| **[@unscttp]**  |     |  | |  |
+| **[@unscttp]**  |     |  | |  |
+| **[@IsSaudade]**   |     |  | |  |
+| **[@IsSaudade]**  |     |  | |  |
+---
