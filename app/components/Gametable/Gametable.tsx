@@ -643,7 +643,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
           <div className={styles.playersContainer}>
             {game.players.map((player, index) => {
               const angle = (index * 360) / game.players.length;
-              const radius = 250; 
+              const radius = 300; 
               const x = Math.cos((angle * Math.PI) / 180) * radius;
               const y = Math.sin((angle * Math.PI) / 180) * radius;
               const isActive = !player.hasFolded && game.currentPlayerId === player.userId;
@@ -661,14 +661,14 @@ export default function GameTable({ gameId }: PokerTableProps) {
                   }}
                 >
                   <div className={styles.playerInfo}>
-                    <div className={styles.playerName}>
+                    <div className={styles.playerName} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                       <Avatar
                         src={playerProfiles[player.userId] ? `/images/avatar${playerProfiles[player.userId].profileImage || 0}.png` : undefined}
                         icon={!playerProfiles[player.userId] && <UserOutlined />}
-                        size={100}
-                        style={{ marginRight: '12px' }}
+                        size={75}
+                        style={{ marginBottom: '8px' }}
                       />
-                      Player {player.userId}
+                      {playerProfiles[player.userId]?.name || `Player ${player.userId}`}
                     </div>
                     <div className={styles.playerCredit}>${player.credit}</div>
                     <div className={styles.playerBet}>Bet: ${player.currentBet}</div>
