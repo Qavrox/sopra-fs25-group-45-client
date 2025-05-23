@@ -5,7 +5,6 @@ import { apiClient } from '@/api/apiClient';
 import { Game, GameActionRequest, Player, PlayerAction, GameStatus, GameResults } from '@/types/game';
 import { useRouter } from 'next/navigation';
 import styles from './GameTable.module.css';
-import TutorialCard from '../RulesAndTutorials/TutorialCard';
 import { UserProfile } from '@/types/user';
 import { Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
@@ -30,6 +29,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
   const [playerProfiles, setPlayerProfiles] = useState<{ [key: number]: UserProfile }>({});
   const [showTimer, setShowTimer] = useState(false);
   const [isPlayerTurn, setIsPlayerTurn] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   const POLLING_INTERVAL = 2000; // Poll every 2 seconds
   const ERROR_DISPLAY_DURATION = 5000; // Display errors for 5 seconds
@@ -464,35 +464,45 @@ export default function GameTable({ gameId }: PokerTableProps) {
         </div>
       )}
 
-      {/* Top Win Probability Button - Completely separate from the poker table */}
+      {/* Top Controls Container - now includes game status and pot */}
       <div className={styles.topControlsContainer}>
-        {canStartGame && (
-          <button 
-            onClick={handleStartBetting}
-            className={styles.startGameButton}
-          >
-            Start Game
-          </button>
-        )}
-        {canCheckProbability && (
-          <button 
-            onClick={handleWinProbability}
-            className={styles.winProbabilityButton}
-          >
-            Check Win Probability
-          </button>
-        )}
-        {winProbability !== null && (
-          <div className={styles.winProbabilityDisplay}>
-            Win Probability: {(winProbability * 100).toFixed(2)}%
+        <div className={styles.topControlsLeft}>
+          {canStartGame && (
+            <button 
+              onClick={handleStartBetting}
+              className={styles.startGameButton}
+            >
+              Start Game
+            </button>
+          )}
+          {canCheckProbability && (
+            <button 
+              onClick={handleWinProbability}
+              className={styles.winProbabilityButton}
+            >
+              Check Win Probability
+            </button>
+          )}
+          {winProbability !== null && (
+            <div className={styles.winProbabilityDisplay}>
+              Win Probability: {(winProbability * 100).toFixed(2)}%
+            </div>
+          )}
+        </div>
+        
+        {/* Game Status and Pot Display - moved to top right */}
+        <div className={styles.topRightInfo}>
+          <div className={styles.gameStatus}>
+            <span className={styles.statusLabel}>Status:</span> 
+            <span className={styles.statusValue}>{game.gameStatus}</span>
           </div>
-        )}
+          <div className={styles.potDisplay}>
+            <div className={styles.potAmount}>${game.pot}</div>
+          </div>
+        </div>
       </div>
 
       <div className={styles.pokerTableContainer}>
-        {/* Tutorial Card Component */}
-        <TutorialCard />
-        
         {/* Help Button and Advice Display */}
         <div className={styles.helpContainer}>
           <button 
@@ -611,23 +621,12 @@ export default function GameTable({ gameId }: PokerTableProps) {
   
 
           {/* Community Cards */}
-          <div className={styles.communityCards}>p
+          <div className={styles.communityCards}>
             {game.communityCards.map((card, index) => (
               <div key={index} className={styles.communityCardWrapper}>
                 {renderCard(card)}
               </div>
             ))}
-          </div>
-
-          {/* Pot Display */}
-          <div className={styles.potDisplay}>
-            <div className={styles.potAmount}>${game.pot}</div>
-          </div>
-
-          {/* Game Status */}
-          <div className={styles.gameStatus}>
-            <span className={styles.statusLabel}>Status:</span> 
-            <span className={styles.statusValue}>{game.gameStatus}</span>
           </div>
 
           {/* Player Seats */}
@@ -751,6 +750,76 @@ export default function GameTable({ gameId }: PokerTableProps) {
             </div>
           )}
         </div>
+      </div>
+      
+      {/* Custom Tutorial Component - positioned in bottom left */}
+      <div className={styles.tutorialContainer}>
+        <button 
+          className={styles.tutorialButton}
+          onClick={() => setShowTutorial(!showTutorial)}
+        >
+          ?
+        </button>
+        
+        {/* Tutorial Popover */}
+        {showTutorial && (
+          <div className={styles.tutorialOverlay}>
+            <div className={styles.tutorialPopover}>
+              <div className={styles.tutorialHeader}>
+                <h3>Poker Tutorial</h3>
+                <button 
+                  className={styles.tutorialCloseButton}
+                  onClick={() => setShowTutorial(false)}
+                >
+                  ×
+                </button>
+              </div>
+              
+              <div className={styles.tutorialContent}>
+                <div className={styles.tutorialSection}>
+                  <h4>Game Basics</h4>
+                  <ul>
+                    <li>Each player receives two private cards (hole cards).</li>
+                    <li>Five community cards are placed face-up on the table.</li>
+                    <li>Players must make the best five-card hand using any combination of their hole cards and community cards.</li>
+                    <li>The player with the best hand at showdown wins the pot.</li>
+                  </ul>
+                </div>
+                
+                <div className={styles.tutorialSection}>
+                  <h4>Player Actions</h4>
+                  <ul>
+                    <li><strong>Check:</strong> Pass the action to the next player (only if no bet has been made).</li>
+                    <li><strong>Bet:</strong> Place a wager (when no previous bet has been made).</li>
+                    <li><strong>Call:</strong> Match the current bet.</li>
+                    <li><strong>Raise:</strong> Increase the current bet.</li>
+                    <li><strong>Fold:</strong> Discard your hand and forfeit the pot.</li>
+                  </ul>
+                </div>
+                
+                <div className={styles.tutorialSection}>
+                  <h4>Game Flow</h4>
+                  <ol>
+                    <li><strong>Pre-flop:</strong> First betting round after receiving hole cards.</li>
+                    <li><strong>Flop:</strong> Three community cards are dealt, followed by betting.</li>
+                    <li><strong>Turn:</strong> A fourth community card is dealt, followed by betting.</li>
+                    <li><strong>River:</strong> A fifth community card is dealt, followed by final betting.</li>
+                    <li><strong>Showdown:</strong> If multiple players remain, cards are shown and best hand wins.</li>
+                  </ol>
+                </div>
+                
+                <div className={styles.tutorialFooter}>
+                  <button 
+                    className={styles.fullTutorialButton}
+                    onClick={() => router.push('/tutorial')}
+                  >
+                    View Full Tutorial
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
