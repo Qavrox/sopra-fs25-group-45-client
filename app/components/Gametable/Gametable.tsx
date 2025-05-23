@@ -623,21 +623,27 @@ export default function GameTable({ gameId }: PokerTableProps) {
           {/* Player Seats */}
           <div className={styles.playersContainer}>
             {game.players.map((player, index) => {
-              // Create safe zone for action controls by excluding bottom 60 degrees (60-120 degrees)
-              const safeZoneStart = 60;  // Start of exclusion zone (degrees) - bottom-right
-              const safeZoneEnd = 120;   // End of exclusion zone (degrees) - bottom-left
-              const usableArc = 360 - (safeZoneEnd - safeZoneStart); // 300 degrees available
-              
-              // Calculate angle within the usable arc, starting from top (270 degrees)
-              let angle = 90 + (index * usableArc) / game.players.length;
-              
-              // If the calculated angle falls within the excluded zone, shift it
-              if (angle >= safeZoneStart && angle <= safeZoneEnd) {
-                angle = safeZoneEnd + ((angle - safeZoneStart) / (safeZoneEnd - safeZoneStart)) * (360 - usableArc);
+              // Calculate angle for this player within the available arc
+              let angle;
+              if (game.players.length === 1) {
+                // Single player at the top
+                angle = 270;
+              } else {
+                // Define the safe zone (60-120 degrees) and usable arc
+                const safeZoneStart = 60;
+                const safeZoneEnd = 120;
+                const usableArc = 360 - (safeZoneEnd - safeZoneStart); // 300 degrees
+                
+                // Divide the usable arc evenly among all players
+                const angleStep = usableArc / game.players.length;
+                
+                // Calculate this player's position within the usable arc
+                const positionInUsableArc = index * angleStep;
+                
+                // Map the position to the actual angle, starting after the safe zone
+                // The usable arc starts at 120 degrees (end of safe zone) and wraps around
+                angle = (safeZoneEnd + positionInUsableArc) % 360;
               }
-              
-              // Normalize angle to 0-360 range
-              angle = angle % 360;
               
               const radius = 300; 
               const x = Math.cos((angle * Math.PI) / 180) * radius;
