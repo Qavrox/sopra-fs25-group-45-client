@@ -586,6 +586,22 @@
   color: #e74c3c;
 }
 
+.foldedIndicator {
+  color: #f39c12;
+  font-weight: bold;
+  font-style: italic;
+}
+
+.foldedMessage {
+  color: #f39c12;
+  font-style: italic;
+  text-align: center;
+  padding: 10px;
+  background-color: rgba(243, 156, 18, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(243, 156, 18, 0.3);
+}
+
 /* Stats section */
 .gameStats {
   margin: 20px 0;
