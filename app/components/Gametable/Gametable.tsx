@@ -581,7 +581,15 @@ export default function GameTable({ gameId }: PokerTableProps) {
             </div>
             
             <div className={styles.resultButtons}>
-
+              {/* New Game Button for Host */}
+              {isHost && isGameOver && (
+                <button 
+                  onClick={handleNewGame}
+                  className={styles.newGameButton}
+                >
+                  New Game
+                </button>
+              )}
               {/* Back to Game Button for Non-Host when game is over */}
               {!isHost && isGameOver && gameResults && (
                  <button
