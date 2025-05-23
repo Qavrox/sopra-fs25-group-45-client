@@ -154,9 +154,11 @@ reason).
 |    |  22.05  | [Link to commit](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/87/commits/6f16aaa777cda89f6a4985281e44de89406a38e5) | Bug Fixes| Basic Functionality  |
 |    |  22.05  | [Link to commit](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/85/commits/674ddc1cee2c5ea02eb6298a42de9c96210f1109) | Bug Fixes| Basic Functionality  |
 |    |  22.05  | [Link to commit](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/83) | Bug Fixes| Basic Functionality  |
-| **[@unscttp]**   |     |  | |  |
-| **[@unscttp]**  |     |  | |  |
-| **[@unscttp]**  |     |  | |  |
+| **[@unscttp]**   |  23.05   | [Link to commit](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/37cf7635b4789d378eecf6d9cc56d8957b4a0a43) | Bug Fixes | Basic Functionality |
+| **[@unscttp]**  |  22.05   | [Link to commit](https://github.com/Qavrox/sopra-fs25-group-45-client/commit/73a811e23b97c39b8c2ed4625e4e282a4fe0f1f1) | Bug Fixes | Basic Functionality |
+| **[@unscttp]**  |  23.05   | [Link to commit](https://github.com/Qavrox/sopra-fs25-group-45-server/commit/a9620a05b921398f17ed54c1fd5dfc4240bc7489) | Tests for mapping | Basic requirements |
+| **[@unscttp]**  |  23.05   | [Link to commit](https://github.com/Qavrox/sopra-fs25-group-45-server/commit/4747986ecd389397b6c1f9b5640b153dceea09ae) | more tests for control | Basic requirements |
+| **[@unscttp]**  |  22.05   | [Link to commit](https://github.com/Qavrox/sopra-fs25-group-45-server/commit/add69f3fa478731095dffc463c9873455786af64) | Tests for control | Basic requirements |
 | **[@IsSaudade]**   |     |  | |  |
 | **[@IsSaudade]**  |     |  | |  |
 ---
