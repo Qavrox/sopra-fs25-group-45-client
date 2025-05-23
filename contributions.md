@@ -144,8 +144,10 @@ reason).
 | ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
 | **[@TauSigma5]**   |   22.05  |  [Link to PR](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/112) | A bunch of tests | Ensuring each task has at least 1 meaningful test |
 | **[@TauSigma5]**  |   22.05  | [Link to PR](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/111) | More tests | ensure more test coverage (there's more changes but I'm too lazy to link them all) | 
-| **[@Qavrox]**   |     |  | |  |
-| **[@Qavrox]**  |     |  | |  |
+| **[@Qavrox]**   |  21.05   | [Link to PR](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/99) |Implemented time range selection function for stats | to meet US#6 |
+| **[@Qavrox]**  |   23.05  | [Link to PR](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/109) | Tons of tests | ensure more test coverage (there's more changes but I'm too lazy to link them all) |
+| **[@Qavrox]**  |   21.05  | [Link to PR](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/76) | Time range ui for stats | To meet US#6 |
+| **[@Qavrox]**  |   23.05  | [Link to PR](https://github.com/Qavrox/sopra-fs25-group-45-client/pull/76) | fix new game logic for non-hosts | Basic functionality for a new round |
 | **[@lydia-milena]**   |  22.05   | [Link to commit](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/106/commits/e3570c3d1dfa66be75fd51c51c604de64fb140be) | Next Round Functionality| Basic Game Functionality  |
 | **[@lydia-milena]**   |  22.05   | [Link to commit](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/110/commits) | Bug Fixes| Basic Functionality  |
 |    | 22.05   | [Link to commit](https://github.com/Qavrox/sopra-fs25-group-45-server/pull/114/commits/ebf5deb0cf982c494f82e72328bcb1fbc76f1e98) | Bug Fixes| Basic Functionality  |
