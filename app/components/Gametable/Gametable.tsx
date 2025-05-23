@@ -577,20 +577,11 @@ export default function GameTable({ gameId }: PokerTableProps) {
             
             <div className={styles.gameStats}>
               <h4>Statistics</h4>
-              <p>Participation Rate: {gameResults.statistics.participationRate}%</p>
               <p>Pots Won: {gameResults.statistics.potsWon}</p>
             </div>
             
             <div className={styles.resultButtons}>
-              {/* New Game Button for Host */}
-              {isHost && isGameOver && (
-                <button 
-                  onClick={handleNewGame}
-                  className={styles.newGameButton}
-                >
-                  New Game
-                </button>
-              )}
+
               {/* Back to Game Button for Non-Host when game is over */}
               {!isHost && isGameOver && gameResults && (
                  <button
@@ -644,7 +635,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
           <div className={styles.playersContainer}>
             {game.players.map((player, index) => {
               const angle = (index * 360) / game.players.length;
-              const radius = 350; // Increased from 230 to 350 to push players further from center
+              const radius = 250; 
               const x = Math.cos((angle * Math.PI) / 180) * radius;
               const y = Math.sin((angle * Math.PI) / 180) * radius;
               const isActive = !player.hasFolded && game.currentPlayerId === player.userId;
