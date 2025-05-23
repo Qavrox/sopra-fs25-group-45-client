@@ -382,7 +382,7 @@ const UserProfilePage: React.FC = () => {
         />
       ),
     }] : []),
-    {
+    ...(isOwnProfile ? [{
       key: 'leaderboard',
       label: <span><OrderedListOutlined /> Leaderboard</span>,
       children: (
@@ -420,7 +420,7 @@ const UserProfilePage: React.FC = () => {
           />
         </>
       ),
-    },
+    }] : []),
   ];
 
   return (
