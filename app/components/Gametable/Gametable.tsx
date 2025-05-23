@@ -271,22 +271,6 @@ export default function GameTable({ gameId }: PokerTableProps) {
   };
 
   const handleReturnToLobby = async () => {
-    // Check if the current user is the host
-    const isHost = game && game.creatorId === apiClient.getUserId();
-
-    if (!isHost) {
-      try {
-        await apiClient.deleteGame(gameId);
-
-      } catch (err) {
-        setError(extractErrorMessage(err));
-        console.error('Failed to leave game:', err);
-      } finally {
-        router.push('/lobby');
-      }
-      return; // End execution for non-host
-    }
-
     // Host logic: delete the game and redirect
     try {
       await apiClient.deleteGame(gameId);
