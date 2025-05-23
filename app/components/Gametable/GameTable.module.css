@@ -389,42 +389,59 @@
   margin-bottom: -15px;
 }
 
+/* Safe zone for action controls */
+.actionSafeZone {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 160px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
+  z-index: 50;
+  pointer-events: none;
+}
+
 /* Action Controls */
 .actionControlsContainer {
   position: absolute;
   bottom: 20px;
-  background-color: rgba(0, 0, 0, 0.8);
-  border-radius: 10px;
-  padding: 15px;
-  z-index: 100;
-  width: 80%;
-  max-width: 500px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.9);
+  border-radius: 8px;
+  padding: 10px;
+  z-index: 150;
+  width: 60%;
+  max-width: 400px;
+  min-width: 280px;
   border: 2px solid #333;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
 .actionTitle {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   font-weight: bold;
   color: white;
   text-align: center;
+  font-size: 14px;
 }
 
 .actionButtons {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
-  gap: 10px;
+  margin-bottom: 8px;
+  gap: 6px;
 }
 
 .actionButton {
-  padding: 8px 16px;
+  padding: 6px 12px;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   font-weight: bold;
   cursor: pointer;
   flex: 1;
   transition: all 0.2s;
+  font-size: 12px;
 }
 
 .actionButton:hover {
@@ -450,17 +467,18 @@
 .betControls {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
-  gap: 10px;
+  margin-bottom: 8px;
+  gap: 6px;
 }
 
 .betInput {
-  padding: 8px;
-  border-radius: 5px;
+  padding: 6px;
+  border-radius: 4px;
   border: 1px solid #555;
   background-color: #333;
   color: white;
   flex: 2;
+  font-size: 12px;
 }
 
 .betButton {
@@ -475,15 +493,16 @@
 
 .confirmButton {
   width: 100%;
-  padding: 10px;
+  padding: 8px;
   background-color: gold;
   color: black;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   font-weight: bold;
   cursor: pointer;
-  margin-top: 10px;
+  margin-top: 8px;
   transition: all 0.2s;
+  font-size: 14px;
 }
 
 .confirmButton:hover {
@@ -858,14 +877,15 @@
 
 .timerContainer {
   position: absolute;
-  top: 20px;
-  left: calc(50% - 220px);
-  transform: translateX(-50%);
-  background-color: rgba(0, 0, 0, 0.7);
-  padding: 10px 20px;
-  border-radius: 20px;
+  top: 140px;
+  right: 20px;
+  background-color: rgba(255, 69, 0, 0.9);
+  padding: 8px 15px;
+  border-radius: 15px;
   z-index: 1000;
-  width: 200px;
+  width: 160px;
+  border: 2px solid #ff8c00;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .progress-bar {
@@ -884,7 +904,7 @@
 /* Tutorial Container - positioned in bottom left */
 .tutorialContainer {
   position: fixed;
-  bottom: 20px;
+  bottom: 140px;
   left: 20px;
   z-index: 1000;
 }
