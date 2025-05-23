@@ -133,7 +133,7 @@ export class ApiClient {
     } catch (error) {
       this.setToken(null); // Clear token on login failure
       this.setUserId(null); // Clear userId on login failure
-      throw error;
+      throw error; // Directly propagate the error with server message
     }
   }
 
@@ -145,7 +145,7 @@ export class ApiClient {
     } catch (error) {
       this.setToken(null); // Clear token even if logout request fails
       this.setUserId(null); // Clear userId even if logout request fails
-      throw error;
+      throw error; // Directly propagate the error with server message
     }
   }
 
@@ -158,7 +158,7 @@ export class ApiClient {
     } catch (error) {
       this.setToken(null); // Clear token on registration failure
       this.setUserId(null); // Clear userId on registration failure
-      throw error;
+      throw error; // Directly propagate the error with server message
     }
   }
 

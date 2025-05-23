@@ -75,19 +75,41 @@ export default function GameTable({ gameId }: PokerTableProps) {
 
     const fetchGameState = async () => {
       try {
-            const gameData = await apiClient.getGameDetails(gameId);
-    setGame(gameData);
-    
-    // If game is over, fetch results
-    if (gameData.gameStatus === GameStatus.GAMEOVER && !gameResults) {
-      try {
-        const results = await apiClient.getGameResults(gameId);
-        setGameResults(results);
-      } catch (err) {
-        setError(extractErrorMessage(err))
-        console.error('Failed to fetch game results:', err);
-      }
-    }
+        const gameData = await apiClient.getGameDetails(gameId);
+        
+        // If game is over, fetch results first before setting game state
+        if (gameData.gameStatus === GameStatus.GAMEOVER && !gameResults) {
+          try {
+            const results = await apiClient.getGameResults(gameId);
+            console.log('Game results from API:', results);
+            setGameResults(results);
+            
+            // Now update the game state, but preserve the winner's correct hand
+            const updatedGameData = {
+              ...gameData,
+              players: gameData.players.map(player => {
+                if (player.userId === results.winner.userId) {
+                  return {
+                    ...player,
+                    hand: results.winner.hand
+                  };
+                }
+                return player;
+              })
+            };
+            setGame(updatedGameData);
+            
+            return; // Exit early to avoid setting game state twice
+          } catch (err) {
+            setError(extractErrorMessage(err))
+            console.error('Failed to fetch game results:', err);
+          }
+        }
+        
+        // Only set game state if we don't have results or game is not over
+        if (!gameResults || gameData.gameStatus !== GameStatus.GAMEOVER) {
+          setGame(gameData);
+        }
       } catch (err) {
         setError(extractErrorMessage(err));
         console.error('Failed to fetch game state', err);
@@ -101,7 +123,14 @@ export default function GameTable({ gameId }: PokerTableProps) {
     initializeGame();
 
     // Set up polling for game state updates
-    const intervalId = setInterval(fetchGameState, POLLING_INTERVAL);
+    const intervalId = setInterval(() => {
+      // Stop polling if we have game results
+      if (gameResults) {
+        clearInterval(intervalId);
+        return;
+      }
+      fetchGameState();
+    }, POLLING_INTERVAL);
 
     return () => {
       clearInterval(intervalId);
@@ -164,9 +193,8 @@ export default function GameTable({ gameId }: PokerTableProps) {
   };
   
   const extractErrorMessage = (err: any): string => {
-    if (err?.response?.data?.message) return err.response.data.message;
-    if (err?.message) return err.message;
-    return 'An unknown error occurred';
+    // Just return the error message without any formatting
+    return err?.message || 'An unknown error occurred';
   };
 
   const handleAction = async () => {
@@ -199,16 +227,58 @@ export default function GameTable({ gameId }: PokerTableProps) {
       setGameResults(null);
       setWinProbability(null);
       setSelectedAction(null);
-      console.log('New game requested');
-
+      setError(null); // Clear any previous errors
     }
     catch(err){ 
-      console.log('Failed new Round.')
+      setError(extractErrorMessage(err));
+      console.error('Failed to start new round:', err);
+    }
+  };
+
+  const handleBackToGame = async () => {
+    if (!game) return;
+    const currentUserId = apiClient.getUserId();
+    if (game.creatorId === currentUserId) {
+      // Host should not see this button, but as a safeguard
+      return;
     }
 
+    try {
+      const currentGameData = await apiClient.getGameDetails(gameId);
+      if (currentGameData.gameStatus === GameStatus.READY) {
+        // Game is ready, host has started a new round
+        setGameResults(null); // Clear previous game results
+        setWinProbability(null);
+        setSelectedAction(null);
+        setError(null); // Clear any messages
+        // The polling mechanism should pick up the new game state
+      } else if (currentGameData.gameStatus === GameStatus.GAMEOVER) {
+        setError("The host has not started a new round yet.");
+      } else if (currentGameData.gameStatus === GameStatus.ARCHIVED) {
+        setError("The host has closed the room. You will be returned to the lobby.");
+        setTimeout(() => router.push('/lobby'), 3000);
+      } else {
+        // For any other status, or if the game somehow reverted from GAMEOVER
+        // to an active state without being READY.
+        setError(null); // Clear any messages
+        // Rely on polling to update to the correct state if it's active.
+        // If it's an unexpected state, polling should eventually resolve or error out.
+      }
+    } catch (err) {
+      setError(extractErrorMessage(err));
+      console.error('Failed to check game status for Back to Game:', err);
+      // If checking status fails, it might be that the game was archived/deleted
+      // and the ID is no longer valid.
+      // Offer to go to lobby as a fallback.
+      setError("Could not retrieve game status. The game may have been closed. Redirecting to lobby...");
+      setTimeout(() => router.push('/lobby'), 3000);
+    }
   };
 
   const handleReturnToLobby = async () => {
+    // Check if the current user is the host
+    const isHost = game && game.creatorId === apiClient.getUserId();
+
     if (!isHost) {
       try {
         await apiClient.leaveGame(gameId);
@@ -218,9 +288,10 @@ export default function GameTable({ gameId }: PokerTableProps) {
       } finally {
         router.push('/lobby');
       }
-      return;
+      return; // End execution for non-host
     }
 
+    // Host logic: delete the game and redirect
     try {
       await apiClient.deleteGame(gameId);
     } catch (err) {
@@ -244,6 +315,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
                 setIsPlayerTurn(false);
             }
         } catch (error) {
+            setError(extractErrorMessage(error));
             console.error('Failed to auto-fold:', error);
         }
     }
@@ -328,6 +400,39 @@ export default function GameTable({ gameId }: PokerTableProps) {
         </div>
       </div>
     );
+  };
+
+  // Add this effect to log when game results are updated
+  useEffect(() => {
+    if (gameResults) {
+      console.log('Game results updated:', gameResults);
+      if (game) {
+        const winnerInGameState = game.players.find(p => p.userId === gameResults.winner.userId);
+        if (winnerInGameState) {
+          console.log('Winner in game state:', winnerInGameState);
+          console.log('Winner hand comparison:',
+            'Game results hand:', gameResults.winner.hand,
+            'Game state hand:', winnerInGameState.hand
+          );
+        }
+      }
+    }
+  }, [gameResults, game]);
+
+  // Add effect to ensure polling stops when game results are available
+  useEffect(() => {
+    // This effect will ensure that any interval is cleared when gameResults becomes available
+    // The cleanup is handled in the main useEffect but this provides additional safety
+  }, [gameResults]);
+
+  // Add this helper function before the return statement
+  const getPlayerCards = (player: Player) => {
+    // If this is the winner and we have game results, use the winner's hand from the results
+    if (gameResults && player.userId === gameResults.winner.userId) {
+      return gameResults.winner.hand;
+    }
+    // Otherwise use the player's hand from the game state
+    return player.hand;
   };
 
   if (isLoading) {
@@ -459,7 +564,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
                       Player {player.userId} {player.hasFolded ? "(Folded)" : ""}
                     </div>
                     <div className={styles.resultCards}>
-                      {player.hand.map((card, index) => (
+                      {getPlayerCards(player).map((card, index) => (
                         <div key={`player-${player.userId}-card-${index}`} className={styles.resultCardWrapper}>
                           {renderCard(card)}
                         </div>
@@ -477,13 +582,15 @@ export default function GameTable({ gameId }: PokerTableProps) {
             </div>
             
             <div className={styles.resultButtons}>
-              {isHost && (
-                <button 
-                  onClick={handleNewGame}
-                  className={styles.newGameButton}
-                >
-                  New Game
-                </button>
+
+              {/* Back to Game Button for Non-Host when game is over */}
+              {!isHost && isGameOver && gameResults && (
+                 <button
+                   onClick={handleBackToGame}
+                   className={styles.newGameButton} // Assuming similar styling to "New Game"
+                 >
+                   Back to Game
+                 </button>
               )}
               <button className={styles.returnButton} onClick={handleReturnToLobby}>
                 Back to Lobby
@@ -570,13 +677,16 @@ export default function GameTable({ gameId }: PokerTableProps) {
                   </div>
                   
                   {/* Show cards for current user or when game is over */}
-                  {shouldShowCards && player.hand.length > 0 && (
+                  {shouldShowCards && (
                     <div className={styles.playerCards}>
-                      {player.hand.map((card, i) => (
-                        <div key={i} className={styles.playerCardWrapper}>
-                          {renderCard(card)}
-                        </div>
-                      ))}
+                      {getPlayerCards(player).length > 0 ? 
+                        getPlayerCards(player).map((card, i) => (
+                          <div key={i} className={styles.playerCardWrapper}>
+                            {renderCard(card)}
+                          </div>
+                        )) : 
+                        <div className={styles.noCards}>No cards</div>
+                      }
                     </div>
                   )}
                 </div>
