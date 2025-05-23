@@ -531,7 +531,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
           <div className={styles.gameResults}>
             <h2 className={styles.gameResultsTitle}>Game Over!</h2>
             <div className={styles.winnerInfo}>
-              <h3>Winner: Player {gameResults.winner.userId}</h3>
+              <h3>Winner: {playerProfiles[gameResults.winner.userId]?.name}</h3>
               <p>Winning Hand: {gameResults.winningHand}</p>
             </div>
             
@@ -549,7 +549,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
             
             {/* Display Winner's Hand */}
             <div className={styles.resultsSection}>
-              <h4>Winner's Hand - Player {gameResults.winner.userId}</h4>
+              <h4>Winner's Hand - {playerProfiles[gameResults.winner.userId]?.name}</h4>
               <div className={styles.resultCards}>
                 {gameResults.winner.hand.map((card, index) => (
                   <div key={`winner-${index}`} className={styles.resultCardWrapper}>
@@ -566,15 +566,20 @@ export default function GameTable({ gameId }: PokerTableProps) {
                 {game.players.filter(player => player.userId !== gameResults.winner.userId).map((player) => (
                   <div key={`player-${player.userId}`} className={styles.playerHandResult}>
                     <div className={styles.playerHandLabel}>
-                      {playerProfiles[player.userId]?.username || `Player ${player.userId}`}
+                      {playerProfiles[player.userId]?.name}
+                      {player.hasFolded && <span className={styles.foldedIndicator}> - FOLDED</span>}
                     </div>
-                    <div className={styles.resultCards}>
-                      {getPlayerCards(player).map((card, index) => (
-                        <div key={`player-${player.userId}-card-${index}`} className={styles.resultCardWrapper}>
-                          {renderCard(card)}
-                        </div>
-                      ))}
-                    </div>
+                    {player.hasFolded ? (
+                      <div className={styles.foldedMessage}>Player folded during the game</div>
+                    ) : (
+                      <div className={styles.resultCards}>
+                        {getPlayerCards(player).map((card, index) => (
+                          <div key={`player-${player.userId}-card-${index}`} className={styles.resultCardWrapper}>
+                            {renderCard(card)}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
