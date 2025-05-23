@@ -113,15 +113,15 @@
   position: absolute;
   display: flex;
   justify-content: center;
-  gap: 10px;
-  top: 50%;
+  gap: 5px;
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
 }
 
 .communityCardWrapper {
-  transform: scale(0.7);
+  transform: scale(0.85);
 }
 
 /* Card Styling */
