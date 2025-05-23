@@ -602,6 +602,19 @@
   margin-top: 20px;
 }
 
+.waitingMessage {
+  padding: 12px 24px;
+  background-color: rgba(255, 193, 7, 0.1);
+  color: #ffc107;
+  border: 2px solid #ffc107;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
 .newGameButton {
   padding: 12px 24px;
   background-color: #4CAF50;
