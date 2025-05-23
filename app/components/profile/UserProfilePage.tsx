@@ -382,7 +382,7 @@ const UserProfilePage: React.FC = () => {
         />
       ),
     }] : []),
-    {
+    ...(isOwnProfile ? [{
       key: 'leaderboard',
       label: <span><OrderedListOutlined /> Leaderboard</span>,
       children: (
@@ -420,7 +420,7 @@ const UserProfilePage: React.FC = () => {
           />
         </>
       ),
-    },
+    }] : []),
   ];
 
   return (
@@ -525,23 +525,25 @@ const UserProfilePage: React.FC = () => {
                       </div>
                     )}
 
-                    <Row gutter={16} style={{ marginBottom: 24 }}>
-                      <Col span={8}>
-                        <Statistic title={<Text style={{ color: 'white' }}>Games Played</Text>} value={statistics.gamesPlayed} loading={loadingStats} />
-                      </Col>
-                      <Col span={8}>
-                        <Statistic title={<Text style={{ color: 'white' }}>Win Rate</Text>} value={statistics.winRate} suffix="%" loading={loadingStats} />
-                      </Col>
-                      <Col span={8}>
-                        <Statistic
-                            title={<Text style={{ color: 'white' }}>Total Winnings</Text>}
-                            value={statistics.totalWinnings}
-                            prefix="$"
-                            valueStyle={{ color: statistics.totalWinnings >= 0 ? 'green' : 'red' }}
-                            loading={loadingStats}
-                        />
-                      </Col>
-                    </Row>
+                    {isOwnProfile && (
+                      <Row gutter={16} style={{ marginBottom: 24 }}>
+                        <Col span={8}>
+                          <Statistic title={<Text style={{ color: 'white' }}>Games Played</Text>} value={statistics.gamesPlayed} loading={loadingStats} />
+                        </Col>
+                         <Col span={8}>
+                            <Statistic title={<Text style={{ color: 'white' }}>Win Rate</Text>} value={statistics.winRate} suffix="%" loading={loadingStats} />
+                          </Col>
+                          <Col span={8}>
+                            <Statistic
+                              title={<Text style={{ color: 'white' }}>Total Winnings</Text>}
+                              value={statistics.totalWinnings}
+                              prefix="$"
+                              valueStyle={{ color: statistics.totalWinnings >= 0 ? 'green' : 'red' }}
+                              loading={loadingStats}
+                            />
+                          </Col>
+                        </Row>
+                    )}
 
                     {/* Use items prop for Tabs */}
                     <Tabs defaultActiveKey={"personal"} items={tabItems} />
