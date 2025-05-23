@@ -556,7 +556,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
                 {game.players.filter(player => player.userId !== gameResults.winner.userId).map((player) => (
                   <div key={`player-${player.userId}`} className={styles.playerHandResult}>
                     <div className={styles.playerHandLabel}>
-                      Player {player.userId} {player.hasFolded ? "(Folded)" : ""}
+                      {playerProfiles[player.userId]?.username || `Player ${player.userId}`}
                     </div>
                     <div className={styles.resultCards}>
                       {getPlayerCards(player).map((card, index) => (
@@ -611,7 +611,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
   
 
           {/* Community Cards */}
-          <div className={styles.communityCards}>
+          <div className={styles.communityCards}>p
             {game.communityCards.map((card, index) => (
               <div key={index} className={styles.communityCardWrapper}>
                 {renderCard(card)}
