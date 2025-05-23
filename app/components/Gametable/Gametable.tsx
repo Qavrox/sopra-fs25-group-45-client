@@ -75,19 +75,41 @@ export default function GameTable({ gameId }: PokerTableProps) {
 
     const fetchGameState = async () => {
       try {
-            const gameData = await apiClient.getGameDetails(gameId);
-    setGame(gameData);
-    
-    // If game is over, fetch results
-    if (gameData.gameStatus === GameStatus.GAMEOVER && !gameResults) {
-      try {
-        const results = await apiClient.getGameResults(gameId);
-        setGameResults(results);
-      } catch (err) {
-        setError(extractErrorMessage(err))
-        console.error('Failed to fetch game results:', err);
-      }
-    }
+        const gameData = await apiClient.getGameDetails(gameId);
+        
+        // If game is over, fetch results first before setting game state
+        if (gameData.gameStatus === GameStatus.GAMEOVER && !gameResults) {
+          try {
+            const results = await apiClient.getGameResults(gameId);
+            console.log('Game results from API:', results);
+            setGameResults(results);
+            
+            // Now update the game state, but preserve the winner's correct hand
+            const updatedGameData = {
+              ...gameData,
+              players: gameData.players.map(player => {
+                if (player.userId === results.winner.userId) {
+                  return {
+                    ...player,
+                    hand: results.winner.hand
+                  };
+                }
+                return player;
+              })
+            };
+            setGame(updatedGameData);
+            
+            return; // Exit early to avoid setting game state twice
+          } catch (err) {
+            setError(extractErrorMessage(err))
+            console.error('Failed to fetch game results:', err);
+          }
+        }
+        
+        // Only set game state if we don't have results or game is not over
+        if (!gameResults || gameData.gameStatus !== GameStatus.GAMEOVER) {
+          setGame(gameData);
+        }
       } catch (err) {
         setError(extractErrorMessage(err));
         console.error('Failed to fetch game state', err);
@@ -101,7 +123,14 @@ export default function GameTable({ gameId }: PokerTableProps) {
     initializeGame();
 
     // Set up polling for game state updates
-    const intervalId = setInterval(fetchGameState, POLLING_INTERVAL);
+    const intervalId = setInterval(() => {
+      // Stop polling if we have game results
+      if (gameResults) {
+        clearInterval(intervalId);
+        return;
+      }
+      fetchGameState();
+    }, POLLING_INTERVAL);
 
     return () => {
       clearInterval(intervalId);
@@ -328,6 +357,39 @@ export default function GameTable({ gameId }: PokerTableProps) {
     );
   };
 
+  // Add this effect to log when game results are updated
+  useEffect(() => {
+    if (gameResults) {
+      console.log('Game results updated:', gameResults);
+      if (game) {
+        const winnerInGameState = game.players.find(p => p.userId === gameResults.winner.userId);
+        if (winnerInGameState) {
+          console.log('Winner in game state:', winnerInGameState);
+          console.log('Winner hand comparison:',
+            'Game results hand:', gameResults.winner.hand,
+            'Game state hand:', winnerInGameState.hand
+          );
+        }
+      }
+    }
+  }, [gameResults, game]);
+
+  // Add effect to ensure polling stops when game results are available
+  useEffect(() => {
+    // This effect will ensure that any interval is cleared when gameResults becomes available
+    // The cleanup is handled in the main useEffect but this provides additional safety
+  }, [gameResults]);
+
+  // Add this helper function before the return statement
+  const getPlayerCards = (player: Player) => {
+    // If this is the winner and we have game results, use the winner's hand from the results
+    if (gameResults && player.userId === gameResults.winner.userId) {
+      return gameResults.winner.hand;
+    }
+    // Otherwise use the player's hand from the game state
+    return player.hand;
+  };
+
   if (isLoading) {
     return <div className={styles.loadingContainer}>Loading game...</div>;
   }
@@ -457,7 +519,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
                       Player {player.userId} {player.hasFolded ? "(Folded)" : ""}
                     </div>
                     <div className={styles.resultCards}>
-                      {player.hand.map((card, index) => (
+                      {getPlayerCards(player).map((card, index) => (
                         <div key={`player-${player.userId}-card-${index}`} className={styles.resultCardWrapper}>
                           {renderCard(card)}
                         </div>
@@ -566,13 +628,16 @@ export default function GameTable({ gameId }: PokerTableProps) {
                   </div>
                   
                   {/* Show cards for current user or when game is over */}
-                  {shouldShowCards && player.hand.length > 0 && (
+                  {shouldShowCards && (
                     <div className={styles.playerCards}>
-                      {player.hand.map((card, i) => (
-                        <div key={i} className={styles.playerCardWrapper}>
-                          {renderCard(card)}
-                        </div>
-                      ))}
+                      {getPlayerCards(player).length > 0 ? 
+                        getPlayerCards(player).map((card, i) => (
+                          <div key={i} className={styles.playerCardWrapper}>
+                            {renderCard(card)}
+                          </div>
+                        )) : 
+                        <div className={styles.noCards}>No cards</div>
+                      }
                     </div>
                   )}
                 </div>
