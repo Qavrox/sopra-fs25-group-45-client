@@ -516,7 +516,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
           <div className={styles.gameResults}>
             <h2 className={styles.gameResultsTitle}>Game Over!</h2>
             <div className={styles.winnerInfo}>
-              <h3>Winner: {playerProfiles[gameResults.winner.userId]?.name || `Player ${gameResults.winner.userId}`}</h3>
+              <h3>Winner: {playerProfiles[gameResults.winner.userId]?.name}</h3>
               <p>Winning Hand: {gameResults.winningHand}</p>
             </div>
             
