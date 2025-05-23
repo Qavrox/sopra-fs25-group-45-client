@@ -611,19 +611,20 @@ export default function GameTable({ gameId }: PokerTableProps) {
             </div>
           </div>
         )}
-          {/* Timer */}
-            {showTimer && (
-              <div className={styles.timerContainer}>
-                  <Timer 
-                      initialTime={30}
-                      onTimeUp={handleTimeUp}
-                      isRunning={isPlayerTurn}
-                  />
-              </div>
-            )}
+          {/* Timer - repositioned to center of table */}
+          {showTimer && (
+            <div className={styles.timerContainer}>
+                <Timer 
+                    initialTime={30}
+                    onTimeUp={handleTimeUp}
+                    isRunning={isPlayerTurn}
+                />
+            </div>
+          )}
         
         <div className={styles.pokerTable}>
-  
+          {/* Safe zone for action controls */}
+          <div className={styles.actionSafeZone}></div>
 
           {/* Community Cards */}
           <div className={styles.communityCards}>
@@ -637,7 +638,17 @@ export default function GameTable({ gameId }: PokerTableProps) {
           {/* Player Seats */}
           <div className={styles.playersContainer}>
             {game.players.map((player, index) => {
-              const angle = (index * 360) / game.players.length;
+              // Create safe zone for action controls by excluding bottom 90 degrees (225-315 degrees)
+              const safeZoneStart = 225; // Start of exclusion zone (degrees)
+              const safeZoneEnd = 315;   // End of exclusion zone (degrees)
+              const usableArc = 360 - (safeZoneEnd - safeZoneStart); // 270 degrees available
+              
+              // Calculate angle within the usable arc, starting from top (270 degrees)
+              let angle = 270 + (index * usableArc) / game.players.length;
+              
+              // Normalize angle to 0-360 range
+              angle = angle % 360;
+              
               const radius = 300; 
               const x = Math.cos((angle * Math.PI) / 180) * radius;
               const y = Math.sin((angle * Math.PI) / 180) * radius;
@@ -660,7 +671,7 @@ export default function GameTable({ gameId }: PokerTableProps) {
                       <Avatar
                         src={playerProfiles[player.userId] ? `/images/avatar${playerProfiles[player.userId].profileImage || 0}.png` : undefined}
                         icon={!playerProfiles[player.userId] && <UserOutlined />}
-                        size={75}
+                        size={45}
                         style={{ marginBottom: '8px' }}
                       />
                       {playerProfiles[player.userId]?.name || `Player ${player.userId}`}
